@@ -32,7 +32,6 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       debugPrint('✅ [Auth] تم تسجيل الدخول بنجاح');
 
-      // Try to fetch existing user data from Firestore (to get photo and other data)
       try {
         debugPrint('📥 [Auth] جلب بيانات المستخدم من Firestore...');
         final UserModel? firestoreUser = await firestoreDataSource.getUserData(
@@ -40,28 +39,21 @@ class AuthRepositoryImpl implements AuthRepository {
         );
 
         if (firestoreUser != null) {
-          // Use Firestore data (it has the saved photo and other data)
           user = firestoreUser;
           debugPrint('✅ [Auth] تم جلب البيانات من Firestore بنجاح');
           debugPrint(
             '📸 [Auth] Photo exists: ${firestoreUser.photoBase64 != null}, length: ${firestoreUser.photoBase64?.length ?? 0}',
           );
         } else {
-          // First time login - user doesn't exist in Firestore yet
           debugPrint(
             '⚠️ [Auth] المستخدم غير موجود في Firestore - تسجيل دخول لأول مرة',
           );
-          // Don't save here - we don't have photo data yet
-          // Photo will be null and initials will be generated in UI
         }
       } catch (e) {
-        // Error fetching from Firestore - continue without photo
         debugPrint('⚠️ [Auth] خطأ في جلب البيانات من Firestore: $e');
         debugPrint('⚠️ [Auth] المتابعة بدون صورة - سيتم عرض initials');
-        // Don't save - we don't want to overwrite existing data
       }
 
-      // Cache the user locally
       debugPrint('💾 [Auth] حفظ البيانات محلياً...');
       await localDataSource.cacheUser(user);
       debugPrint('✅ [Auth] تم حفظ البيانات محلياً');
@@ -92,12 +84,10 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       debugPrint('✅ [Auth] تم إنشاء الحساب بنجاح');
 
-      // Save to Firestore (cloud database)
       debugPrint('💾 [Auth] حفظ البيانات في Firestore...');
       await firestoreDataSource.saveUserData(user);
       debugPrint('✅ [Auth] تم حفظ البيانات في Firestore');
 
-      // Cache the user locally
       debugPrint('💾 [Auth] حفظ البيانات محلياً...');
       await localDataSource.cacheUser(user);
       debugPrint('✅ [Auth] تم حفظ البيانات محلياً');
@@ -120,7 +110,6 @@ class AuthRepositoryImpl implements AuthRepository {
       var user = await remoteDataSource.signInWithGoogle();
       debugPrint('✅ [Auth] تم تسجيل الدخول بجوجل بنجاح');
 
-      // Try to fetch existing user data from Firestore (to get photo and other data)
       try {
         debugPrint('📥 [Auth] جلب بيانات المستخدم من Firestore...');
         final UserModel? firestoreUser = await firestoreDataSource.getUserData(
@@ -128,14 +117,12 @@ class AuthRepositoryImpl implements AuthRepository {
         );
 
         if (firestoreUser != null) {
-          // Use existing Firestore data (has saved photo)
           user = firestoreUser;
           debugPrint('✅ [Auth] تم جلب البيانات من Firestore بنجاح');
           debugPrint(
             '📸 [Auth] Photo exists: ${firestoreUser.photoBase64 != null}, length: ${firestoreUser.photoBase64?.length ?? 0}',
           );
         } else {
-          // First time Google sign in - save user with Google photo if available
           if (user.photoBase64 != null) {
             debugPrint(
               '💾 [Auth] تسجيل دخول Google لأول مرة - حفظ البيانات مع صورة Google...',
@@ -150,12 +137,10 @@ class AuthRepositoryImpl implements AuthRepository {
           }
         }
       } catch (e) {
-        // Error fetching - continue without overwriting
         debugPrint('⚠️ [Auth] خطأ في جلب البيانات من Firestore: $e');
         debugPrint('⚠️ [Auth] المتابعة بدون صورة');
       }
 
-      // Cache the user locally
       debugPrint('💾 [Auth] حفظ البيانات محلياً...');
       await localDataSource.cacheUser(user);
       debugPrint('✅ [Auth] تم حفظ البيانات محلياً');
@@ -171,8 +156,60 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, UserModel>> signInWithApple() async {
+    try {
+      debugPrint('🔐 [Auth] محاولة تسجيل الدخول بـ Apple');
+
+      var user = await remoteDataSource.signInWithApple();
+      debugPrint('✅ [Auth] تم تسجيل الدخول بـ Apple بنجاح');
+
+      try {
+        debugPrint('📥 [Auth] جلب بيانات المستخدم من Firestore...');
+        final UserModel? firestoreUser = await firestoreDataSource.getUserData(
+          user.id,
+        );
+
+        if (firestoreUser != null) {
+          user = firestoreUser;
+          debugPrint('✅ [Auth] تم جلب البيانات من Firestore بنجاح');
+          debugPrint(
+            '📸 [Auth] Photo exists: ${firestoreUser.photoBase64 != null}, length: ${firestoreUser.photoBase64?.length ?? 0}',
+          );
+        } else {
+          if (user.photoBase64 != null) {
+            debugPrint(
+              '💾 [Auth] تسجيل دخول Apple لأول مرة - حفظ البيانات مع صورة initials...',
+            );
+            debugPrint(
+              '📸 [Auth] Apple photo length: ${user.photoBase64?.length ?? 0}',
+            );
+            await firestoreDataSource.saveUserData(user);
+            debugPrint('✅ [Auth] تم حفظ البيانات في Firestore');
+          } else {
+            debugPrint('⚠️ [Auth] تسجيل دخول Apple لأول مرة بدون صورة');
+          }
+        }
+      } catch (e) {
+        debugPrint('⚠️ [Auth] خطأ في جلب البيانات من Firestore: $e');
+        debugPrint('⚠️ [Auth] المتابعة بدون صورة');
+      }
+
+      debugPrint('💾 [Auth] حفظ البيانات محلياً...');
+      await localDataSource.cacheUser(user);
+      debugPrint('✅ [Auth] تم حفظ البيانات محلياً');
+
+      return Right(user);
+    } on Failure catch (failure) {
+      debugPrint('❌ [Auth] فشل تسجيل الدخول بـ Apple: ${failure.message}');
+      return Left(failure);
+    } catch (e) {
+      debugPrint('❌ [Auth] خطأ غير متوقع: ${e.toString()}');
+      return Left(AuthFailure('حدث خطأ غير متوقع: ${e.toString()}'));
+    }
+  }
+
+  @override
   Future<Either<Failure, UserModel>> completeGoogleSignIn() async {
-    // This method is no longer needed - keeping for interface compatibility
     return signInWithGoogle();
   }
 
@@ -191,6 +228,38 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, void>> deleteAccount(String userId) async {
+    try {
+      debugPrint('🗑️ [Auth] بدء حذف الحساب...');
+      debugPrint('👤 [Auth] User ID: $userId');
+
+      // Delete user data from Firestore
+      debugPrint('🗑️ [Auth] حذف بيانات المستخدم من Firestore...');
+      await firestoreDataSource.deleteUserData(userId);
+      debugPrint('✅ [Auth] تم حذف البيانات من Firestore');
+
+      // Delete Firebase Auth account
+      debugPrint('🗑️ [Auth] حذف حساب Firebase Auth...');
+      await remoteDataSource.deleteAccount();
+      debugPrint('✅ [Auth] تم حذف حساب Firebase Auth');
+
+      // Clear local cache
+      debugPrint('🗑️ [Auth] مسح البيانات المحلية...');
+      await localDataSource.clearUser();
+      debugPrint('✅ [Auth] تم مسح البيانات المحلية');
+
+      debugPrint('✅ [Auth] تم حذف الحساب بنجاح');
+      return const Right(null);
+    } on Failure catch (failure) {
+      debugPrint('❌ [Auth] فشل حذف الحساب: ${failure.message}');
+      return Left(failure);
+    } catch (e) {
+      debugPrint('❌ [Auth] خطأ في حذف الحساب: ${e.toString()}');
+      return Left(AuthFailure('فشل حذف الحساب: ${e.toString()}'));
+    }
+  }
+
+  @override
   Future<Either<Failure, UserModel>> updateUserPhoto({
     required String userId,
     required String photoBase64,
@@ -200,12 +269,10 @@ class AuthRepositoryImpl implements AuthRepository {
       debugPrint('📸 [Auth] User ID: $userId');
       debugPrint('📸 [Auth] Photo length: ${photoBase64.length}');
 
-      // Update photo in Firestore
       debugPrint('💾 [Auth] حفظ الصورة في Firestore...');
       await firestoreDataSource.updateUserPhoto(userId, photoBase64);
       debugPrint('✅ [Auth] تم حفظ الصورة في Firestore بنجاح');
 
-      // Get current user and update with new photo
       final currentUser = getCurrentUser();
       if (currentUser == null) {
         return Left(const AuthFailure('المستخدم غير مسجل دخول.'));
@@ -213,14 +280,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final updatedUser = currentUser.copyWith(
         photoBase64: photoBase64,
-        updatePhoto: true, // Force photo update
+        updatePhoto: true,
       );
 
       debugPrint(
         '📸 [Auth] Updated user photo length: ${updatedUser.photoBase64?.length ?? 0}',
       );
 
-      // Update cache with new photo
       debugPrint('💾 [Auth] حفظ الصورة في الـ cache...');
       await localDataSource.cacheUser(updatedUser);
       debugPrint('✅ [Auth] تم حفظ الصورة في الـ cache بنجاح');
@@ -237,13 +303,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   UserModel? getCurrentUser() {
-    // Try to get from cache first
     final cachedUser = localDataSource.getCachedUser();
     if (cachedUser != null) {
       return cachedUser;
     }
 
-    // Otherwise get from Firebase
     return remoteDataSource.getCurrentUser();
   }
 
@@ -253,7 +317,6 @@ class AuthRepositoryImpl implements AuthRepository {
       debugPrint('🔄 [Auth] Refreshing user data from Firestore...');
       debugPrint('👤 [Auth] User ID: $userId');
 
-      // Fetch latest data from Firestore
       final firestoreUser = await firestoreDataSource.getUserData(userId);
 
       if (firestoreUser != null) {
@@ -262,7 +325,6 @@ class AuthRepositoryImpl implements AuthRepository {
           '📸 [Auth] Photo exists: ${firestoreUser.photoBase64 != null}, length: ${firestoreUser.photoBase64?.length ?? 0}',
         );
 
-        // Update local cache with fresh data
         await localDataSource.cacheUser(firestoreUser);
         debugPrint('💾 [Auth] Cache updated with fresh data');
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
@@ -25,7 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Check auth status when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndShowLoginPrompt();
     });
@@ -42,12 +40,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     context.read<AuthCubit>().signOut();
   }
 
+  Future<void> _handleDeleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('delete_account_title'.tr()),
+        content: Text('delete_account_message'.tr()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('cancel'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.errorColor),
+            child: Text('delete'.tr()),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      context.read<AuthCubit>().deleteAccount();
+    }
+  }
+
   Future<void> _handlePhotoUpload() async {
-    // Show image picker dialog
     final imageFile = await ImagePickerService.showImageSourceDialog(context);
 
     if (imageFile != null && mounted) {
-      // Upload photo using AuthCubit
       context.read<AuthCubit>().updateUserPhoto(imageFile);
     }
   }
@@ -73,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: SafeArea(
           child: Stack(
             children: [
-              // Islamic Pattern Background - Top Right
+              // Background decorations
               Positioned(
                 top: -50,
                 right: -50,
@@ -88,7 +109,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              // Islamic Pattern Background - Bottom Left
               Positioned(
                 bottom: -30,
                 left: -30,
@@ -114,13 +134,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundColor: AppColors.errorColor,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     );
+                  } else if (state is AuthUnauthenticated) {
+                    // Navigate back or show message when account is deleted
+                    context.pop();
                   }
                 },
                 builder: (context, state) {
+                  if (state is AuthDeletingAccount) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(),
+                          const SizedBox(height: 24),
+                          Text(
+                            'deleting_account'.tr(),
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
                   if (state is AuthAuthenticated ||
                       state is AuthPhotoUploading) {
                     final user = state is AuthAuthenticated
@@ -128,7 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : (state as AuthPhotoUploading).user;
                     final isUploadingPhoto = state is AuthPhotoUploading;
 
-                    // User is authenticated, show profile content
                     return CustomScrollView(
                       slivers: [
                         // App Bar
@@ -142,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(
                               color: theme.colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
-                              fontSize: 24.sp,
+                              fontSize: 24,
                             ),
                           ),
                           centerTitle: true,
@@ -159,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: const EdgeInsets.all(20),
                           sliver: SliverList(
                             delegate: SliverChildListDelegate([
-                              SizedBox(height: 20.h),
+                              const SizedBox(height: 20),
 
                               // Profile Avatar Section
                               Center(
@@ -192,32 +233,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
 
-                              SizedBox(height: 24.h),
+                              const SizedBox(height: 24),
 
                               // User Name
                               Text(
                                 user.displayName ?? user.email.split('@')[0],
                                 style: TextStyle(
-                                  fontSize: 28.sp,
+                                  fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.onSurface,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
 
-                              SizedBox(height: 8.h),
+                              const SizedBox(height: 8),
 
                               // User Email
                               Text(
                                 user.email,
                                 style: TextStyle(
-                                  fontSize: 16.sp,
+                                  fontSize: 16,
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
 
-                              SizedBox(height: 32.h),
+                              const SizedBox(height: 32),
 
                               // Email Verification Status Card
                               ProfileInfoCard(
@@ -235,11 +276,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     : 'please_verify_email'.tr(),
                               ),
 
-                              SizedBox(height: 16.h),
+                              const SizedBox(height: 16),
 
                               // Account Details Section
                               SectionTitle(title: 'account_details'.tr()),
-                              SizedBox(height: 12.h),
+                              const SizedBox(height: 12),
 
                               ModernCard(
                                 child: Column(
@@ -254,19 +295,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
 
-                              SizedBox(height: 32.h),
+                              const SizedBox(height: 32),
 
                               // Logout Button
                               _buildLogoutButton(),
 
-                              SizedBox(height: 40.h),
+                              const SizedBox(height: 16),
+
+                              // Delete Account Button
+                              _buildDeleteAccountButton(),
+
+                              const SizedBox(height: 40),
                             ]),
                           ),
                         ),
                       ],
                     );
                   } else {
-                    // User is not authenticated, show placeholder
+                    // User is not authenticated
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -285,24 +331,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          SizedBox(height: 32.h),
+                          const SizedBox(height: 32),
                           Text(
                             'login_required'.tr(),
                             style: TextStyle(
-                              fontSize: 24.sp,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.onSurface,
                             ),
                           ),
-                          SizedBox(height: 12.h),
+                          const SizedBox(height: 12),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 40),
                             child: Text(
                               'must_login_to_access_profile'.tr(),
                               style: TextStyle(
-                                fontSize: 16.sp,
+                                fontSize: 16,
                                 color: theme.colorScheme.onSurfaceVariant,
-                                height: 1.5.h,
+                                height: 1.5,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -325,13 +371,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      height: 56.h,
+      height: 56,
       decoration: BoxDecoration(
         color: isDark
             ? theme.colorScheme.surface
             : AppColors.whiteColor.withValues(alpha: .9),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.errorColor, width: 2.w),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.errorColor, width: 2),
       ),
       child: ElevatedButton.icon(
         onPressed: _handleSignOut,
@@ -339,16 +385,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
         icon: const Icon(Icons.logout, color: AppColors.errorColor),
         label: Text(
           'sign_out'.tr(),
-          style: TextStyle(
-            fontSize: 16.sp,
+          style: const TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: AppColors.errorColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeleteAccountButton() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: isDark
+            ? theme.colorScheme.surface
+            : AppColors.whiteColor.withValues(alpha: .9),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.errorColor.withValues(alpha: .5),
+          width: 1.5,
+        ),
+      ),
+      child: TextButton.icon(
+        onPressed: _handleDeleteAccount,
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        icon: Icon(
+          Icons.delete_forever,
+          color: AppColors.errorColor.withValues(alpha: .8),
+        ),
+        label: Text(
+          'delete_account'.tr(),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.errorColor.withValues(alpha: .8),
           ),
         ),
       ),

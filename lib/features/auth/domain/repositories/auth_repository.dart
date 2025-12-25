@@ -16,14 +16,21 @@ abstract class AuthRepository {
     required String displayName,
   });
 
-  /// Sign in with Google (returns user data for confirmation)
+  /// Sign in with Google
   Future<Either<Failure, UserModel>> signInWithGoogle();
+
+  /// Sign in with Apple
+  Future<Either<Failure, UserModel>> signInWithApple();
 
   /// Complete Google Sign In with Firebase after confirmation
   Future<Either<Failure, UserModel>> completeGoogleSignIn();
 
   /// Sign out
   Future<Either<Failure, void>> signOut();
+
+  /// Delete account
+  /// 🟢 ADDED THIS METHOD
+  Future<Either<Failure, void>> deleteAccount(String userId);
 
   /// Update user photo
   Future<Either<Failure, UserModel>> updateUserPhoto({

@@ -15,14 +15,14 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({required AuthRepository authRepository})
     : _authRepository = authRepository,
       super(const AuthInitial()) {
-    // Listen to auth state changes from Firebase
     _authStateSubscription = _authRepository.authStateChanges.listen((user) {
       debugPrint(
         '🔔 [AuthCubit] Firebase auth state changed, user: ${user?.id}, currentState: ${state.runtimeType}',
       );
 
-      // Skip auto-emit if we're in loading or pending Google Sign In state
-      if (state is AuthLoading || state is GoogleSignInPending) {
+      if (state is AuthLoading ||
+          state is GoogleSignInPending ||
+          state is AuthDeletingAccount) {
         debugPrint(
           '⏸️ [AuthCubit] Skipping Firebase listener emit (state: ${state.runtimeType})',
         );
@@ -43,7 +43,6 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  /// Check authentication status on app start
   Future<void> checkAuthStatus() async {
     emit(const AuthLoading());
 
@@ -56,10 +55,8 @@ class AuthCubit extends Cubit<AuthState> {
           '📸 [AuthCubit] Cached photo length: ${user.photoBase64?.length ?? 0}',
         );
 
-        // First emit cached user to show UI immediately
         emit(AuthAuthenticated(user));
 
-        // Then refresh from Firestore in background to get latest data
         debugPrint('🔄 [AuthCubit] Refreshing user data from Firestore...');
         _refreshUserFromFirestore(user.id);
       } else {
@@ -70,7 +67,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Refresh user data from Firestore in background
   Future<void> _refreshUserFromFirestore(String userId) async {
     try {
       debugPrint('📥 [AuthCubit] Background refresh from Firestore...');
@@ -80,14 +76,12 @@ class AuthCubit extends Cubit<AuthState> {
       result.fold(
         (failure) {
           debugPrint('⚠️ [AuthCubit] Failed to refresh: ${failure.message}');
-          // Keep current state, just log the error
         },
         (refreshedUser) {
           debugPrint('✅ [AuthCubit] User data refreshed successfully');
           debugPrint(
             '📸 [AuthCubit] Refreshed photo length: ${refreshedUser.photoBase64?.length ?? 0}',
           );
-          // Emit new state with refreshed data
           emit(AuthAuthenticated(refreshedUser));
         },
       );
@@ -96,7 +90,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Sign in with email and password
   Future<void> signInWithEmail({
     required String email,
     required String password,
@@ -110,7 +103,6 @@ class AuthCubit extends Cubit<AuthState> {
 
     if (result.isRight()) {
       final user = result.getOrElse(() => throw Exception('User not found'));
-      // Sync user to Supabase BEFORE emitting authenticated state
       await _syncUserToSupabase();
       emit(AuthAuthenticated(user));
     } else {
@@ -122,7 +114,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Sign up with email and password
   Future<void> signUpWithEmail({
     required String email,
     required String password,
@@ -138,7 +129,6 @@ class AuthCubit extends Cubit<AuthState> {
 
     if (result.isRight()) {
       final user = result.getOrElse(() => throw Exception('User not found'));
-      // Sync user to Supabase BEFORE emitting authenticated state
       await _syncUserToSupabase();
       emit(AuthAuthenticated(user));
     } else {
@@ -150,7 +140,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Sign in with Google
   Future<void> signInWithGoogle() async {
     debugPrint('🔵 [AuthCubit] Starting Google Sign In');
     emit(const AuthLoading());
@@ -160,7 +149,6 @@ class AuthCubit extends Cubit<AuthState> {
     if (result.isRight()) {
       final user = result.getOrElse(() => throw Exception('User not found'));
       debugPrint('✅ [AuthCubit] Google Sign In success');
-      // Sync user to Supabase BEFORE emitting authenticated state
       await _syncUserToSupabase();
       emit(AuthAuthenticated(user));
     } else {
@@ -173,7 +161,27 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Sync Firebase user to Supabase
+  Future<void> signInWithApple() async {
+    debugPrint('🍎 [AuthCubit] Starting Apple Sign In');
+    emit(const AuthLoading());
+
+    final result = await _authRepository.signInWithApple();
+
+    if (result.isRight()) {
+      final user = result.getOrElse(() => throw Exception('User not found'));
+      debugPrint('✅ [AuthCubit] Apple Sign In success');
+      await _syncUserToSupabase();
+      emit(AuthAuthenticated(user));
+    } else {
+      final failure = result.fold(
+        (f) => f,
+        (r) => throw Exception('Unexpected state'),
+      );
+      debugPrint('❌ [AuthCubit] Apple Sign In failed: ${failure.message}');
+      emit(AuthError(failure.message));
+    }
+  }
+
   Future<void> _syncUserToSupabase() async {
     try {
       await community_di.sl<SupabaseAuthSyncService>().onUserSignedIn();
@@ -183,7 +191,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Sign out
   Future<void> signOut() async {
     emit(const AuthLoading());
 
@@ -195,29 +202,52 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  /// Update user photo from File
-  Future<void> updateUserPhoto(File imageFile) async {
-    // Get current user
+  Future<void> deleteAccount() async {
     final currentUser = _authRepository.getCurrentUser();
     if (currentUser == null) {
       emit(const AuthError('المستخدم غير مسجل دخول.'));
       return;
     }
 
-    // Emit loading state but preserve current user
+    debugPrint(
+      '🗑️ [AuthCubit] Starting account deletion for user: ${currentUser.id}',
+    );
+    emit(const AuthDeletingAccount());
+
+    final result = await _authRepository.deleteAccount(currentUser.id);
+
+    result.fold(
+      (failure) {
+        debugPrint('❌ [AuthCubit] Account deletion failed: ${failure.message}');
+        emit(AuthError(failure.message));
+        // Return to authenticated state if deletion fails
+        emit(AuthAuthenticated(currentUser));
+      },
+      (_) {
+        debugPrint('✅ [AuthCubit] Account deleted successfully');
+        emit(const AuthUnauthenticated());
+      },
+    );
+  }
+
+  Future<void> updateUserPhoto(File imageFile) async {
+    final currentUser = _authRepository.getCurrentUser();
+    if (currentUser == null) {
+      emit(const AuthError('المستخدم غير مسجل دخول.'));
+      return;
+    }
+
     emit(AuthPhotoUploading(currentUser));
 
     try {
-      // Convert image to base64
       final photoBase64 = await ImageHelper.fileToBase64(imageFile);
 
       if (photoBase64 == null) {
         emit(const AuthError('فشل تحويل الصورة. يرجى المحاولة مرة أخرى.'));
-        emit(AuthAuthenticated(currentUser)); // Restore previous state
+        emit(AuthAuthenticated(currentUser));
         return;
       }
 
-      // Update photo in repository
       final result = await _authRepository.updateUserPhoto(
         userId: currentUser.id,
         photoBase64: photoBase64,
@@ -227,7 +257,7 @@ class AuthCubit extends Cubit<AuthState> {
         (failure) {
           debugPrint('❌ [AuthCubit] فشل تحديث الصورة: ${failure.message}');
           emit(AuthError(failure.message));
-          emit(AuthAuthenticated(currentUser)); // Restore previous state
+          emit(AuthAuthenticated(currentUser));
         },
         (updatedUser) {
           debugPrint('✅ [AuthCubit] تم تحديث الصورة بنجاح');
@@ -240,11 +270,10 @@ class AuthCubit extends Cubit<AuthState> {
       );
     } catch (e) {
       emit(AuthError('حدث خطأ أثناء تحديث الصورة: ${e.toString()}'));
-      emit(AuthAuthenticated(currentUser)); // Restore previous state
+      emit(AuthAuthenticated(currentUser));
     }
   }
 
-  /// Get current user
   bool get isAuthenticated => _authRepository.isAuthenticated;
 
   @override

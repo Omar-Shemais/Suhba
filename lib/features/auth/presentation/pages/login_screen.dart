@@ -1,9 +1,10 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:islamic_app/features/auth/presentation/widgets/apple_sign_In_button.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../../../../../core/routes/app_routes.dart';
@@ -66,6 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
     context.read<AuthCubit>().signInWithGoogle();
   }
 
+  void _handleAppleSignIn() {
+    context.read<AuthCubit>().signInWithApple();
+  }
+
   void _navigateToRegister() {
     context.go(AppRoutes.authRegister);
   }
@@ -113,7 +118,6 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SafeArea(
           child: Stack(
             children: [
-              // Islamic Pattern Background - Top Right
               Positioned(
                 top: -80,
                 right: -80,
@@ -126,7 +130,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              // Islamic Pattern Background - Bottom Left
               Positioned(
                 bottom: -50,
                 left: -50,
@@ -173,11 +176,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          SizedBox(height: 60.h),
+                          const SizedBox(height: 60),
                           Text(
                             'welcome_back'.tr(),
                             style: TextStyle(
-                              fontSize: 34.sp,
+                              fontSize: 34,
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.onSurface,
                               shadows: isDark
@@ -194,17 +197,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 12.h),
+                          const SizedBox(height: 12),
                           Text(
                             'sign_in_to_continue'.tr(),
                             style: TextStyle(
-                              fontSize: 16.sp,
+                              fontSize: 16,
                               color: theme.colorScheme.onSurfaceVariant,
-                              height: 1.5.h,
+                              height: 1.5,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 48.h),
+                          const SizedBox(height: 48),
                           CustomTextField(
                             controller: _emailController,
                             label: 'email'.tr(),
@@ -214,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             validator: _validateEmail,
                             enabled: !isLoading,
                           ),
-                          SizedBox(height: 16.h),
+                          const SizedBox(height: 16),
                           FormField<String>(
                             validator: (value) =>
                                 _validatePassword(_passwordController.text),
@@ -228,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Container(
                                     decoration: BoxDecoration(
                                       gradient: AppColors.goldenTripleGradient,
-                                      borderRadius: BorderRadius.circular(16.r),
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Container(
                                       margin: const EdgeInsets.all(1),
@@ -245,9 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   : Colors.white.withValues(
                                                       alpha: .6,
                                                     )),
-                                        borderRadius: BorderRadius.circular(
-                                          14.r,
-                                        ),
+                                        borderRadius: BorderRadius.circular(14),
                                       ),
                                       child: TextField(
                                         controller: _passwordController,
@@ -257,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             formFieldState.didChange(value),
                                         style: TextStyle(
                                           color: theme.colorScheme.onSurface,
-                                          fontSize: 16.sp,
+                                          fontSize: 16,
                                         ),
                                         decoration: InputDecoration(
                                           labelText: 'password'.tr(),
@@ -316,18 +317,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                             borderRadius: BorderRadius.circular(
                                               14,
                                             ),
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Colors.red,
-                                              width: 2.w,
+                                              width: 2,
                                             ),
                                           ),
                                           focusedErrorBorder:
                                               OutlineInputBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(14.r),
-                                                borderSide: BorderSide(
+                                                    BorderRadius.circular(14),
+                                                borderSide: const BorderSide(
                                                   color: Colors.red,
-                                                  width: 2.w,
+                                                  width: 2,
                                                 ),
                                               ),
                                           filled: false,
@@ -336,9 +337,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 horizontal: 16,
                                                 vertical: 16,
                                               ),
-                                          errorStyle: TextStyle(
-                                            height: 0.h,
-                                            fontSize: 0.sp,
+                                          errorStyle: const TextStyle(
+                                            height: 0,
+                                            fontSize: 0,
                                           ),
                                         ),
                                       ),
@@ -352,9 +353,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       child: Text(
                                         formFieldState.errorText!,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.red,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ),
@@ -362,13 +363,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             },
                           ),
-                          SizedBox(height: 24.h),
+                          const SizedBox(height: 24),
                           AuthButton(
                             text: 'sign_in'.tr(),
                             onPressed: _handleLogin,
                             isLoading: isLoading,
                           ),
-                          SizedBox(height: 24.h),
+                          const SizedBox(height: 24),
                           Row(
                             children: [
                               Expanded(
@@ -401,12 +402,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 24.h),
+                          const SizedBox(height: 24),
                           GoogleSignInButton(
                             onPressed: _handleGoogleSignIn,
                             isLoading: isLoading,
                           ),
-                          SizedBox(height: 32.h),
+                          // Show Apple Sign In only on iOS
+                          if (Platform.isIOS) ...[
+                            const SizedBox(height: 16),
+                            AppleSignInButton(
+                              onPressed: _handleAppleSignIn,
+                              isLoading: isLoading,
+                            ),
+                          ],
+                          const SizedBox(height: 32),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

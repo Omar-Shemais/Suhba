@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../models/user_model.dart';
 import '../../../../../core/errors/failures.dart';
 import '../../../../../core/utils/image_helper.dart';
@@ -18,14 +19,20 @@ abstract class AuthRemoteDataSource {
     required String displayName,
   });
 
-  /// Sign in with Google (returns user data for confirmation)
+  /// Sign in with Google
   Future<UserModel> signInWithGoogle();
+
+  /// Sign in with Apple
+  Future<UserModel> signInWithApple();
 
   /// Complete Google Sign In with Firebase after confirmation
   Future<UserModel> completeGoogleSignIn();
 
   /// Sign out
   Future<void> signOut();
+
+  /// Delete the current user's Firebase Auth account
+  Future<void> deleteAccount();
 
   /// Get current user
   UserModel? getCurrentUser();
@@ -62,11 +69,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthFailure('فشل تسجيل الدخول. المستخدم غير موجود.');
       }
 
-      // Create user model from Firebase Auth (without photo - it will be loaded from Firestore)
       final user = UserModel.fromFirebaseUser(userCredential.user!);
-
-      // Don't generate initials here - let the repository fetch photo from Firestore
-      // Initials will be generated in UI if no photo exists
       return user;
     } on FirebaseAuthException catch (e) {
       throw _handleFirebaseAuthException(e);
@@ -91,7 +94,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthFailure('فشل إنشاء الحساب.');
       }
 
-      // Update display name
       await userCredential.user!.updateDisplayName(displayName);
       await userCredential.user!.reload();
 
@@ -100,10 +102,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthFailure('فشل تحديث معلومات المستخدم.');
       }
 
-      // Create user model
       var user = UserModel.fromFirebaseUser(updatedUser);
 
-      // Generate initials avatar for email signups
       final photoBase64 = await ImageHelper.generateInitialsAvatarBase64(
         displayName.isNotEmpty ? displayName : email,
       );
@@ -120,24 +120,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         throw const AuthFailure('تم إلغاء تسجيل الدخول بواسطة المستخدم.');
       }
 
-      // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // Sign in to Firebase with the Google credential
       final userCredential = await _firebaseAuth.signInWithCredential(
         credential,
       );
@@ -146,10 +142,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthFailure('فشل تسجيل الدخول باستخدام Google.');
       }
 
-      // Create user model from Google Sign In
       var user = UserModel.fromFirebaseUser(userCredential.user!);
 
-      // Convert Google photo to base64 if it exists (for first time Google sign in)
       if (userCredential.user!.photoURL != null) {
         final photoBase64 = await ImageHelper.urlToBase64(
           userCredential.user!.photoURL!,
@@ -170,18 +164,134 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<UserModel> signInWithApple() async {
+    try {
+      // Request Apple ID credential
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      // Create OAuth credential for Firebase
+      final oAuthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      // Sign in to Firebase with Apple credential
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        oAuthCredential,
+      );
+
+      if (userCredential.user == null) {
+        throw const AuthFailure('فشل تسجيل الدخول باستخدام Apple.');
+      }
+
+      var user = UserModel.fromFirebaseUser(userCredential.user!);
+
+      // For first-time Apple sign in, update display name if provided
+      if (userCredential.additionalUserInfo?.isNewUser == true) {
+        String? displayName;
+
+        // Try to construct display name from Apple's name components
+        if (appleCredential.givenName != null ||
+            appleCredential.familyName != null) {
+          displayName = [
+            appleCredential.givenName,
+            appleCredential.familyName,
+          ].where((name) => name != null && name.isNotEmpty).join(' ');
+
+          if (displayName.isNotEmpty) {
+            await userCredential.user!.updateDisplayName(displayName);
+            await userCredential.user!.reload();
+
+            // Refresh user model with updated name
+            final updatedUser = _firebaseAuth.currentUser;
+            if (updatedUser != null) {
+              user = UserModel.fromFirebaseUser(updatedUser);
+            }
+          }
+        }
+
+        // Generate initials avatar for Apple sign-in
+        final nameForInitials =
+            displayName ?? user.displayName ?? user.email ?? 'User';
+        final photoBase64 = await ImageHelper.generateInitialsAvatarBase64(
+          nameForInitials,
+        );
+        user = user.copyWith(photoBase64: photoBase64, updatePhoto: true);
+      }
+
+      return user;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      // Handle Apple-specific exceptions
+      switch (e.code) {
+        case AuthorizationErrorCode.canceled:
+          throw const AuthFailure('تم إلغاء تسجيل الدخول بواسطة المستخدم.');
+        case AuthorizationErrorCode.failed:
+          throw const AuthFailure('فشل تسجيل الدخول باستخدام Apple.');
+        case AuthorizationErrorCode.invalidResponse:
+          throw const AuthFailure('استجابة غير صالحة من Apple.');
+        case AuthorizationErrorCode.notHandled:
+          throw const AuthFailure('لم تتم معالجة طلب تسجيل الدخول.');
+        case AuthorizationErrorCode.unknown:
+          throw const AuthFailure('حدث خطأ غير معروف.');
+        default:
+          throw AuthFailure('حدث خطأ: ${e.code}');
+      }
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseAuthException(e);
+    } catch (e) {
+      throw AuthFailure(
+        'حدث خطأ أثناء تسجيل الدخول بواسطة Apple: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
   Future<UserModel> completeGoogleSignIn() async {
-    // This method is no longer needed - keeping for interface compatibility
     return signInWithGoogle();
   }
 
   @override
   Future<void> signOut() async {
     try {
-      // Sign out from both Firebase and Google
       await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
     } catch (e) {
       throw AuthFailure('فشل تسجيل الخروج: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) {
+        throw const AuthFailure('لا يوجد مستخدم مسجل دخول');
+      }
+
+      print(
+        '🗑️ [Remote] Deleting Firebase Auth account for user: ${user.uid}',
+      );
+
+      await user.delete();
+
+      print('✅ [Remote] Firebase Auth account deleted successfully');
+    } on FirebaseAuthException catch (e) {
+      print('❌ [Remote] Firebase Auth deletion error: ${e.code}');
+
+      if (e.code == 'requires-recent-login') {
+        throw const AuthFailure(
+          'يجب إعادة تسجيل الدخول لحذف الحساب. يرجى تسجيل الخروج وتسجيل الدخول مرة أخرى.',
+        );
+      }
+
+      throw AuthFailure('فشل حذف الحساب: ${e.message}');
+    } catch (e) {
+      print('❌ [Remote] Unexpected error: $e');
+      throw AuthFailure('حدث خطأ غير متوقع: ${e.toString()}');
     }
   }
 
@@ -201,7 +311,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     });
   }
 
-  /// Handle Firebase Auth exceptions and convert them to Failures
   Failure _handleFirebaseAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
@@ -244,6 +353,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return const AuthFailure(
           'يوجد حساب بنفس البريد الإلكتروني بطريقة دخول مختلفة.',
         );
+      case 'requires-recent-login':
+        return const AuthFailure('يجب إعادة تسجيل الدخول لإجراء هذه العملية.');
       default:
         return AuthFailure('حدث خطأ: ${e.message ?? e.code}');
     }

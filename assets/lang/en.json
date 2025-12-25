@@ -1,5 +1,5 @@
 {
-  "app_name": "Suhbah",
+  "app_name": "Islamic App",
   "quran": "Quran",
   "Alquran": "Al Quran",
   "hadith": "Hadiths",
@@ -74,7 +74,7 @@
   "privacy_policy": "Privacy Policy",
   "help_and_support": "Help & Support",
   "sign_out": "Sign Out",
-  "version": "Version 1.0.1",
+  "version": "Version 1.0.0",
   "nearby_masjed": "Nearby Mosques",
   "my_location": "My Location",
   "qibla_direction": "Qibla Direction",
@@ -209,5 +209,6 @@
   "faq_account_delete_answer": "Go to Profile > Account Settings > Delete Account. This action is permanent and will remove all your data from our servers.",
   "faq_report_issue": "How do I report a problem?",
   "faq_report_issue_answer": "You can contact our support team via email at support@islamicapp.com. Please provide detailed information about the issue including screenshots if possible.",
-  "support_team_available": "Our support team is here to help you. Feel free to reach out anytime!"
+  "support_team_available": "Our support team is here to help you. Feel free to reach out anytime!",
+  "sign_in_with_apple": "Sign in with Apple"
 }

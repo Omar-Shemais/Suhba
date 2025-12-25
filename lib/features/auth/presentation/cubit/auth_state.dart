@@ -38,6 +38,11 @@ class AuthPhotoUploading extends AuthState {
   List<Object?> get props => [user];
 }
 
+/// State when account deletion is in progress
+class AuthDeletingAccount extends AuthState {
+  const AuthDeletingAccount();
+}
+
 /// State when Google sign in is pending confirmation
 class GoogleSignInPending extends AuthState {
   final UserModel user;

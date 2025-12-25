@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBrJD2u5kJ8FRjW_bXaCs2fdkCBoWscMy4',
-    appId: '1:49397939337:android:687e75a0f3a76a30389a58',
+    appId: '1:49397939337:android:72c6bd3b7a860560389a58',
     messagingSenderId: '49397939337',
     projectId: 'islamic-app-18842',
     storageBucket: 'islamic-app-18842.firebasestorage.app',
@@ -63,8 +63,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '49397939337',
     projectId: 'islamic-app-18842',
     storageBucket: 'islamic-app-18842.firebasestorage.app',
-    iosClientId:
-        '49397939337-fa2m3i1t6top5ut7fndv820fbtcsbts9.apps.googleusercontent.com',
+    androidClientId: '49397939337-2g36dujkt29j4l8i209ogn4dq5ndpdi6.apps.googleusercontent.com',
+    iosClientId: '49397939337-fa2m3i1t6top5ut7fndv820fbtcsbts9.apps.googleusercontent.com',
     iosBundleId: 'com.example.islamicApp',
   );
+
 }
