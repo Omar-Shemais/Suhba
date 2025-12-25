@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Mishary Rashid Alafasy",
+    "arabic_name": "مشاري بن راشد العفاسي",
+    "base_url": "https://server8.mp3quran.net",
+    "subfolder": "afs",
+    "bitrate": 128
+  },
+  {
+    "id": 2,
+    "name": "Abdul Basit Abdul Samad",
+    "arabic_name": "عبد الباسط عبد الصمد",
+    "base_url": "https://server7.mp3quran.net",
+    "subfolder": "basit",
+    "bitrate": 128
+  },
+  {
+    "id": 3,
+    "name": "Saad Al-Ghamdi",
+    "arabic_name": "سعد الغامدي",
+    "base_url": "https://server7.mp3quran.net",
+    "subfolder": "s_gmd",
+    "bitrate": 40
+  },
+  {
+    "id": 4,
+    "name": "Maher Al Muaiqly",
+    "arabic_name": "ماهر المعيقلي",
+    "base_url": "https://server12.mp3quran.net",
+    "subfolder": "maher",
+    "bitrate": 128
+  },
+  {
+    "id": 5,
+    "name": "Ahmed Al Ajmy",
+    "arabic_name": "أحمد بن علي العجمي",
+    "base_url": "https://server10.mp3quran.net",
+    "subfolder": "ajm",
+    "bitrate": 128
+  }
+]

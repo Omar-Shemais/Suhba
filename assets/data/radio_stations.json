@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Radio Quran - Mishary Alafasy",
+    "arabic_name": "إذاعة القرآن الكريم - مشاري العفاسي",
+    "url": "https://backup.qurango.net/radio/mishary_alafasi",
+    "recent_date": "2025-01-15"
+  },
+  {
+    "id": 2,
+    "name": "Radio Quran - Abdul Basit",
+    "arabic_name": "إذاعة القرآن الكريم - عبد الباسط",
+    "url": "https://backup.qurango.net/radio/abdulbasit_abdulsamad_mojawwad",
+    "recent_date": "2025-01-15"
+  },
+  {
+    "id": 3,
+    "name": "Radio Quran - Saad Al-Ghamdi",
+    "arabic_name": "إذاعة القرآن الكريم - سعد الغامدي",
+    "url": "https://backup.qurango.net/radio/saad_alghamdi",
+    "recent_date": "2025-01-15"
+  },
+  {
+    "id": 4,
+    "name": "Radio Quran - Maher Al Muaiqly",
+    "arabic_name": "إذاعة القرآن الكريم - ماهر المعيقلي",
+    "url": "https://backup.qurango.net/radio/maher",
+    "recent_date": "2025-01-15"
+  },
+  {
+    "id": 5,
+    "name": "Radio Quran - Ahmed Al Ajmy",
+    "arabic_name": "إذاعة القرآن الكريم - أحمد العجمي",
+    "url": "https://backup.qurango.net/radio/ahmad_alajmy",
+    "recent_date": "2025-01-15"
+  }
+]

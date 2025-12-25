@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "49397939337",
+    "project_id": "islamic-app-18842",
+    "storage_bucket": "islamic-app-18842.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49397939337:android:687e75a0f3a76a30389a58",
+        "android_client_info": {
+          "package_name": "com.zbooma.suhbah"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrJD2u5kJ8FRjW_bXaCs2fdkCBoWscMy4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
