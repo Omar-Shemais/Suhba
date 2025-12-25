@@ -1,6 +1,7 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 // import 'package:islamic_app/core/services/azan_notification_service.dart'; // ❌ REMOVE THIS IMPORT
 import 'core/app/app_widget.dart';
@@ -14,6 +15,12 @@ void main() async {
 
   // EasyLocalization is lightweight and required for UI text
   await EasyLocalization.ensureInitialized();
+
+  // 🔒 FORCE PORTRAIT MODE
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   // ⚡ IMMEDIATELY START THE APP
   runApp(

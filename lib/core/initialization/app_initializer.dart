@@ -29,10 +29,34 @@ class AppInitializer {
     debugPrint('🚀 [AppInit] Starting deferred initialization...');
     final stopwatch = Stopwatch()..start();
 
+    // 🛡️ GLOBAL SAFETY NET
     try {
-      await _initializePhase1();
-      await _initializePhase2();
-      await _initializePhase3();
+      // ⏳ Phase 1: Critical Sesrvices (w/ Timeout)
+      // We wrap this in its own try/catch so if it fails, we STILL try Phase 2
+      try {
+        await _initializePhase1().timeout(const Duration(seconds: 5));
+      } catch (e) {
+        debugPrint('⚠️ [AppInit] Phase 1 (Services) failed or timed out: $e');
+        // Continue to Phase 2 because we need ServiceLocator for the app to function at all
+      }
+
+      // ⏳ Phase 2: Dependency Injection (CRITICAL)
+      // If this fails, the app is likely dead, but we catch it to log.
+      try {
+        await _initializePhase2();
+      } catch (e) {
+        debugPrint('❌ [AppInit] Phase 2 (DI) failed: $e');
+        // This is fatal for the UI, but we don't rethrow to avoid crashing to OS home
+      }
+
+      // ⏳ Phase 3: Optional Services
+      try {
+        await _initializePhase3().timeout(const Duration(seconds: 3));
+      } catch (e) {
+        debugPrint('⚠️ [AppInit] Phase 3 (Optional) failed: $e');
+      }
+
+      // 🏃 Phase 4: Background (Fire and forget)
       _initializePhase4();
 
       _isInitialized = true;
@@ -41,10 +65,9 @@ class AppInitializer {
         '✅ [AppInit] Complete! Total time: ${stopwatch.elapsedMilliseconds}ms',
       );
     } catch (e, stackTrace) {
-      debugPrint('❌ [AppInit] Initialization failed: $e');
+      // This catches anything unexpected in the overall flow
+      debugPrint('❌ [AppInit] Unexpected fatal error: $e');
       debugPrint('Stack trace: $stackTrace');
-      // We do not rethrow here to prevent the app from crashing on splash
-      // Instead, we log it and allow the app to try continuing
     }
   }
 
@@ -52,42 +75,52 @@ class AppInitializer {
   static Future<void> _initializePhase1() async {
     debugPrint('📦 [AppInit] Phase 1: Critical services...');
 
-    // 1. Notifications
-    try {
-      final notificationService = AzanNotificationService();
-      await notificationService.initialize();
-      debugPrint('✅ [AppInit] Notifications initialized');
-    } catch (e) {
-      debugPrint('⚠️ [AppInit] Notification init failed (Non-fatal): $e');
-    }
+    // 1. SharedPreferences (Fast & usually safe, do first)
+    await SharedPreferences.getInstance();
+    debugPrint('✅ [AppInit] SharedPreferences initialized');
 
-    // 2. Firebase (🟢 FIX: Check if already initialized to prevent crash)
+    // 2. Firebase
     try {
       if (Firebase.apps.isEmpty) {
         await Firebase.initializeApp();
         debugPrint('✅ [AppInit] Firebase initialized');
       } else {
-        debugPrint('ℹ️ [AppInit] Firebase already initialized (Skipping)');
+        debugPrint('ℹ️ [AppInit] Firebase already initialized');
       }
     } catch (e) {
       debugPrint('⚠️ [AppInit] Firebase init error: $e');
     }
 
-    // 3. SharedPreferences
-    await SharedPreferences.getInstance();
-    debugPrint('✅ [AppInit] SharedPreferences initialized');
+    // 3. Notifications (Can be flaky on iOS if permissions are weird)
+    try {
+      final notificationService = AzanNotificationService();
+      await notificationService.initialize();
+      debugPrint('✅ [AppInit] Notifications initialized');
+    } catch (e) {
+      debugPrint('⚠️ [AppInit] Notification init failed: $e');
+    }
 
     // 4. Hive
-    await CacheHelper.init();
-    await CacheHelper.openBox(StorageConstants.userBoxName);
-    debugPrint('✅ [AppInit] Hive initialized');
+    try {
+      await CacheHelper.init();
+      await CacheHelper.openBox(StorageConstants.userBoxName);
+      debugPrint('✅ [AppInit] Hive initialized');
+    } catch (e) {
+      debugPrint('⚠️ [AppInit] Hive init failed: $e');
+    }
   }
 
   /// Phase 2: Dependency Injection Setup
   static Future<void> _initializePhase2() async {
     debugPrint('📦 [AppInit] Phase 2: Dependency injection...');
-    setupServiceLocator();
-    debugPrint('✅ [AppInit] Service locator configured');
+    // This MUST run for the app to work.
+    try {
+      setupServiceLocator();
+      debugPrint('✅ [AppInit] Service locator configured');
+    } catch (e) {
+      debugPrint('❌ [AppInit] Service locator FAILED: $e');
+      rethrow; // Re-throw to signal critical failure if needed
+    }
   }
 
   /// Phase 3: Optional Services
@@ -104,8 +137,9 @@ class AppInitializer {
     }
 
     // Timeago
-    timeago.setLocaleMessages('ar', timeago.ArMessages());
-    debugPrint('✅ [AppInit] Timeago locale configured');
+    try {
+      timeago.setLocaleMessages('ar', timeago.ArMessages());
+    } catch (_) {}
   }
 
   /// Phase 4: Background Preloading

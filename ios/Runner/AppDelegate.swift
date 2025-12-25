@@ -18,18 +18,21 @@ import MediaPlayer
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         
+        // 1. Setup Flutter Controller & Channel
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
         let radioChannel = FlutterMethodChannel(name: CHANNEL, binaryMessenger: controller.binaryMessenger)
         
         // 2. Setup Audio Session (Crucial for Background Playback)
         setupAudioSession()
+        setupAudioObservers()
         
         // 3. Setup Remote Command Center (Lock Screen Buttons)
         setupRemoteTransportControls()
         
         // 4. Handle Flutter Calls
-        radioChannel.setMethodCallHandler({
+        radioChannel.setMethodCallHandler({ [weak self]
             (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+            guard let self = self else { return }
             
             let args = call.arguments as? [String: Any]
             
@@ -57,7 +60,7 @@ import MediaPlayer
             case "stop":
                 self.player?.pause()
                 self.player = nil
-                self.updateNowPlaying(isPaused: true) // Or clear info
+                self.updateNowPlaying(isPaused: true)
                 result(nil)
                 
             default:
@@ -73,20 +76,101 @@ import MediaPlayer
     
     private func setupAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+            // Configure audio session for background playback
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.allowAirPlay, .defaultToSpeaker])
             try AVAudioSession.sharedInstance().setActive(true)
+            print("✅ [AppDelegate] Audio Session Active")
         } catch {
-            print("Failed to set audio session category.")
+            print("❌ [AppDelegate] Failed to set audio session: \(error)")
+        }
+    }
+    
+    private func setupAudioObservers() {
+        // Handle interruptions (e.g. Phone Calls)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleInterruption),
+                                               name: AVAudioSession.interruptionNotification,
+                                               object: AVAudioSession.sharedInstance())
+        
+        // Handle route changes (e.g. unplugging headphones)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleRouteChange),
+                                               name: AVAudioSession.routeChangeNotification,
+                                               object: AVAudioSession.sharedInstance())
+    }
+
+    @objc func handleInterruption(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
+            return
+        }
+
+        switch type {
+        case .began:
+            // Interruption began (e.g. Phone call incoming) -> Pause
+            print("⚠️ [AppDelegate] Interruption Began")
+            player?.pause()
+            updateNowPlaying(isPaused: true)
+            
+        case .ended:
+            // Interruption ended -> Resume if options say so
+            if let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
+                let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+                if options.contains(.shouldResume) {
+                    print("▶️ [AppDelegate] Interruption Ended - Resuming")
+                    player?.play()
+                    updateNowPlaying(isPaused: false)
+                }
+            }
+        @unknown default:
+            break
+        }
+    }
+    
+    @objc func handleRouteChange(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else {
+            return
+        }
+        
+        // If headphones are unplugged, pause music
+        if reason == .oldDeviceUnavailable {
+            if let previousRoute = userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
+                for output in previousRoute.outputs {
+                    if output.portType == .headphones || output.portType == .bluetoothA2DP {
+                        print("⏸️ [AppDelegate] Headphones unplugged - Pausing")
+                        player?.pause()
+                        updateNowPlaying(isPaused: true)
+                        return
+                    }
+                }
+            }
         }
     }
     
     private func playAudio(url: String, title: String, desc: String) {
-        guard let mediaUrl = URL(string: url) else { return }
+        guard let mediaUrl = URL(string: url) else {
+            print("❌ [AppDelegate] Invalid URL: \(url)")
+            return
+        }
         
-        playerItem = AVPlayerItem(url: mediaUrl)
-        player = AVPlayer(playerItem: playerItem)
+        // Reset player item
+        let asset = AVAsset(url: mediaUrl)
+        playerItem = AVPlayerItem(asset: asset)
         
+        if player == nil {
+            player = AVPlayer(playerItem: playerItem)
+        } else {
+            player?.replaceCurrentItem(with: playerItem)
+        }
+        
+        player?.automaticallyWaitsToMinimizeStalling = true
         player?.play()
+        
+        // Log
+        print("▶️ [AppDelegate] Playing: \(title)")
         
         // Update Metadata immediately
         setupNowPlayingInfo(title: title, desc: desc)
@@ -105,15 +189,12 @@ import MediaPlayer
         nowPlayingInfo[MPMediaItemPropertyTitle] = title
         nowPlayingInfo[MPMediaItemPropertyArtist] = desc
         
-        // Set a placeholder image if you have one in Assets.xcassets named "AppIcon"
-        if let image = UIImage(named: "AppIcon") {
-            nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { size in
-                return image
-            }
+        // Set a placeholder image if available
+        if let image = UIImage(named: "AppIcon") ?? UIImage(named: "LaunchImage") {
+             nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in return image }
         }
         
-        // This is important for "Live" streams or duration
-        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true
+        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true // Since it's radio mostly
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
@@ -131,30 +212,47 @@ import MediaPlayer
     private func setupRemoteTransportControls() {
         let commandCenter = MPRemoteCommandCenter.shared()
         
+        // Clear previous targets to avoid duplication if re-initialized
+        commandCenter.playCommand.removeTarget(nil)
+        commandCenter.pauseCommand.removeTarget(nil)
+        commandCenter.stopCommand.removeTarget(nil)
+        commandCenter.togglePlayPauseCommand.removeTarget(nil)
+        
         // Play Command
-        commandCenter.playCommand.addTarget { [unowned self] event in
-            if self.player?.rate == 0.0 {
-                self.player?.play()
-                self.updateNowPlaying(isPaused: false)
-                return .success
-            }
-            return .commandFailed
+        commandCenter.playCommand.addTarget { [weak self] event in
+            guard let self = self else { return .commandFailed }
+            self.player?.play()
+            self.updateNowPlaying(isPaused: false)
+            return .success
         }
         
         // Pause Command
-        commandCenter.pauseCommand.addTarget { [unowned self] event in
-            if self.player?.rate == 1.0 {
+        commandCenter.pauseCommand.addTarget { [weak self] event in
+            guard let self = self else { return .commandFailed }
+            self.player?.pause()
+            self.updateNowPlaying(isPaused: true)
+            return .success
+        }
+        
+        // Toggle Play/Pause (Headphones button)
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self] event in
+            guard let self = self else { return .commandFailed }
+            if self.player?.rate == 0.0 {
+                self.player?.play()
+                self.updateNowPlaying(isPaused: false)
+            } else {
                 self.player?.pause()
                 self.updateNowPlaying(isPaused: true)
-                return .success
             }
-            return .commandFailed
+            return .success
         }
         
         // Stop Command
-        commandCenter.stopCommand.addTarget { [unowned self] event in
+        commandCenter.stopCommand.addTarget { [weak self] event in
+            guard let self = self else { return .commandFailed }
             self.player?.pause()
-            self.player = nil
+            self.player = nil // Properly release
+            self.updateNowPlaying(isPaused: true)
             return .success
         }
     }

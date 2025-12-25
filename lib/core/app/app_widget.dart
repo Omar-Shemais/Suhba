@@ -39,14 +39,28 @@ class _MyAppState extends State<MyApp> {
   /// Initialize app services after widget is mounted
   Future<void> _initializeApp() async {
     // 1. Wait for AppInitializer (Notifications, Firebase, etc.)
-    await AppInitializer.initialize();
+    // 🛡️ TIMEOUT SAFEGUARD: Don't wait more than 7 seconds on splash
+    try {
+      await AppInitializer.initialize().timeout(const Duration(seconds: 7));
+    } catch (e) {
+      debugPrint('⚠️ [MyApp] Init timed out or failed: $e');
+      // We proceed anyway because critical DI might have passed in AppInitializer
+    }
 
     // 2. Initialize UI dependencies (Router, Cubits)
     if (mounted) {
       setState(() {
-        _authCubit = getIt<AuthCubit>();
-        _appRouter = AppRouter(_authCubit!);
-        _isReady = true; // App is now ready to switch to Router
+        // Wrap in try-catch in case GetIt failed completely
+        try {
+          _authCubit = getIt<AuthCubit>();
+          _appRouter = AppRouter(_authCubit!);
+          _isReady = true; // App is now ready to switch to Router
+        } catch (e) {
+          debugPrint('❌ [MyApp] Critical UI Dep Failure: $e');
+          // In a real app we might show a FatalErrorWidget here
+          // For now, we proceed to let it fail visibly or handle it
+          _isReady = true; // Proceed to try building, or it will throw in build
+        }
       });
 
       // Check auth status
