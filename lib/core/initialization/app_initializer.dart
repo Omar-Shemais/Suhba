@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:islamic_app/core/services/azan_notification_service.dart';
+import '../../firebase_options.dart';
 import '../utils/cache_helper.dart';
 import '../utils/service_locator.dart';
 import '../constants/storage_constants.dart';
@@ -82,7 +83,9 @@ class AppInitializer {
     // 2. Firebase
     try {
       if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp();
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
         debugPrint('✅ [AppInit] Firebase initialized');
       } else {
         debugPrint('ℹ️ [AppInit] Firebase already initialized');

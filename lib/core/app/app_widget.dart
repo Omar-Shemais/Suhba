@@ -16,6 +16,7 @@ import '../../features/prayer_times/presentation/cubit/prayer_cubit.dart';
 import '../../features/qibla/data/repositories/qibla_repo.dart';
 import '../../features/qibla/presentation/cubit/qibla_cubit.dart';
 import '../../features/settings/presentation/cubit/settings_cubit.dart';
+import 'app_error_widget.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -29,6 +30,7 @@ class _MyAppState extends State<MyApp> {
   AuthCubit? _authCubit;
   AppRouter? _appRouter;
   bool _isReady = false;
+  String? _initError;
 
   @override
   void initState() {
@@ -44,7 +46,8 @@ class _MyAppState extends State<MyApp> {
       await AppInitializer.initialize().timeout(const Duration(seconds: 7));
     } catch (e) {
       debugPrint('⚠️ [MyApp] Init timed out or failed: $e');
-      // We proceed anyway because critical DI might have passed in AppInitializer
+      // If it's a timeout, we might chance it. If it's a critical crash, we might want to show error.
+      // But Phase 2 (DI) is critical. If AppInitializer didn't finish, we assume it might be bad.
     }
 
     // 2. Initialize UI dependencies (Router, Cubits)
@@ -57,14 +60,16 @@ class _MyAppState extends State<MyApp> {
           _isReady = true; // App is now ready to switch to Router
         } catch (e) {
           debugPrint('❌ [MyApp] Critical UI Dep Failure: $e');
-          // In a real app we might show a FatalErrorWidget here
-          // For now, we proceed to let it fail visibly or handle it
-          _isReady = true; // Proceed to try building, or it will throw in build
+          // Capture the error to show in UI
+          _initError = e.toString();
+          _isReady = false; // Not ready
         }
       });
 
-      // Check auth status
-      _authCubit?.checkAuthStatus();
+      // Check auth status if we are ready
+      if (_isReady) {
+        _authCubit?.checkAuthStatus();
+      }
     }
   }
 
@@ -88,6 +93,20 @@ class _MyAppState extends State<MyApp> {
         home: const SplashScreen(
           shouldNavigate: false,
         ), // Keeps app alive while loading
+      );
+    }
+
+    // 🔴 ERROR STATE: Show Fatal Error Screen
+    if (_initError != null) {
+      return AppErrorWidget(
+        message: _initError!,
+        onRetry: () {
+          setState(() {
+            _initError = null;
+            _isReady = false;
+          });
+          _initializeApp();
+        },
       );
     }
 
