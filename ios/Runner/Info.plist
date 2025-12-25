@@ -5,7 +5,8 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Suhbah</string> <key>CFBundleExecutable</key>
+    <string>Suhbah</string>
+    <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
@@ -27,15 +28,27 @@
     <string>LaunchScreen</string>
     <key>UIMainStoryboardFile</key>
     <string>Main</string>
-    
+
+    <key>UIRequiresFullScreen</key>
+    <true/>
+
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+
     <key>UIBackgroundModes</key>
     <array>
-        <string>audio</string> <string>fetch</string> <string>remote-notification</string> </array>
+        <string>audio</string>
+        <string>fetch</string>
+        <string>remote-notification</string>
+    </array>
 
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
-        <true/> </dict>
+        <true/>
+    </dict>
 
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>We need your location to calculate accurate Prayer Times and Qibla direction based on your city.</string>
@@ -43,21 +56,16 @@
     <string>We need your location in the background to automatically update Prayer Times when you travel and ensure Azan notifications trigger accurately.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>We need your location in the background to automatically update Prayer Times when you travel and ensure Azan notifications trigger accurately.</string>
-
+    
     <key>NSCameraUsageDescription</key>
     <string>We need access to your camera to let you take a profile picture or share photos with the community.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photo library to let you select a profile picture or share images with the community.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need permission to save Islamic images or generated prayer schedules to your gallery.</string>
-    
     <key>NSUserNotificationsUsageDescription</key>
     <string>We need permission to send you Azan alerts, prayer reminders, and daily Islamic content.</string>
 
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-    </array>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>UIApplicationSupportsIndirectInputEvents</key>
@@ -72,6 +80,5 @@
         <string>googlechromes</string>
         <string>comgooglemaps</string>
     </array>
-
 </dict>
 </plist>
