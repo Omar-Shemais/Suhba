@@ -38,47 +38,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // --- Validation Logic ---
   String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'please_enter_name'.tr();
-    }
-    if (value.length < 3) {
-      return 'name_min_3_chars'.tr();
-    }
+    if (value == null || value.isEmpty) return 'please_enter_name'.tr();
+    if (value.length < 3) return 'name_min_3_chars'.tr();
     return null;
   }
 
   String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'please_enter_email'.tr();
-    }
+    if (value == null || value.isEmpty) return 'please_enter_email'.tr();
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'please_enter_valid_email'.tr();
-    }
+    if (!emailRegex.hasMatch(value)) return 'please_enter_valid_email'.tr();
     return null;
   }
 
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'please_enter_password'.tr();
-    }
-    if (value.length < 6) {
-      return 'password_min_6_chars'.tr();
-    }
+    if (value == null || value.isEmpty) return 'please_enter_password'.tr();
+    if (value.length < 6) return 'password_min_6_chars'.tr();
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'please_confirm_password'.tr();
-    }
-    if (value != _passwordController.text) {
-      return 'passwords_not_match'.tr();
-    }
+    if (value == null || value.isEmpty) return 'please_confirm_password'.tr();
+    if (value != _passwordController.text) return 'passwords_not_match'.tr();
     return null;
   }
 
+  // --- Actions ---
   void _handleRegister() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthCubit>().signUpWithEmail(
@@ -97,8 +83,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     context.read<AuthCubit>().signInWithApple();
   }
 
+  // 🟢 Navigation: Pop if coming from Login, otherwise go to Login
   void _navigateToLogin() {
-    context.go(AppRoutes.authLogin);
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(AppRoutes.authLogin);
+    }
   }
 
   void _showSnackBar(
@@ -117,7 +108,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         contentType: contentType,
       ),
     );
-
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
@@ -129,6 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      // 🟢 Removed AppBar to use custom positioning
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         width: double.infinity,
@@ -144,6 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SafeArea(
           child: Stack(
             children: [
+              // --- 1. Background Decoration ---
               Positioned(
                 top: -80,
                 right: -80,
@@ -169,6 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
 
+              // --- 2. Main Content ---
               BlocConsumer<AuthCubit, AuthState>(
                 listener: (context, state) {
                   if (state is AuthError) {
@@ -185,24 +178,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       'register_success'.tr(),
                       ContentType.success,
                     );
-                    Future.delayed(const Duration(milliseconds: 500), () {
-                      if (context.mounted) {
-                        context.go(AppRoutes.home);
-                      }
-                    });
                   }
                 },
                 builder: (context, state) {
                   final isLoading = state is AuthLoading;
 
                   return SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SizedBox(height: 60),
+                          const SizedBox(height: 60), // Space for top content
                           Text(
                             'create_new_account'.tr(),
                             style: TextStyle(
@@ -234,6 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 48),
+
                           CustomTextField(
                             controller: _nameController,
                             label: 'name'.tr(),
@@ -243,6 +232,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             enabled: !isLoading,
                           ),
                           const SizedBox(height: 16),
+
                           CustomTextField(
                             controller: _emailController,
                             label: 'email'.tr(),
@@ -253,312 +243,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             enabled: !isLoading,
                           ),
                           const SizedBox(height: 16),
-                          FormField<String>(
-                            validator: (value) =>
-                                _validatePassword(_passwordController.text),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            builder: (formFieldState) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: AppColors.goldenTripleGradient,
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Container(
-                                      margin: const EdgeInsets.all(1),
-                                      decoration: BoxDecoration(
-                                        color: !isLoading
-                                            ? (isDark
-                                                  ? theme.colorScheme.surface
-                                                  : Colors.white.withValues(
-                                                      alpha: .95,
-                                                    ))
-                                            : (isDark
-                                                  ? theme.colorScheme.surface
-                                                        .withValues(alpha: .6)
-                                                  : Colors.white.withValues(
-                                                      alpha: .6,
-                                                    )),
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: TextField(
-                                        controller: _passwordController,
-                                        obscureText: !_isPasswordVisible,
-                                        enabled: !isLoading,
-                                        onChanged: (value) =>
-                                            formFieldState.didChange(value),
-                                        style: TextStyle(
-                                          color: theme.colorScheme.onSurface,
-                                          fontSize: 16,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'password'.tr(),
-                                          hintText: 'enter_password'.tr(),
-                                          labelStyle: TextStyle(
-                                            color: theme
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                          ),
-                                          hintStyle: TextStyle(
-                                            color: theme
-                                                .colorScheme
-                                                .onSurfaceVariant
-                                                .withValues(alpha: .6),
-                                          ),
-                                          floatingLabelBehavior:
-                                              FloatingLabelBehavior.never,
-                                          prefixIcon: const Icon(
-                                            Icons.lock_outlined,
-                                            color: AppColors.goldenPrimary,
-                                          ),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              _isPasswordVisible
-                                                  ? Icons
-                                                        .visibility_off_outlined
-                                                  : Icons.visibility_outlined,
-                                              color: AppColors.goldenPrimary,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _isPasswordVisible =
-                                                    !_isPasswordVisible;
-                                              });
-                                            },
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Colors.red,
-                                              width: 2,
-                                            ),
-                                          ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                borderSide: const BorderSide(
-                                                  color: Colors.red,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                          filled: false,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                                vertical: 16,
-                                              ),
-                                          errorStyle: const TextStyle(
-                                            height: 0,
-                                            fontSize: 0,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  if (formFieldState.hasError)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 6,
-                                        left: 12,
-                                      ),
-                                      child: Text(
-                                        formFieldState.errorText!,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              );
-                            },
+
+                          _buildPasswordContainer(
+                            controller: _passwordController,
+                            isConfirm: false,
+                            isLoading: isLoading,
+                            theme: theme,
+                            isDark: isDark,
                           ),
                           const SizedBox(height: 16),
-                          FormField<String>(
-                            validator: (value) => _validateConfirmPassword(
-                              _confirmPasswordController.text,
-                            ),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            builder: (formFieldState) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: AppColors.goldenTripleGradient,
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Container(
-                                      margin: const EdgeInsets.all(1),
-                                      decoration: BoxDecoration(
-                                        color: !isLoading
-                                            ? (isDark
-                                                  ? theme.colorScheme.surface
-                                                  : Colors.white.withValues(
-                                                      alpha: .95,
-                                                    ))
-                                            : (isDark
-                                                  ? theme.colorScheme.surface
-                                                        .withValues(alpha: .6)
-                                                  : Colors.white.withValues(
-                                                      alpha: .6,
-                                                    )),
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: TextField(
-                                        controller: _confirmPasswordController,
-                                        obscureText: !_isConfirmPasswordVisible,
-                                        enabled: !isLoading,
-                                        onChanged: (value) =>
-                                            formFieldState.didChange(value),
-                                        style: TextStyle(
-                                          color: theme.colorScheme.onSurface,
-                                          fontSize: 16,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'confirm_password'.tr(),
-                                          hintText: 'reenter_password'.tr(),
-                                          labelStyle: TextStyle(
-                                            color: theme
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                          ),
-                                          hintStyle: TextStyle(
-                                            color: theme
-                                                .colorScheme
-                                                .onSurfaceVariant
-                                                .withValues(alpha: .6),
-                                          ),
-                                          floatingLabelBehavior:
-                                              FloatingLabelBehavior.never,
-                                          prefixIcon: const Icon(
-                                            Icons.lock_outlined,
-                                            color: AppColors.goldenPrimary,
-                                          ),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              _isConfirmPasswordVisible
-                                                  ? Icons
-                                                        .visibility_off_outlined
-                                                  : Icons.visibility_outlined,
-                                              color: AppColors.goldenPrimary,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _isConfirmPasswordVisible =
-                                                    !_isConfirmPasswordVisible;
-                                              });
-                                            },
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Colors.red,
-                                              width: 2,
-                                            ),
-                                          ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                borderSide: const BorderSide(
-                                                  color: Colors.red,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                          filled: false,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                                vertical: 16,
-                                              ),
-                                          errorStyle: const TextStyle(
-                                            height: 0,
-                                            fontSize: 0,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  if (formFieldState.hasError)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 6,
-                                        left: 12,
-                                      ),
-                                      child: Text(
-                                        formFieldState.errorText!,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              );
-                            },
+
+                          _buildPasswordContainer(
+                            controller: _confirmPasswordController,
+                            isConfirm: true,
+                            isLoading: isLoading,
+                            theme: theme,
+                            isDark: isDark,
                           ),
+
                           const SizedBox(height: 24),
+
                           AuthButton(
                             text: 'create_account'.tr(),
                             onPressed: _handleRegister,
                             isLoading: isLoading,
                           ),
+
                           const SizedBox(height: 24),
+
                           Row(
                             children: [
                               Expanded(
                                 child: Divider(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.outlineVariant,
+                                  color: theme.colorScheme.outlineVariant,
                                 ),
                               ),
                               Padding(
@@ -567,29 +284,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 child: Text(
                                   'or'.tr(),
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 child: Divider(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.outlineVariant,
+                                  color: theme.colorScheme.outlineVariant,
                                 ),
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 24),
+
                           GoogleSignInButton(
                             onPressed: _handleGoogleSignIn,
                             isLoading: isLoading,
                           ),
-                          // Show Apple Sign In only on iOS
+
                           if (Platform.isIOS) ...[
                             const SizedBox(height: 16),
                             AppleSignInButton(
@@ -597,13 +311,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               isLoading: isLoading,
                             ),
                           ],
+
                           const SizedBox(height: 32),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 'already_have_account'.tr(),
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: theme.textTheme.bodyMedium,
                               ),
                               TextButton(
                                 onPressed: isLoading ? null : _navigateToLogin,
@@ -616,16 +332,141 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),
                   );
                 },
               ),
+
+              // --- 3. Custom Back Button (Floating on Top) ---
+              Align(
+                alignment: AlignmentDirectional
+                    .topStart, // Auto-adjusts for Arabic/English
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.colorScheme.onSurface,
+                      size: 28,
+                    ),
+                    onPressed: _navigateToLogin,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPasswordContainer({
+    required TextEditingController controller,
+    required bool isConfirm,
+    required bool isLoading,
+    required ThemeData theme,
+    required bool isDark,
+  }) {
+    return FormField<String>(
+      validator: (value) => isConfirm
+          ? _validateConfirmPassword(controller.text)
+          : _validatePassword(controller.text),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      builder: (formFieldState) {
+        final isVisible = isConfirm
+            ? _isConfirmPasswordVisible
+            : _isPasswordVisible;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.goldenTripleGradient,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                margin: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  color: !isLoading
+                      ? (isDark
+                            ? theme.colorScheme.surface
+                            : Colors.white.withValues(alpha: .95))
+                      : (isDark
+                            ? theme.colorScheme.surface.withValues(alpha: .6)
+                            : Colors.white.withValues(alpha: .6)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: TextField(
+                  controller: controller,
+                  obscureText: !isVisible,
+                  enabled: !isLoading,
+                  onChanged: (value) => formFieldState.didChange(value),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 16,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: isConfirm
+                        ? 'confirm_password'.tr()
+                        : 'password'.tr(),
+                    hintText: isConfirm
+                        ? 'reenter_password'.tr()
+                        : 'enter_password'.tr(),
+                    labelStyle: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    hintStyle: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant.withValues(
+                        alpha: .6,
+                      ),
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    prefixIcon: const Icon(
+                      Icons.lock_outlined,
+                      color: AppColors.goldenPrimary,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        isVisible
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: AppColors.goldenPrimary,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (isConfirm) {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          } else {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          }
+                        });
+                      },
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (formFieldState.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 6, left: 12),
+                child: Text(
+                  formFieldState.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

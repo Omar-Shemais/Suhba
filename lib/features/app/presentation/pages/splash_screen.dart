@@ -6,7 +6,12 @@ import 'package:islamic_app/core/routes/app_routes.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final bool shouldNavigate; // 🟢 Added flag
+
+  const SplashScreen({
+    super.key,
+    this.shouldNavigate = true, // Default to true (normal behavior)
+  });
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -42,7 +47,11 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _animationController.forward();
-    _navigateToNextScreen();
+
+    // 🟢 Only navigate if allowed
+    if (widget.shouldNavigate) {
+      _navigateToNextScreen();
+    }
   }
 
   @override
@@ -52,14 +61,17 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
-    // Wait only for animation to complete (no extra delay)
+    // Wait only for animation to complete
     await _animationController.forward();
 
     if (!mounted) return;
 
-    // Always navigate to home after splash
-    // Protected routes (like community) will redirect to welcome if not authenticated
-    context.go(AppRoutes.home);
+    // 🟢 Safety check: Try-Catch prevents crashes if Router is missing
+    try {
+      context.go(AppRoutes.home);
+    } catch (e) {
+      debugPrint("ℹ️ [SplashScreen] Navigation skipped (Router not ready yet).");
+    }
   }
 
   @override
@@ -145,7 +157,6 @@ class _SplashScreenState extends State<SplashScreen>
                                 gradient: isDark
                                     ? AppColors.goldenGradient
                                     : AppColors.secanderyGradient,
-
                                 boxShadow: [
                                   BoxShadow(
                                     color: isDark
@@ -190,7 +201,6 @@ class _SplashScreenState extends State<SplashScreen>
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: isArabic ? 'Amiri' : 'Poppins',
-
                               color: theme.colorScheme.onSurfaceVariant,
                               letterSpacing: 0.5,
                             ),

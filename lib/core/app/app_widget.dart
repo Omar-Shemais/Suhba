@@ -1,10 +1,3 @@
-// ============================================================================
-// APP WIDGET - Main application widget
-// ============================================================================
-// This is the root widget of the application.
-// It manages the app state, initialization, and provides the router.
-// ============================================================================
-
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +17,6 @@ import '../../features/qibla/data/repositories/qibla_repo.dart';
 import '../../features/qibla/presentation/cubit/qibla_cubit.dart';
 import '../../features/settings/presentation/cubit/settings_cubit.dart';
 
-/// Root application widget
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -45,20 +37,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   /// Initialize app services after widget is mounted
-  /// This happens AFTER the first frame is rendered
   Future<void> _initializeApp() async {
-    // Wait for deferred initialization to complete
+    // 1. Wait for AppInitializer (Notifications, Firebase, etc.)
     await AppInitializer.initialize();
 
-    // Now it's safe to access GetIt services
+    // 2. Initialize UI dependencies (Router, Cubits)
     if (mounted) {
       setState(() {
         _authCubit = getIt<AuthCubit>();
         _appRouter = AppRouter(_authCubit!);
-        _isReady = true;
+        _isReady = true; // App is now ready to switch to Router
       });
 
-      // Check auth status AFTER UI is ready (non-blocking)
+      // Check auth status
       _authCubit?.checkAuthStatus();
     }
   }
@@ -71,7 +62,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Show splash screen immediately while initializing in background
+    // 🟢 LOADING STATE: Show Splash WITHOUT Navigation
     if (!_isReady) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -80,15 +71,16 @@ class _MyAppState extends State<MyApp> {
         locale: context.locale,
         theme: lightTheme,
         darkTheme: darkTheme,
-        home: const SplashScreen(),
+        home: const SplashScreen(
+          shouldNavigate: false,
+        ), // Keeps app alive while loading
       );
     }
 
-    // Full app: Services are ready, router will navigate from splash to home
+    // 🟢 READY STATE: Show Full App with Router
     return _buildFullApp(context);
   }
 
-  /// Build full app with all features
   Widget _buildFullApp(BuildContext context) {
     return MultiBlocProvider(
       providers: [

@@ -33,27 +33,21 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // --- Validation ---
   String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'please_enter_email'.tr();
-    }
+    if (value == null || value.isEmpty) return 'please_enter_email'.tr();
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'please_enter_valid_email'.tr();
-    }
+    if (!emailRegex.hasMatch(value)) return 'please_enter_valid_email'.tr();
     return null;
   }
 
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'please_enter_password'.tr();
-    }
-    if (value.length < 6) {
-      return 'password_min_6_chars'.tr();
-    }
+    if (value == null || value.isEmpty) return 'please_enter_password'.tr();
+    if (value.length < 6) return 'password_min_6_chars'.tr();
     return null;
   }
 
+  // --- Actions ---
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthCubit>().signInWithEmail(
@@ -72,7 +66,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToRegister() {
-    context.go(AppRoutes.authRegister);
+    context.push(AppRoutes.authRegister);
+  }
+
+  void _handleBackNavigation() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(AppRoutes.welcome);
+    }
   }
 
   void _showSnackBar(
@@ -91,7 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
         contentType: contentType,
       ),
     );
-
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
@@ -103,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      // 🟢 Removed AppBar
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         width: double.infinity,
@@ -118,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SafeArea(
           child: Stack(
             children: [
+              // --- 1. Background Decoration ---
               Positioned(
                 top: -80,
                 right: -80,
@@ -143,6 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
+              // --- 2. Main Content ---
               BlocConsumer<AuthCubit, AuthState>(
                 listener: (context, state) {
                   if (state is AuthError) {
@@ -159,24 +163,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       'login_success'.tr(),
                       ContentType.success,
                     );
-                    Future.delayed(const Duration(milliseconds: 500), () {
-                      if (context.mounted) {
-                        context.go(AppRoutes.home);
-                      }
-                    });
+                    // Router handles redirect
                   }
                 },
                 builder: (context, state) {
                   final isLoading = state is AuthLoading;
 
                   return SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SizedBox(height: 60),
+                          const SizedBox(
+                            height: 60,
+                          ), // Space for back button area
                           Text(
                             'welcome_back'.tr(),
                             style: TextStyle(
@@ -208,6 +210,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 48),
+
+                          // Email Field
                           CustomTextField(
                             controller: _emailController,
                             label: 'email'.tr(),
@@ -218,6 +222,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             enabled: !isLoading,
                           ),
                           const SizedBox(height: 16),
+
+                          // Password Field
                           FormField<String>(
                             validator: (value) =>
                                 _validatePassword(_passwordController.text),
@@ -288,59 +294,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   : Icons.visibility_outlined,
                                               color: AppColors.goldenPrimary,
                                             ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _isPasswordVisible =
-                                                    !_isPasswordVisible;
-                                              });
-                                            },
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Colors.red,
-                                              width: 2,
+                                            onPressed: () => setState(
+                                              () => _isPasswordVisible =
+                                                  !_isPasswordVisible,
                                             ),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                borderSide: const BorderSide(
-                                                  color: Colors.red,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                          filled: false,
+                                          border: InputBorder.none,
                                           contentPadding:
                                               const EdgeInsets.symmetric(
                                                 horizontal: 16,
                                                 vertical: 16,
                                               ),
-                                          errorStyle: const TextStyle(
-                                            height: 0,
-                                            fontSize: 0,
-                                          ),
                                         ),
                                       ),
                                     ),
@@ -363,20 +327,24 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             },
                           ),
+
                           const SizedBox(height: 24),
+
+                          // Sign In Button
                           AuthButton(
                             text: 'sign_in'.tr(),
                             onPressed: _handleLogin,
                             isLoading: isLoading,
                           ),
+
                           const SizedBox(height: 24),
+
+                          // Divider
                           Row(
                             children: [
                               Expanded(
                                 child: Divider(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.outlineVariant,
+                                  color: theme.colorScheme.outlineVariant,
                                 ),
                               ),
                               Padding(
@@ -385,29 +353,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 child: Text(
                                   'or'.tr(),
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 child: Divider(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.outlineVariant,
+                                  color: theme.colorScheme.outlineVariant,
                                 ),
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 24),
+
+                          // Social Login
                           GoogleSignInButton(
                             onPressed: _handleGoogleSignIn,
                             isLoading: isLoading,
                           ),
-                          // Show Apple Sign In only on iOS
+
                           if (Platform.isIOS) ...[
                             const SizedBox(height: 16),
                             AppleSignInButton(
@@ -415,13 +381,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               isLoading: isLoading,
                             ),
                           ],
+
                           const SizedBox(height: 32),
+
+                          // Sign Up Link
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 'dont_have_account'.tr(),
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: theme.textTheme.bodyMedium,
                               ),
                               TextButton(
                                 onPressed: isLoading
@@ -436,11 +405,28 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),
                   );
                 },
+              ),
+
+              // --- 3. Custom Floating Back Button (Top Right/Left) ---
+              Align(
+                alignment: AlignmentDirectional.topStart,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.colorScheme.onSurface,
+                      size: 28,
+                    ),
+                    onPressed: _handleBackNavigation,
+                  ),
+                ),
               ),
             ],
           ),
