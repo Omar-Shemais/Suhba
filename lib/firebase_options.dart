@@ -63,9 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '49397939337',
     projectId: 'islamic-app-18842',
     storageBucket: 'islamic-app-18842.firebasestorage.app',
-    androidClientId: '49397939337-2g36dujkt29j4l8i209ogn4dq5ndpdi6.apps.googleusercontent.com',
-    iosClientId: '49397939337-fa2m3i1t6top5ut7fndv820fbtcsbts9.apps.googleusercontent.com',
-    iosBundleId: 'com.example.islamicApp',
+    androidClientId:
+        '49397939337-2g36dujkt29j4l8i209ogn4dq5ndpdi6.apps.googleusercontent.com',
+    iosClientId:
+        '49397939337-fa2m3i1t6top5ut7fndv820fbtcsbts9.apps.googleusercontent.com',
+    iosBundleId: 'com.zbooma.suhbah',
   );
-
 }
