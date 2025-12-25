@@ -339,6 +339,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           const SizedBox(height: 24),
 
+                          // 🚫 DISABLED: Social Sign-In temporarily disabled on iOS
+                          /* 
                           // Divider
                           Row(
                             children: [
@@ -381,7 +383,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               isLoading: isLoading,
                             ),
                           ],
-
+                          */
                           const SizedBox(height: 32),
 
                           // Sign Up Link

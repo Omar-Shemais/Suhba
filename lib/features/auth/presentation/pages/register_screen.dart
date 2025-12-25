@@ -271,6 +271,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                           const SizedBox(height: 24),
 
+                          // 🚫 DISABLED: Social Sign-In temporarily disabled on iOS
+                          /*
                           Row(
                             children: [
                               Expanded(
@@ -311,7 +313,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               isLoading: isLoading,
                             ),
                           ],
-
+                          */
                           const SizedBox(height: 32),
 
                           Row(

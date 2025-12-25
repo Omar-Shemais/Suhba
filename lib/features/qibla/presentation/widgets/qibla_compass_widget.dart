@@ -15,7 +15,7 @@ class QiblaCompassWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<double>(
-      stream: FlutterCompass.events!.map((event) => event.heading ?? 0),
+      stream: FlutterCompass.events?.map((event) => event.heading ?? 0),
 
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -28,8 +28,19 @@ class QiblaCompassWidget extends StatelessWidget {
         }
 
         if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.goldenPrimary),
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(color: AppColors.goldenPrimary),
+                SizedBox(height: 16.h),
+                Text(
+                  "Compass unavailable on this device",
+                  style: TextStyle(fontSize: 14.sp),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           );
         }
 

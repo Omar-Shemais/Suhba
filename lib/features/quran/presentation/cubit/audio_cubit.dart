@@ -32,10 +32,39 @@ class AudioCubit extends Cubit<AudioState> {
   AudioCubit(this.audioRepository) : super(AudioInitial()) {
     _initializeLocalPlayer();
     _loadSavedReciter();
+    _setupControlCenterListener();
   }
 
   Future<void> _loadSavedReciter() async {
     _currentReciterId = await ReciterStorageManager.getSelectedReciterId();
+  }
+
+  /// 🎛️ Listen to Control Center Actions (iOS)
+  void _setupControlCenterListener() {
+    _nativeService.onControlCenterAction = (action) {
+      print('📱 [AudioCubit] Control Center Action: $action');
+
+      switch (action) {
+        case 'play':
+          // User pressed play in control center
+          if (state is AudioPaused) {
+            resume();
+          }
+          break;
+        case 'pause':
+          // User pressed pause in control center
+          if (state is AudioPlaying ||
+              state is AudioPlayingAyah ||
+              state is AudioPlayingRadio) {
+            pause();
+          }
+          break;
+        case 'stop':
+          // User pressed stop in control center
+          stop();
+          break;
+      }
+    };
   }
 
   void _initializeLocalPlayer() {

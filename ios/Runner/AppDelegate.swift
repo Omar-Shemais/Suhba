@@ -2,6 +2,7 @@ import UIKit
 import Flutter
 import AVFoundation
 import MediaPlayer
+import GoogleMaps
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,6 +10,9 @@ import MediaPlayer
     // 1. Audio Player Components
     var player: AVPlayer?
     var playerItem: AVPlayerItem?
+    
+    // 2. Flutter Channel (needs to be accessible from control center handlers)
+    var radioChannel: FlutterMethodChannel?
     
     // Channel Name must match Dart & Android
     let CHANNEL = "com.islamic_app/radio"
@@ -18,9 +22,12 @@ import MediaPlayer
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         
+        // 🗺️ Initialize Google Maps
+        GMSServices.provideAPIKey("AIzaSyCZ4hpeRm89E-8lLsOPmNvLoIoNpX1PeZs")
+        
         // 1. Setup Flutter Controller & Channel
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        let radioChannel = FlutterMethodChannel(name: CHANNEL, binaryMessenger: controller.binaryMessenger)
+        radioChannel = FlutterMethodChannel(name: CHANNEL, binaryMessenger: controller.binaryMessenger)
         
         // 2. Setup Audio Session (Crucial for Background Playback)
         setupAudioSession()
@@ -30,7 +37,7 @@ import MediaPlayer
         setupRemoteTransportControls()
         
         // 4. Handle Flutter Calls
-        radioChannel.setMethodCallHandler({ [weak self]
+        radioChannel!.setMethodCallHandler({ [weak self]
             (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
             guard let self = self else { return }
             
@@ -223,6 +230,12 @@ import MediaPlayer
             guard let self = self else { return .commandFailed }
             self.player?.play()
             self.updateNowPlaying(isPaused: false)
+            
+            // 🔔 Notify Flutter about Play
+            DispatchQueue.main.async {
+                self.radioChannel?.invokeMethod("onPlay", arguments: nil)
+            }
+            
             return .success
         }
         
@@ -231,6 +244,12 @@ import MediaPlayer
             guard let self = self else { return .commandFailed }
             self.player?.pause()
             self.updateNowPlaying(isPaused: true)
+            
+            // 🔔 Notify Flutter about Pause
+            DispatchQueue.main.async {
+                self.radioChannel?.invokeMethod("onPause", arguments: nil)
+            }
+            
             return .success
         }
         
@@ -240,9 +259,19 @@ import MediaPlayer
             if self.player?.rate == 0.0 {
                 self.player?.play()
                 self.updateNowPlaying(isPaused: false)
+                
+                // 🔔 Notify Flutter about Play
+                DispatchQueue.main.async {
+                    self.radioChannel?.invokeMethod("onPlay", arguments: nil)
+                }
             } else {
                 self.player?.pause()
                 self.updateNowPlaying(isPaused: true)
+                
+                // 🔔 Notify Flutter about Pause
+                DispatchQueue.main.async {
+                    self.radioChannel?.invokeMethod("onPause", arguments: nil)
+                }
             }
             return .success
         }
@@ -253,6 +282,12 @@ import MediaPlayer
             self.player?.pause()
             self.player = nil // Properly release
             self.updateNowPlaying(isPaused: true)
+            
+            // 🔔 Notify Flutter about Stop
+            DispatchQueue.main.async {
+                self.radioChannel?.invokeMethod("onStop", arguments: nil)
+            }
+            
             return .success
         }
     }
