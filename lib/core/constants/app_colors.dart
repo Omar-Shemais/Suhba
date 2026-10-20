@@ -23,6 +23,9 @@ class AppColors {
   /// Container Color - #FAF2EB
   static const Color containerColor = Color(0xFFfaf2eb);
 
+  /// Container Dark Color (for Dark Mode cards) - #1E1E1E
+  static const Color containerDarkColor = Color(0xFF1E1E1E);
+
   // Additional colors for better UI
   /// White Color
   static const Color whiteColor = Color(0xFFFFFFFF);

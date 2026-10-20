@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
-import 'package:islamic_app/core/constants/app_text_styles.dart';
 import '../../data/models/prayer_times_model.dart';
 
 class PrayerTimeCard extends StatelessWidget {
@@ -14,74 +13,109 @@ class PrayerTimeCard extends StatelessWidget {
   IconData _getPrayerIcon(String prayerName) {
     switch (prayerName.toLowerCase()) {
       case 'fajr':
-        return Icons.wb_twilight;
+        return Icons.wb_twilight_rounded;
       case 'sunrise':
-        return Icons.wb_sunny;
+        return Icons.wb_sunny_rounded;
+      case 'dhuhr':
       case '.hr':
         return Icons.wb_sunny_outlined;
       case 'asr':
-        return Icons.cloud;
+        return Icons.cloud_outlined;
       case 'maghrib':
-        return Icons.nights_stay;
+        return Icons.nights_stay_rounded;
       case 'isha':
         return Icons.nightlight_round;
       default:
-        return Icons.access_time;
+        return Icons.access_time_rounded;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isPassed = prayer.isPassed;
+    final isNext = prayer.isNext;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Container(
-      width: 90.w,
+      width: 76.w,
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
       decoration: BoxDecoration(
-        color: isPassed
+        color: isNext
             ? (isDark
-                  ? AppColors.primaryDarkColor.withOpacity(0.5)
-                  : AppColors.containerColor.withOpacity(0.5))
-            : (isDark ? AppColors.primaryDarkColor : AppColors.containerColor),
-        borderRadius: BorderRadius.circular(16.r),
+                ? AppColors.primaryColor.withValues(alpha: 0.18)
+                : AppColors.primaryColor.withValues(alpha: 0.12))
+            : isPassed
+                ? (isDark
+                    ? AppColors.primaryDarkColor.withValues(alpha: 0.45)
+                    : AppColors.containerColor.withValues(alpha: 0.55))
+                : (isDark ? AppColors.primaryDarkColor : AppColors.containerColor),
+        borderRadius: BorderRadius.circular(14.r),
+        border: isNext
+            ? Border.all(
+                color: AppColors.primaryColor.withValues(alpha: 0.6),
+                width: 1.2,
+              )
+            : null,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Icon
           Container(
-            width: 48.w,
-            height: 48.h,
+            width: 32.w,
+            height: 32.h,
             decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(12.r),
+              color: isNext
+                  ? AppColors.primaryColor.withValues(alpha: 0.15)
+                  : Colors.transparent,
+              shape: BoxShape.circle,
             ),
             child: Icon(
               _getPrayerIcon(prayer.name),
-              color: AppColors.primaryColor,
-              size: 28.sp,
+              color: isNext
+                  ? AppColors.primaryColor
+                  : isPassed
+                      ? (isDark ? Colors.grey[500] : Colors.grey[600])
+                      : AppColors.primaryColor,
+              size: 20.sp,
             ),
           ),
 
-          SizedBox(height: 8.h),
+          SizedBox(height: 4.h),
 
-          // Prayer Name (Arabic)
+          // Prayer Name (Arabic / English)
           Text(
             isArabic ? prayer.nameAr : prayer.name,
-            style: AppTextStyles.textstyle14,
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: isNext ? FontWeight.bold : FontWeight.w600,
+              color: isNext
+                  ? AppColors.primaryColor
+                  : isPassed
+                      ? (isDark ? Colors.grey[400] : Colors.grey[600])
+                      : (isDark ? Colors.white : AppColors.textPrimary),
+            ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
 
-          SizedBox(height: 4.h),
+          SizedBox(height: 2.h),
 
           // Prayer Time
           Text(
             textDirection: TextDirection.ltr,
             prayer.time,
-            style: AppTextStyles.button,
+            style: TextStyle(
+              fontSize: 12.5.sp,
+              fontWeight: FontWeight.bold,
+              color: isNext
+                  ? AppColors.primaryColor
+                  : isPassed
+                      ? (isDark ? Colors.grey[400] : Colors.grey[600])
+                      : (isDark ? Colors.white : AppColors.textPrimary),
+            ),
             textAlign: TextAlign.center,
           ),
         ],

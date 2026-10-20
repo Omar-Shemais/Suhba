@@ -6,8 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamic_app/features/hadith/presentation/pages/hadith_screen.dart';
 import 'package:islamic_app/features/hadith/presentation/pages/hadith_search_screen.dart';
 import 'package:islamic_app/features/azkar/presentation/pages/azkar_screen.dart';
+import 'package:islamic_app/features/azkar/presentation/pages/morning_azkar.dart';
+import 'package:islamic_app/features/azkar/presentation/pages/evening_azkar_screen.dart';
+import 'package:islamic_app/features/azkar/presentation/pages/after_prayer_azkar_screen.dart';
+import 'package:islamic_app/features/duaa/presentation/pages/duaa_screen.dart';
 import 'package:islamic_app/features/qibla/presentation/pages/qibla_screen.dart';
-import 'package:islamic_app/features/tasbeeh/presentation/pages/tasbeeh_screen.dart';
+import 'package:islamic_app/features/sibha/views/screens/sibha_view.dart';
 import 'package:islamic_app/features/quran/presentation/pages/mushaf_reader_screen.dart';
 import 'package:islamic_app/features/quran/presentation/pages/radio_screen.dart';
 import 'package:islamic_app/features/quran/presentation/surah_search_screen.dart';
@@ -32,12 +36,15 @@ import 'app_routes.dart';
 
 /// Router configuration for the app with auth guards
 class AppRouter {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
   final AuthCubit authCubit;
 
   AppRouter(this.authCubit);
 
   /// Get the router configuration
   GoRouter get router => GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
     redirect: _handleRedirect,
@@ -131,6 +138,27 @@ class AppRouter {
         name: 'azkar',
         builder: (context, state) => const AzkarScreen(),
       ),
+      GoRoute(
+        path: AppRoutes.morningAzkar,
+        name: 'morningAzkar',
+        builder: (context, state) => const MorningAzkar(),
+      ),
+      GoRoute(
+        path: AppRoutes.eveningAzkar,
+        name: 'eveningAzkar',
+        builder: (context, state) => const EveningAzkarScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.afterPrayerAzkar,
+        name: 'afterPrayerAzkar',
+        builder: (context, state) => const AfterPrayerAzkarScreen(),
+      ),
+      // duaa Route
+      GoRoute(
+        path: AppRoutes.duaa,
+        name: 'duaa',
+        builder: (context, state) => const DuaaScreen(),
+      ),
       //tasbeh Route
       // GoRoute(
       //   path: AppRoutes.tasbeh,
@@ -189,7 +217,7 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.tasbeeh,
         name: 'tasbeeh',
-        builder: (context, state) => const TasbeehScreen(),
+        builder: (context, state) => const SibhaView(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

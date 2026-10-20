@@ -36,10 +36,19 @@ class RadioViewBody extends StatelessWidget {
                 final stations = snapshot.data ?? [];
 
                 return ListView.builder(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  cacheExtent: 1000,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: true,
                   itemCount: stations.length,
                   itemBuilder: (context, index) {
                     final station = stations[index];
-                    return RadioStationCard(station: station);
+                    return RadioStationCard(
+                      key: ValueKey('station_${station.id}'),
+                      station: station,
+                    );
                   },
                 );
               },

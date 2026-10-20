@@ -50,23 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBrJD2u5kJ8FRjW_bXaCs2fdkCBoWscMy4',
-    appId: '1:49397939337:android:72c6bd3b7a860560389a58',
-    messagingSenderId: '49397939337',
-    projectId: 'islamic-app-18842',
-    storageBucket: 'islamic-app-18842.firebasestorage.app',
+    apiKey: 'AIzaSyAfeRHDZhfUOM_v70pUNx7YxUoyAtJAFKs',
+    appId: '1:473520189953:android:70d4778a5055d58730c600',
+    messagingSenderId: '473520189953',
+    projectId: 'suhbah-ffd5f',
+    storageBucket: 'suhbah-ffd5f.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCZ4hpeRm89E-8lLsOPmNvLoIoNpX1PeZs',
-    appId: '1:49397939337:ios:a76f7c1f161cc0fe389a58',
-    messagingSenderId: '49397939337',
-    projectId: 'islamic-app-18842',
-    storageBucket: 'islamic-app-18842.firebasestorage.app',
-    androidClientId:
-        '49397939337-2g36dujkt29j4l8i209ogn4dq5ndpdi6.apps.googleusercontent.com',
-    iosClientId:
-        '49397939337-fa2m3i1t6top5ut7fndv820fbtcsbts9.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAcJZysG_4m2Fii4Wjjg7QJTCtIo1fpPvc',
+    appId: '1:473520189953:ios:63a02f038ec145c230c600',
+    messagingSenderId: '473520189953',
+    projectId: 'suhbah-ffd5f',
+    storageBucket: 'suhbah-ffd5f.firebasestorage.app',
     iosBundleId: 'com.zbooma.suhbah',
   );
 }

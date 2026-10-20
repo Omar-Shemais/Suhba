@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
-import 'package:islamic_app/core/routes/app_routes.dart';
+import 'package:islamic_app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:islamic_app/features/auth/presentation/cubit/auth_state.dart';
+import 'package:islamic_app/features/auth/presentation/pages/login_screen.dart';
 import '../cubits/community/community_cubit.dart';
 import '../cubits/community/community_state.dart';
 import '../widgets/premium_post_card.dart';
@@ -39,13 +40,12 @@ class _PremiumCommunityPageState extends State<PremiumCommunityPage>
   }
 
   void _checkAuthAndLoad() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Navigate directly to welcome page instead of showing dialog
-        context.go(AppRoutes.welcome);
-      });
-    } else {
+    final authState = context.read<AuthCubit>().state;
+    final isAuthenticated =
+        authState is AuthAuthenticated ||
+        FirebaseAuth.instance.currentUser != null;
+
+    if (isAuthenticated) {
       // Only load if posts are empty (use cache if available)
       final cubit = context.read<CommunityCubit>();
       if (cubit.state.posts.isEmpty) {
@@ -70,12 +70,35 @@ class _PremiumCommunityPageState extends State<PremiumCommunityPage>
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: user == null ? _buildLoginRequired() : _buildCommunityContent(),
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, authState) {
+        if (authState is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(authState.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (authState is AuthAuthenticated) {
+          context.read<CommunityCubit>().loadPosts(refresh: true);
+        }
+      },
+      builder: (context, authState) {
+        final isAuthenticated =
+            authState is AuthAuthenticated ||
+            FirebaseAuth.instance.currentUser != null;
+
+        if (!isAuthenticated) {
+          return const LoginScreen(showBackButton: false);
+        }
+
+        return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          body: _buildCommunityContent(),
+        );
+      },
     );
   }
 
@@ -89,6 +112,7 @@ class _PremiumCommunityPageState extends State<PremiumCommunityPage>
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
+        cacheExtent: 1500,
         slivers: [
           _buildSliverAppBar(),
           _buildSliverTabBar(),
@@ -465,6 +489,8 @@ class _PremiumCommunityPageState extends State<PremiumCommunityPage>
               childCount:
                   filteredPosts.length +
                   (state is CommunityLoadingMore ? 1 : 0),
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: true,
             ),
           ),
         );
@@ -587,67 +613,7 @@ class _PremiumCommunityPageState extends State<PremiumCommunityPage>
     );
   }
 
-  Widget _buildLoginRequired() {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(30),
-            decoration: BoxDecoration(
-              gradient: isDark
-                  ? LinearGradient(
-                      colors: [
-                        theme.colorScheme.primary,
-                        theme.colorScheme.primary.withValues(alpha: 0.8),
-                      ],
-                    )
-                  : AppColors.goldenTripleGradient,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: isDark
-                      ? theme.colorScheme.primary.withValues(alpha: .2)
-                      : AppColors.goldenPrimary.withValues(alpha: .3),
-                  blurRadius: 30,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.lock_rounded,
-              size: 80,
-              color: isDark ? theme.colorScheme.onPrimary : Colors.white,
-            ),
-          ),
-          SizedBox(height: 32.h),
-          Text(
-            'must_login'.tr(),
-            style: TextStyle(
-              fontSize: 26.sp,
-              fontWeight: FontWeight.bold,
-              color: isDark
-                  ? theme.colorScheme.onSurface
-                  : AppColors.brownPrimary,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            'login_to_access_community'.tr(),
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: isDark
-                  ? theme.colorScheme.onSurfaceVariant
-                  : AppColors.brownSecondary.withValues(alpha: .8),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showDeleteDialog(String postId) {
     showDialog(

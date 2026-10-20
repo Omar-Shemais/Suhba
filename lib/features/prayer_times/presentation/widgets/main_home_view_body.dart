@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islamic_app/core/constants/app_colors.dart';
 import 'package:islamic_app/core/constants/app_text_styles.dart';
 import '../cubit/prayer_cubit.dart';
 import '../widgets/features_grid_section.dart';
@@ -87,6 +88,10 @@ class MainHomeViewBody extends StatelessWidget {
         return RefreshIndicator(
           onRefresh: () => context.read<PrayerCubit>().refreshPrayerTimes(),
           child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            cacheExtent: 1000,
             slivers: [
               SliverToBoxAdapter(
                 child: Column(
@@ -112,30 +117,50 @@ class MainHomeViewBody extends StatelessWidget {
                       enHijriDate: loadedData.prayerTimes.hijriDateEn,
                     ),
 
-                    SizedBox(height: 16.h),
-
-                    // Features Grid
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0.r),
-                      child: FeaturesGridSection(),
-                    ),
-
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 14.h),
 
                     // Title
                     Padding(
-                      padding: EdgeInsets.all(16.w),
-                      child: Text(
-                        "prayer_times".tr(),
-                        style: AppTextStyles.subHead,
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 3.5.w,
+                            height: 16.h,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            "prayer_times".tr(),
+                            style: AppTextStyles.subHead.copyWith(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
+                    SizedBox(height: 10.h),
+
+                    // Prayer Times List (وضعناها في المكان العلوي بحجم مصغر وأنيق)
+                    PrayerTimesList(prayers: loadedData.prayers),
+
+                    SizedBox(height: 18.h),
+
+                    // Features Grid (القرآن، الحديث، الأذكار، الراديو، القبلة، الأدعية... نزلت للأسفل)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0.r),
+                      child: const FeaturesGridSection(),
+                    ),
+
+                    SizedBox(height: 20.h),
                   ],
                 ),
               ),
-
-              // Prayer Times List
-              PrayerTimesList(prayers: loadedData.prayers),
 
               SliverToBoxAdapter(child: SizedBox(height: 80.h)),
             ],

@@ -6,7 +6,14 @@ class QiblaLoading extends QiblaState {}
 
 class QiblaSuccess extends QiblaState {
   final double angle;
-  QiblaSuccess(this.angle);
+  final double latitude;
+  final double longitude;
+
+  QiblaSuccess({
+    required this.angle,
+    required this.latitude,
+    required this.longitude,
+  });
 }
 
 class QiblaFailure extends QiblaState {

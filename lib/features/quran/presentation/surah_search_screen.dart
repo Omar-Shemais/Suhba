@@ -166,6 +166,12 @@ class _QuranSearchScreenState extends State<QuranSearchScreen> {
               }
 
               return ListView.separated(
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                cacheExtent: 1200,
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: true,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,

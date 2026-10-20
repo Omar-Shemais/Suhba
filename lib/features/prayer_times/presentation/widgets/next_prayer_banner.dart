@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
@@ -7,7 +8,7 @@ import 'package:islamic_app/core/constants/app_text_styles.dart';
 import 'package:islamic_app/core/constants/assets.dart';
 import '../../data/models/prayer_times_model.dart';
 
-class NextPrayerBanner extends StatelessWidget {
+class NextPrayerBanner extends StatefulWidget {
   final PrayerInfo prayer;
   final String title;
 
@@ -18,8 +19,45 @@ class NextPrayerBanner extends StatelessWidget {
   });
 
   @override
+  State<NextPrayerBanner> createState() => _NextPrayerBannerState();
+}
+
+class _NextPrayerBannerState extends State<NextPrayerBanner> {
+  late DateTime _currentTime;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentTime = DateTime.now();
+    // تحديث الساعة الحقيقية كل ثانية في الوقت الفعلي
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) {
+        setState(() {
+          _currentTime = DateTime.now();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+    // حساب الساعة الحالية بنظام 12 ساعة متوافقة بدقة مع ساعة الهاتف الحقيقية
+    int hour = _currentTime.hour % 12;
+    if (hour == 0) hour = 12;
+    final hours = hour.toString().padLeft(2, '0');
+    final minutes = _currentTime.minute.toString().padLeft(2, '0');
+    final period = _currentTime.hour >= 12 ? 'PM' : 'AM';
+    final periodAr = _currentTime.hour >= 12 ? 'م' : 'ص';
 
     return Container(
       height: 235.h,
@@ -60,7 +98,7 @@ class NextPrayerBanner extends StatelessWidget {
                 const SizedBox(width: 48),
                 Expanded(
                   child: Text(
-                    title,
+                    widget.title,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.headline,
                   ),
@@ -75,6 +113,7 @@ class NextPrayerBanner extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
+                // عرض الساعة الحقيقية الحالية
                 Positioned(
                   top: -15.h,
                   left: 0,
@@ -83,10 +122,11 @@ class NextPrayerBanner extends StatelessWidget {
                     child: Row(
                       textDirection: TextDirection.ltr,
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           textDirection: TextDirection.ltr,
-                          prayer.hours,
+                          hours,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.timeText.copyWith(
                             color: AppColors.secondaryColor,
@@ -94,19 +134,31 @@ class NextPrayerBanner extends StatelessWidget {
                         ),
                         SizedBox(width: 4.w),
                         Icon(
-                          Icons.nightlight_round,
+                          _currentTime.hour >= 6 && _currentTime.hour < 18
+                              ? Icons.wb_sunny_rounded
+                              : Icons.nightlight_round,
                           color: AppColors.primaryColor,
                           size: 28.sp,
                         ),
                         SizedBox(width: 4.w),
-
                         Text(
                           textDirection: TextDirection.ltr,
-
-                          prayer.minutes,
+                          minutes,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.timeText.copyWith(
                             color: AppColors.secondaryColor,
+                          ),
+                        ),
+                        SizedBox(width: 6.w),
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: Text(
+                            isArabic ? periodAr : period,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.secondaryColor,
+                            ),
                           ),
                         ),
                       ],

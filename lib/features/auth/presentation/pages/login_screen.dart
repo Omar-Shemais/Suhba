@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:islamic_app/features/auth/presentation/widgets/apple_sign_In_button.dart';
+import 'package:islamic_app/features/auth/presentation/widgets/apple_sign_in_button.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../../../../../core/routes/app_routes.dart';
@@ -14,7 +14,12 @@ import '../widgets/auth_button.dart';
 import '../widgets/google_sign_in_button.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final bool showBackButton;
+
+  const LoginScreen({
+    super.key,
+    this.showBackButton = true,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -63,6 +68,76 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleAppleSignIn() {
     context.read<AuthCubit>().signInWithApple();
+  }
+
+  void _handleForgotPassword() {
+    final emailCtrl = TextEditingController(text: _emailController.text.trim());
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'reset_password'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'enter_email_for_password_reset'.tr(),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailCtrl,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'email'.tr(),
+                hintText: 'enter_email'.tr(),
+                prefixIcon: const Icon(Icons.email_outlined),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: Text('cancel'.tr()),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.goldenPrimary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () async {
+              final email = emailCtrl.text.trim();
+              if (email.isEmpty) return;
+              Navigator.pop(dialogCtx);
+              final success = await context.read<AuthCubit>().sendPasswordResetEmail(email);
+              if (success && mounted) {
+                _showSnackBar(
+                  context,
+                  'success'.tr(),
+                  'password_reset_sent'.tr(),
+                  ContentType.success,
+                );
+              }
+            },
+            child: Text('send_reset_link'.tr()),
+          ),
+        ],
+      ),
+    );
   }
 
   void _navigateToRegister() {
@@ -176,8 +251,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SizedBox(
-                            height: 60,
+                          SizedBox(
+                            height: widget.showBackButton ? 60 : 20,
                           ), // Space for back button area
                           Text(
                             'welcome_back'.tr(),
@@ -328,7 +403,29 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
 
-                          const SizedBox(height: 24),
+                          // Forgot Password
+                          Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: TextButton(
+                              onPressed: isLoading ? null : _handleForgotPassword,
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 4,
+                                ),
+                              ),
+                              child: Text(
+                                'forgot_password'.tr(),
+                                style: TextStyle(
+                                  color: AppColors.goldenPrimary,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
 
                           // Sign In Button
                           AuthButton(
@@ -339,8 +436,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           const SizedBox(height: 24),
 
-                          // 🚫 DISABLED: Social Sign-In temporarily disabled on iOS
-                          /* 
                           // Divider
                           Row(
                             children: [
@@ -368,22 +463,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             ],
                           ),
 
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 20),
 
-                          // Social Login
+                          // Google Sign-In (Gmail)
                           GoogleSignInButton(
                             onPressed: _handleGoogleSignIn,
                             isLoading: isLoading,
                           ),
 
+                          // If iOS, show Apple Sign-In
                           if (Platform.isIOS) ...[
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             AppleSignInButton(
                               onPressed: _handleAppleSignIn,
                               isLoading: isLoading,
                             ),
                           ],
-                          */
                           const SizedBox(height: 32),
 
                           // Sign Up Link
@@ -416,20 +511,21 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               // --- 3. Custom Floating Back Button (Top Right/Left) ---
-              Align(
-                alignment: AlignmentDirectional.topStart,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: theme.colorScheme.onSurface,
-                      size: 28,
+              if (widget.showBackButton)
+                Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: theme.colorScheme.onSurface,
+                        size: 28,
+                      ),
+                      onPressed: _handleBackNavigation,
                     ),
-                    onPressed: _handleBackNavigation,
                   ),
                 ),
-              ),
             ],
           ),
         ),

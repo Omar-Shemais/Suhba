@@ -5,6 +5,7 @@ import '../../data/models/prayer_times_model.dart';
 import '../../data/repositories/prayer_repository.dart';
 import 'package:islamic_app/core/services/location_service.dart';
 import 'package:islamic_app/core/services/azan_notification_service.dart';
+import 'package:islamic_app/features/azkar/services/azkar_notification_service.dart';
 
 part 'prayer_state.dart';
 
@@ -321,6 +322,8 @@ class PrayerCubit extends Cubit<PrayerState> {
       });
 
       await notificationService.schedulePrayerNotifications(times);
+      // ✅ مزامنة مواعيد أذكار الصباح والمساء تلقائياً مع الشروق والغروب وفجر وعصر اليوم
+      await AzkarNotificationService().syncWithPrayerTimes(model);
 
       // ✅ التحقق من الإشعارات المجدولة
       final pending = await notificationService.getPendingNotifications();

@@ -1,139 +1,45 @@
 {
   "project_info": {
-    "project_number": "49397939337",
-    "project_id": "islamic-app-18842",
-    "storage_bucket": "islamic-app-18842.firebasestorage.app"
+    "project_number": "473520189953",
+    "project_id": "suhbah-ffd5f",
+    "storage_bucket": "suhbah-ffd5f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:49397939337:android:687e75a0f3a76a30389a58",
+        "mobilesdk_app_id": "1:473520189953:android:913ba2e064b9d7f930c600",
         "android_client_info": {
-          "package_name": "com.example.islamic_app"
+          "package_name": "com.seg.suhbah"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "49397939337-ju8facqavj5vtn2etu7rruammdu1dsad.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.islamic_app",
-            "certificate_hash": "8135a9c2dfad0a2b7c848449c988613fc125acd6"
-          }
-        },
-        {
-          "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBrJD2u5kJ8FRjW_bXaCs2fdkCBoWscMy4"
+          "current_key": "AIzaSyAfeRHDZhfUOM_v70pUNx7YxUoyAtJAFKs"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "49397939337-cm6dtvar56lol281ge643rk1376u05od.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.zbooma.suhbah"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:49397939337:android:5fcef6d8529926cc389a58",
-        "android_client_info": {
-          "package_name": "com.example.suhba"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBrJD2u5kJ8FRjW_bXaCs2fdkCBoWscMy4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "49397939337-cm6dtvar56lol281ge643rk1376u05od.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.zbooma.suhbah"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:49397939337:android:72c6bd3b7a860560389a58",
+        "mobilesdk_app_id": "1:473520189953:android:70d4778a5055d58730c600",
         "android_client_info": {
           "package_name": "com.zbooma.suhbah"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "49397939337-2g36dujkt29j4l8i209ogn4dq5ndpdi6.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.zbooma.suhbah",
-            "certificate_hash": "435b0bdfa7da5049ba90b1848815dae22744b32b"
-          }
-        },
-        {
-          "client_id": "49397939337-ok7d3ab5gm547jepq5sr1q5p2eimpgg4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.zbooma.suhbah",
-            "certificate_hash": "8135a9c2dfad0a2b7c848449c988613fc125acd6"
-          }
-        },
-        {
-          "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBrJD2u5kJ8FRjW_bXaCs2fdkCBoWscMy4"
+          "current_key": "AIzaSyAfeRHDZhfUOM_v70pUNx7YxUoyAtJAFKs"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "49397939337-8hvgsi9h9kj4fdp9vit1btgkkjuvule0.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "49397939337-cm6dtvar56lol281ge643rk1376u05od.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.zbooma.suhbah"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

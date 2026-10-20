@@ -32,11 +32,14 @@ class AyahListHandler extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             sliver: SliverList.builder(
               itemCount: state.surah.verses.length,
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: true,
               itemBuilder: (context, index) {
                 final ayah = state.surah.verses[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: AyahCard(
+                    key: ValueKey('ayah_${ayah.id}'),
                     ayah: ayah,
                     surahId: state.surah.id,
                     surahName: state.surah.name,

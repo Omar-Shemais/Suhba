@@ -19,8 +19,14 @@ abstract class AuthRepository {
   /// Sign in with Google
   Future<Either<Failure, UserModel>> signInWithGoogle();
 
+  /// Sign in with Facebook
+  Future<Either<Failure, UserModel>> signInWithFacebook();
+
   /// Sign in with Apple
   Future<Either<Failure, UserModel>> signInWithApple();
+
+  /// Send password reset email
+  Future<Either<Failure, void>> sendPasswordResetEmail(String email);
 
   /// Complete Google Sign In with Firebase after confirmation
   Future<Either<Failure, UserModel>> completeGoogleSignIn();

@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Certificates and sensitive keys
+*.pem
+*.jks
+*.keystore
+key.properties

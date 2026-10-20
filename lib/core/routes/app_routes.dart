@@ -13,6 +13,10 @@ class AppRoutes {
   static const String tasbeh = '/tasbeh';
 
   static const String azkar = '/azkar';
+  static const String morningAzkar = '/azkar/morning';
+  static const String eveningAzkar = '/azkar/evening';
+  static const String afterPrayerAzkar = '/azkar/after-prayer';
+  static const String duaa = '/duaa';
   static const String prayerTimes = '/prayer-times';
   static const String qibla = '/qibla';
   static const String tasbeeh = '/tasbeeh';

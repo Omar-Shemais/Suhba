@@ -14,6 +14,7 @@ class AssetsData {
   static const homeIcon = 'assets/icons/home.svg';
 
   static const azkarIcon = 'assets/icons/duaa.svg';
+  static const duaaIcon = 'assets/icons/duaa.svg';
 
   static const tasbihIcon = 'assets/icons/tasbih.svg';
 

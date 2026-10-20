@@ -13,6 +13,10 @@ class SurahDetailViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      cacheExtent: 1500,
       slivers: [
         // App Bar
         SliverToBoxAdapter(

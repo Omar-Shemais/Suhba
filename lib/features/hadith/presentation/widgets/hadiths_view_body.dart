@@ -140,6 +140,12 @@ class _HadithsViewBodyState extends State<HadithsViewBody> {
 
                 return ListView.builder(
                   controller: _scrollController,
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  cacheExtent: 1500,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: true,
                   itemCount: state.hadiths.length + (state.hasMore ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == state.hadiths.length) {

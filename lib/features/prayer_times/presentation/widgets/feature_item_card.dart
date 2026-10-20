@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/constants/app_text_styles.dart';
 
 class FeatureItemCard extends StatelessWidget {
   final String title;
@@ -36,8 +35,11 @@ class FeatureItemCard extends StatelessWidget {
             // Title
             Text(
               title,
-              style: AppTextStyles.textstyle14.copyWith(
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,

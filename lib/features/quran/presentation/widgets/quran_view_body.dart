@@ -65,10 +65,17 @@ class QuranViewBody extends StatelessWidget {
                   final surahs = state.surahs;
 
                   return ListView.builder(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    cacheExtent: 1200,
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: true,
                     itemCount: surahs.length,
                     itemBuilder: (context, index) {
                       final surah = surahs[index];
                       return SurahListItem(
+                        key: ValueKey('surah_${surah.id}'),
                         surah: surah,
                         onTap: () {
                           Navigator.push(

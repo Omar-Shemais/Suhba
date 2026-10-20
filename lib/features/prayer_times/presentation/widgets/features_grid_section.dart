@@ -26,6 +26,7 @@ class FeaturesGridSection extends StatelessWidget {
       const Color(0xFFD4A056),
       const Color(0xFF4A6FA5),
       const Color(0xFF5C8E5C),
+      const Color(0xFFE5A93C),
     ];
 
     final iconColorsDark = [
@@ -36,8 +37,10 @@ class FeaturesGridSection extends StatelessWidget {
       const Color(0xFFFFD54F),
       const Color(0xFF64B5F6),
       const Color(0xFF81C784),
+      const Color(0xFFFFB74D),
     ];
     final features = [
+      // Row 1
       // 1- Mushaf
       FeatureItemData(
         title: "Mushaf".tr(),
@@ -45,23 +48,10 @@ class FeaturesGridSection extends StatelessWidget {
           AssetsData.quranIcon,
           width: 24.w,
           height: 24.h,
-
           color: isDark ? iconColorsDark[0] : iconColorsLight[0],
         ),
         onTap: () => GoRouter.of(context).push(AppRoutes.mushaf),
       ),
-      // 5- Qibla
-      FeatureItemData(
-        title: "qibla".tr(),
-        icon: SvgPicture.asset(
-          AssetsData.qiblaIcon,
-          width: 24.w,
-          height: 24.h,
-          color: isDark ? iconColorsDark[4] : iconColorsLight[4],
-        ),
-        onTap: () => GoRouter.of(context).push(AppRoutes.qibla),
-      ),
-
       // 2- Hadith
       FeatureItemData(
         title: "hadith".tr(),
@@ -73,18 +63,6 @@ class FeaturesGridSection extends StatelessWidget {
         ),
         onTap: () => GoRouter.of(context).push(AppRoutes.hadith),
       ),
-      // 7- Nearby Masjed
-      FeatureItemData(
-        title: "nearby_masjed".tr(),
-        icon: SvgPicture.asset(
-          AssetsData.mosqurLocationIcon,
-          width: 24.w,
-          height: 24.h,
-          color: isDark ? iconColorsDark[6] : iconColorsLight[6],
-        ),
-        onTap: () => GoRouter.of(context).push(AppRoutes.nearestMasjedScreen),
-      ),
-
       // 3- Azkar
       FeatureItemData(
         title: "Azkar".tr(),
@@ -98,8 +76,42 @@ class FeaturesGridSection extends StatelessWidget {
           GoRouter.of(context).push(AppRoutes.azkar);
         },
       ),
+      // 4- Radio
+      FeatureItemData(
+        title: "radio".tr(),
+        icon: SvgPicture.asset(
+          AssetsData.radioIcon,
+          width: 24.w,
+          height: 24.h,
+          color: isDark ? iconColorsDark[5] : iconColorsLight[5],
+        ),
+        onTap: () => GoRouter.of(context).push(AppRoutes.radio),
+      ),
 
-      // 4- Tasbih
+      // Row 2
+      // 5- Qibla
+      FeatureItemData(
+        title: "qibla".tr(),
+        icon: SvgPicture.asset(
+          AssetsData.qiblaIcon,
+          width: 24.w,
+          height: 24.h,
+          color: isDark ? iconColorsDark[4] : iconColorsLight[4],
+        ),
+        onTap: () => GoRouter.of(context).push(AppRoutes.qibla),
+      ),
+      // 6- Nearby Masjed
+      FeatureItemData(
+        title: "nearby_masjed".tr(),
+        icon: SvgPicture.asset(
+          AssetsData.mosqurLocationIcon,
+          width: 24.w,
+          height: 24.h,
+          color: isDark ? iconColorsDark[6] : iconColorsLight[6],
+        ),
+        onTap: () => GoRouter.of(context).push(AppRoutes.nearestMasjedScreen),
+      ),
+      // 7- Tasbih
       FeatureItemData(
         title: "Tasbih".tr(),
         icon: SvgPicture.asset(
@@ -112,35 +124,33 @@ class FeaturesGridSection extends StatelessWidget {
           GoRouter.of(context).push(AppRoutes.tasbeeh);
         },
       ),
-
-      // 6- Radio
+      // 8- Duaa (مباشرة تحت الراديو)
       FeatureItemData(
-        title: "radio".tr(),
+        title: "duaa".tr(),
         icon: SvgPicture.asset(
-          AssetsData.radioIcon,
+          AssetsData.duaaIcon,
           width: 24.w,
           height: 24.h,
-          color: isDark ? iconColorsDark[5] : iconColorsLight[5],
+          color: isDark ? iconColorsDark[7] : iconColorsLight[7],
         ),
-        onTap: () => GoRouter.of(context).push(AppRoutes.radio),
+        onTap: () => GoRouter.of(context).push(AppRoutes.duaa),
       ),
     ];
 
     return Container(
-      height: 200.h,
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: isDark ? AppColors.primaryDarkColor : AppColors.containerColor,
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: GridView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 10.w,
-          crossAxisSpacing: 10.h,
-          childAspectRatio: 0.85,
+          crossAxisCount: 4,
+          mainAxisSpacing: 10.h,
+          crossAxisSpacing: 4.w,
+          childAspectRatio: 0.88,
         ),
         itemCount: features.length,
         itemBuilder: (context, index) {

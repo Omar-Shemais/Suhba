@@ -127,9 +127,11 @@ class AzanNotificationService {
 
       debugPrint('🔔 بدء جدولة الإشعارات...');
 
-      // ✅ إلغاء الإشعارات القديمة
-      await _notifications.cancelAll();
-      debugPrint('✅ تم إلغاء الإشعارات القديمة');
+      // ✅ إلغاء إشعارات الصلوات السابقة فقط حتى لا تلغي تنبيهات الأذكار
+      for (int id = 1; id <= 5; id++) {
+        await _notifications.cancel(id);
+      }
+      debugPrint('✅ تم إلغاء إشعارات الصلوات السابقة');
 
       final prayers = {
         'fajr': {'name_ar': 'الفجر', 'name_en': 'Fajr', 'id': 1, 'emoji': '🌅'},

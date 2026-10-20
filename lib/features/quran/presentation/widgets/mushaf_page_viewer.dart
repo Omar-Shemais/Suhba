@@ -92,7 +92,7 @@ class _MushafPageViewerState extends State<MushafPageViewer> {
               controller: _pageController,
               physics: _isZooming
                   ? const NeverScrollableScrollPhysics()
-                  : const PageScrollPhysics(),
+                  : const BouncingScrollPhysics(parent: PageScrollPhysics()),
               itemCount: widget.pages.length,
               onPageChanged: (index) {
                 context.read<MushafCubit>().goToPage(index);

@@ -52,23 +52,24 @@ class _MyAppState extends State<MyApp> {
 
     // 2. Initialize UI dependencies (Router, Cubits)
     if (mounted) {
-      setState(() {
-        // Wrap in try-catch in case GetIt failed completely
-        try {
-          _authCubit = getIt<AuthCubit>();
-          _appRouter = AppRouter(_authCubit!);
-          _isReady = true; // App is now ready to switch to Router
-        } catch (e) {
-          debugPrint('❌ [MyApp] Critical UI Dep Failure: $e');
-          // Capture the error to show in UI
-          _initError = e.toString();
-          _isReady = false; // Not ready
+      try {
+        _authCubit = getIt<AuthCubit>();
+        // Check auth status from cache before building router
+        await _authCubit!.checkAuthStatus();
+        _appRouter = AppRouter(_authCubit!);
+        if (mounted) {
+          setState(() {
+            _isReady = true; // App is now ready to switch to Router
+          });
         }
-      });
-
-      // Check auth status if we are ready
-      if (_isReady) {
-        _authCubit?.checkAuthStatus();
+      } catch (e) {
+        debugPrint('❌ [MyApp] Critical UI Dep Failure: $e');
+        if (mounted) {
+          setState(() {
+            _initError = e.toString();
+            _isReady = false; // Not ready
+          });
+        }
       }
     }
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../data/models/user_model.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../../core/utils/image_helper.dart';
 import '../../../community/community_injector.dart' as community_di;
@@ -30,11 +31,40 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       if (user != null) {
+        UserModel userToEmit = user;
+        // If we currently have an authenticated user with photoBase64, preserve it
+        if (state is AuthAuthenticated) {
+          final currentUser = (state as AuthAuthenticated).user;
+          if (user.photoBase64 == null && currentUser.photoBase64 != null) {
+            userToEmit = user.copyWith(photoBase64: currentUser.photoBase64);
+          }
+        } else {
+          final cachedUser = _authRepository.getCurrentUser();
+          if (cachedUser != null &&
+              cachedUser.id == user.id &&
+              cachedUser.photoBase64 != null) {
+            userToEmit = user.copyWith(photoBase64: cachedUser.photoBase64);
+          }
+        }
+
         debugPrint(
-          '✅ [AuthCubit] Emitting AuthAuthenticated from Firebase listener',
+          '✅ [AuthCubit] Emitting AuthAuthenticated from Firebase listener: ${userToEmit.id}',
         );
-        emit(AuthAuthenticated(user));
+        emit(AuthAuthenticated(userToEmit));
       } else {
+        // Firebase user is null (can happen during initial startup/cold boot or offline)
+        // DO NOT log out if there is a valid cached user session!
+        final cachedUser = _authRepository.getCurrentUser();
+        if (cachedUser != null) {
+          debugPrint(
+            '🛡️ [AuthCubit] Firebase user is null, but cached user found (${cachedUser.id}). Preserving session.',
+          );
+          if (state is! AuthAuthenticated) {
+            emit(AuthAuthenticated(cachedUser));
+          }
+          return;
+        }
+
         debugPrint(
           '🚪 [AuthCubit] Emitting AuthUnauthenticated from Firebase listener',
         );
@@ -50,7 +80,7 @@ class AuthCubit extends Cubit<AuthState> {
       final user = _authRepository.getCurrentUser();
 
       if (user != null) {
-        debugPrint('🔍 [AuthCubit] User found in cache: ${user.id}');
+        debugPrint('🔍 [AuthCubit] User found in cache/remote: ${user.id}');
         debugPrint(
           '📸 [AuthCubit] Cached photo length: ${user.photoBase64?.length ?? 0}',
         );
@@ -60,9 +90,11 @@ class AuthCubit extends Cubit<AuthState> {
         debugPrint('🔄 [AuthCubit] Refreshing user data from Firestore...');
         _refreshUserFromFirestore(user.id);
       } else {
+        debugPrint('ℹ️ [AuthCubit] No user found in cache or remote');
         emit(const AuthUnauthenticated());
       }
     } catch (e) {
+      debugPrint('❌ [AuthCubit] Error in checkAuthStatus: $e');
       emit(const AuthUnauthenticated());
     }
   }
@@ -159,6 +191,38 @@ class AuthCubit extends Cubit<AuthState> {
       debugPrint('❌ [AuthCubit] Google Sign In failed: ${failure.message}');
       emit(AuthError(failure.message));
     }
+  }
+
+  Future<void> signInWithFacebook() async {
+    debugPrint('🔵 [AuthCubit] Starting Facebook Sign In');
+    emit(const AuthLoading());
+
+    final result = await _authRepository.signInWithFacebook();
+
+    if (result.isRight()) {
+      final user = result.getOrElse(() => throw Exception('User not found'));
+      debugPrint('✅ [AuthCubit] Facebook Sign In success');
+      await _syncUserToSupabase();
+      emit(AuthAuthenticated(user));
+    } else {
+      final failure = result.fold(
+        (f) => f,
+        (r) => throw Exception('Unexpected state'),
+      );
+      debugPrint('❌ [AuthCubit] Facebook Sign In failed: ${failure.message}');
+      emit(AuthError(failure.message));
+    }
+  }
+
+  Future<bool> sendPasswordResetEmail(String email) async {
+    final result = await _authRepository.sendPasswordResetEmail(email);
+    return result.fold(
+      (failure) {
+        emit(AuthError(failure.message));
+        return false;
+      },
+      (_) => true,
+    );
   }
 
   Future<void> signInWithApple() async {
