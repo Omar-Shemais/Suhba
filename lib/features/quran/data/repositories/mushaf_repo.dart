@@ -1,37 +1,42 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:islamic_app/core/constants/api_constance.dart';
+import 'package:islamic_app/core/network/dio_client.dart';
 import '../models/mushaf_models.dart';
-import '../models/quran_models.dart';
 
 class MushafRepository {
   List<MushafVerse>? _cachedVerses;
 
   Future<List<MushafVerse>> loadFullQuran() async {
-    if (_cachedVerses != null) return _cachedVerses!;
+    if (_cachedVerses != null && _cachedVerses!.isNotEmpty) {
+      return _cachedVerses!;
+    }
 
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/data/quran_en.json',
+      final response = await DioClient.getData(
+        endPoint: '${ApiConstance.quranBaseUrl}${ApiConstance.completeQuran}',
       );
-      final List<dynamic> jsonData = json.decode(jsonString);
 
+      final surahs = response.data['data']['surahs'] as List<dynamic>;
       final List<MushafVerse> allVerses = [];
 
-      for (var surahJson in jsonData) {
-        final surah = SurahModel.fromJson(surahJson);
+      for (var surahJson in surahs) {
+        final surahMap = surahJson as Map<String, dynamic>;
+        final int surahId = surahMap['number'] as int;
+        final String surahName = surahMap['englishName'] as String;
+        final String surahNameArabic = surahMap['name'] as String;
+        final ayahs = surahMap['ayahs'] as List<dynamic>;
 
-        for (int i = 0; i < surah.verses.length; i++) {
-          final verse = surah.verses[i];
-
+        for (int i = 0; i < ayahs.length; i++) {
+          final ayah = ayahs[i] as Map<String, dynamic>;
           allVerses.add(
             MushafVerse(
-              surahId: surah.id,
-              surahName: surah.transliteration,
-              surahNameArabic: surah.name,
-              verseId: verse.id,
-              textArabic: verse.text,
-              textEnglish: verse.translation,
+              surahId: surahId,
+              surahName: surahName,
+              surahNameArabic: surahNameArabic,
+              verseId: (ayah['numberInSurah'] ?? (i + 1)) as int,
+              textArabic: (ayah['text'] as String?)?.trim() ?? '',
+              textEnglish: '',
               isNewSurah: i == 0,
+              pageNumber: ayah['page'] as int?,
             ),
           );
         }
@@ -44,10 +49,24 @@ class MushafRepository {
     }
   }
 
-  // ✅ محاكاة المصحف الحقيقي - 604 صفحة
+  // ✅ تقسيم المصحف - باستخدام أرقام الصفحات الحقيقية من الـ API (604 صفحات)
   List<MushafPage> paginateVerses(List<MushafVerse> verses) {
+    if (verses.isNotEmpty && verses.any((v) => v.pageNumber != null)) {
+      final Map<int, List<MushafVerse>> pageMap = {};
+      for (var verse in verses) {
+        final pageNum = verse.pageNumber ?? 1;
+        pageMap.putIfAbsent(pageNum, () => []).add(verse);
+      }
+
+      final sortedPages = pageMap.keys.toList()..sort();
+      return sortedPages
+          .map((p) => MushafPage(pageNumber: p, verses: pageMap[p]!))
+          .toList();
+    }
+
     const int totalRealPages = 604; // عدد صفحات المصحف الحقيقي
     final int totalVerses = verses.length; // إجمالي الآيات (6236)
+
 
     // حساب متوسط الآيات لكل صفحة
     final double averageVersesPerPage = totalVerses / totalRealPages;

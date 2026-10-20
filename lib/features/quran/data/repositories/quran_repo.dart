@@ -1,5 +1,5 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:islamic_app/core/constants/api_constance.dart';
+import 'package:islamic_app/core/network/dio_client.dart';
 import '../models/quran_models.dart';
 
 abstract class QuranRepository {
@@ -10,43 +10,69 @@ abstract class QuranRepository {
 
 class QuranRepositoryImpl implements QuranRepository {
   List<SurahModel>? _cachedSurahs;
+  final Map<int, SurahModel> _cachedSurahDetails = {};
 
-  Future<List<SurahModel>> _loadQuranData() async {
-    if (_cachedSurahs != null) return _cachedSurahs!;
+  @override
+  Future<List<SurahModel>> getAllSurahs() async {
+    if (_cachedSurahs != null && _cachedSurahs!.isNotEmpty) {
+      return _cachedSurahs!;
+    }
 
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/data/quran_en.json',
+      final response = await DioClient.getData(
+        endPoint: '${ApiConstance.quranBaseUrl}${ApiConstance.surah}',
       );
-      final List<dynamic> jsonData = json.decode(jsonString);
 
+      final List<dynamic> jsonData = response.data['data'] as List<dynamic>;
       _cachedSurahs = jsonData
-          .map((json) => SurahModel.fromJson(json))
+          .map((json) => SurahModel.fromApiSurah(json as Map<String, dynamic>))
           .toList();
       return _cachedSurahs!;
     } catch (e) {
-      throw Exception('Failed to load Quran data: $e');
+      throw Exception('Failed to load Quran surahs: $e');
     }
   }
 
   @override
-  Future<List<SurahModel>> getAllSurahs() async {
-    return await _loadQuranData();
-  }
-
-  @override
   Future<SurahModel> getSurahById(int id) async {
-    final surahs = await _loadQuranData();
-    return surahs.firstWhere(
-      (surah) => surah.id == id,
-      orElse: () => throw Exception('Surah not found'),
-    );
+    if (_cachedSurahDetails.containsKey(id) &&
+        _cachedSurahDetails[id]!.verses.isNotEmpty) {
+      return _cachedSurahDetails[id]!;
+    }
+
+    try {
+      final response = await DioClient.getData(
+        endPoint:
+            '${ApiConstance.quranBaseUrl}${ApiConstance.surah}/$id/editions/quran-uthmani,en.sahih',
+      );
+
+      final editions = response.data['data'] as List<dynamic>;
+      final surah = SurahModel.fromApiEditions(editions);
+      _cachedSurahDetails[id] = surah;
+      return surah;
+    } catch (_) {
+      try {
+        final response = await DioClient.getData(
+          endPoint: '${ApiConstance.quranBaseUrl}${ApiConstance.surah}/$id',
+        );
+        final surahData = response.data['data'] as Map<String, dynamic>;
+        final ayahs = (surahData['ayahs'] as List<dynamic>)
+            .map((a) => VerseModel.fromApiAyah(a as Map<String, dynamic>))
+            .toList();
+        final surah = SurahModel.fromApiSurah(surahData, ayahs);
+        _cachedSurahDetails[id] = surah;
+        return surah;
+      } catch (e) {
+        throw Exception('Failed to load Surah $id: $e');
+      }
+    }
   }
 
   @override
   Future<List<SurahModel>> searchSurahs(String query) async {
-    final surahs = await _loadQuranData();
-    final lowerQuery = query.toLowerCase();
+    final surahs = await getAllSurahs();
+    final lowerQuery = query.toLowerCase().trim();
+    if (lowerQuery.isEmpty) return surahs;
 
     return surahs.where((surah) {
       return surah.name.toLowerCase().contains(lowerQuery) ||
@@ -55,3 +81,4 @@ class QuranRepositoryImpl implements QuranRepository {
     }).toList();
   }
 }
+
