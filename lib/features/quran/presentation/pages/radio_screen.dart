@@ -5,33 +5,20 @@ import '../cubit/audio_cubit.dart';
 import '../widgets/audio_error_listener.dart';
 import '../widgets/radio_view_body.dart';
 
-class RadioScreen extends StatefulWidget {
+class RadioScreen extends StatelessWidget {
   const RadioScreen({super.key});
 
   @override
-  State<RadioScreen> createState() => _RadioScreenState();
-}
-
-class _RadioScreenState extends State<RadioScreen> {
-  late AudioCubit _audioCubit;
-
-  @override
-  void initState() {
-    super.initState();
-    _audioCubit = getIt<AudioCubit>();
-  }
-
-  @override
-  void dispose() {
-    _audioCubit.stop();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return BlocProvider.value(
       value: getIt<AudioCubit>(),
-      child: AudioErrorListener(child: const Scaffold(body: RadioViewBody())),
+      child: AudioErrorListener(
+        child: Scaffold(
+          backgroundColor: isDark ? const Color(0xFF1E2125) : const Color(0xFFFAF5ED),
+          body: const RadioViewBody(),
+        ),
+      ),
     );
   }
 }

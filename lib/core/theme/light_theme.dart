@@ -274,15 +274,21 @@ ThemeData lightTheme = ThemeData(
   switchTheme: SwitchThemeData(
     thumbColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return AppColors.goldenPrimary;
+        return const Color(0xFFC7A87A);
       }
-      return AppColors.brownSecondary;
+      return const Color(0xFF8C7A6B);
     }),
     trackColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return AppColors.goldenPrimary.withValues(alpha: 0.5);
+        return const Color(0xFF143427);
       }
-      return AppColors.dividerColor;
+      return const Color(0xFFE5DCD1);
+    }),
+    trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return Colors.transparent;
+      }
+      return const Color(0xFFC7B9A9);
     }),
   ),
 
@@ -301,9 +307,12 @@ ThemeData lightTheme = ThemeData(
 
   // Dialog Theme
   dialogTheme: DialogThemeData(
-    backgroundColor: AppColors.whiteColor,
+    backgroundColor: const Color(0xFFFCFAF7),
     elevation: 8,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: const BorderSide(color: Color(0xFFEADBCE), width: 1),
+    ),
     titleTextStyle: const TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.bold,
@@ -315,6 +324,12 @@ ThemeData lightTheme = ThemeData(
       color: AppColors.brownSecondary,
       fontFamily: 'poppins',
     ),
+  ),
+
+  // Bottom Sheet Theme
+  bottomSheetTheme: const BottomSheetThemeData(
+    backgroundColor: Color(0xFFFAF5ED),
+    surfaceTintColor: Colors.transparent,
   ),
 
   // Snackbar Theme
@@ -349,9 +364,9 @@ ThemeData lightTheme = ThemeData(
 
   // Progress Indicator Theme
   progressIndicatorTheme: const ProgressIndicatorThemeData(
-    color: AppColors.goldenPrimary,
-    linearTrackColor: AppColors.dividerColor,
-    circularTrackColor: AppColors.dividerColor,
+    color: Color(0xFF143427),
+    linearTrackColor: Color(0xFFEADBCE),
+    circularTrackColor: Color(0xFFEADBCE),
   ),
 
   // Slider Theme

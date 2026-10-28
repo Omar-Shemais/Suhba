@@ -6,6 +6,10 @@ class AzkarCubit extends Cubit<AzkarState> {
   AzkarCubit() : super(AzkarInitial());
 
   Future<void> getMorningAzkar() async {
+    if (AzkarRepo.cachedMorning != null) {
+      emit(MorningAzkarSuccess(AzkarRepo.cachedMorning!));
+      return;
+    }
     emit(AzkarLoading());
     final result = await AzkarRepo.getMorningAzkar();
 
@@ -16,6 +20,10 @@ class AzkarCubit extends Cubit<AzkarState> {
   }
 
   Future<void> getEveningAzkar() async {
+    if (AzkarRepo.cachedEvening != null) {
+      emit(EveningAzkarSuccess(AzkarRepo.cachedEvening!));
+      return;
+    }
     emit(AzkarLoading());
     final result = await AzkarRepo.getEveningAzkar();
 
@@ -26,6 +34,10 @@ class AzkarCubit extends Cubit<AzkarState> {
   }
 
   Future<void> getAfterPrayerAzkar() async {
+    if (AzkarRepo.cachedAfterPrayer != null) {
+      emit(AfterPrayerAzkarSuccess(AzkarRepo.cachedAfterPrayer!));
+      return;
+    }
     emit(AzkarLoading());
     final result = await AzkarRepo.getAfterPrayerAzkar();
 

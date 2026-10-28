@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:islamic_app/features/auth/presentation/widgets/apple_sign_In_button.dart';
+import 'package:islamic_app/features/auth/presentation/widgets/apple_sign_in_button.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../../../../../core/routes/app_routes.dart';
@@ -271,8 +271,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                           const SizedBox(height: 24),
 
-                          // 🚫 DISABLED: Social Sign-In temporarily disabled on iOS
-                          /*
+                          // Divider
                           Row(
                             children: [
                               Expanded(
@@ -299,21 +298,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ],
                           ),
 
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 20),
 
+                          // Google Sign-In (Gmail)
                           GoogleSignInButton(
                             onPressed: _handleGoogleSignIn,
                             isLoading: isLoading,
                           ),
 
+                          // If iOS, show Apple Sign-In
                           if (Platform.isIOS) ...[
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             AppleSignInButton(
                               onPressed: _handleAppleSignIn,
                               isLoading: isLoading,
                             ),
                           ],
-                          */
                           const SizedBox(height: 32),
 
                           Row(

@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"islamic-app-18842","appId":"1:49397939337:android:5fcef6d8529926cc389a58","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"islamic-app-18842","configurations":{"android":"1:49397939337:android:5fcef6d8529926cc389a58","ios":"1:49397939337:ios:3deb853c35513acf389a58"}}},"ios":{"default":{"projectId":"islamic-app-18842","appId":"1:49397939337:ios:3deb853c35513acf389a58","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}}}}}
+{
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Suhbah",
+        "supportEmail": "seg.programmer@gmail.com"
+      }
+    }
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "suhbah-ffd5f",
+          "appId": "1:473520189953:android:70d4778a5055d58730c600",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "suhbah-ffd5f",
+          "configurations": {
+            "android": "1:473520189953:android:70d4778a5055d58730c600",
+            "ios": "1:473520189953:ios:63a02f038ec145c230c600"
+          }
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "suhbah-ffd5f",
+          "appId": "1:473520189953:ios:63a02f038ec145c230c600",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      }
+    }
+  }
+}

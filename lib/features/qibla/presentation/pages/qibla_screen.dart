@@ -10,6 +10,8 @@ import '../cubit/qibla_cubit.dart';
 import '../cubit/qibla_states.dart';
 import '../widgets/qibla_compass_widget.dart';
 
+import 'package:geolocator/geolocator.dart';
+
 class QiblaScreen extends StatefulWidget {
   const QiblaScreen({super.key});
 
@@ -17,13 +19,29 @@ class QiblaScreen extends StatefulWidget {
   State<QiblaScreen> createState() => _QiblaScreenState();
 }
 
-class _QiblaScreenState extends State<QiblaScreen> {
+class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
   late final QiblaCubit cubit;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     cubit = QiblaCubit(QiblaRepository())..getQibla();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    cubit.close();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Re-trigger location check when user returns from settings
+      cubit.getQibla();
+    }
   }
 
   @override
@@ -70,23 +88,49 @@ class _QiblaScreenState extends State<QiblaScreen> {
                         ),
                       ),
                       SizedBox(height: 24.h),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          context.read<QiblaCubit>().getQibla();
-                        },
-                        icon: const Icon(Icons.refresh),
-                        label: Text('retry'.tr()),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.goldenPrimary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 16,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              cubit.getQibla();
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: Text('retry'.tr()),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.goldenPrimary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                          SizedBox(width: 12.w),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              await Geolocator.openLocationSettings();
+                            },
+                            icon: const Icon(Icons.settings),
+                            label: const Text('الإعدادات'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.goldenPrimary,
+                              side: const BorderSide(
+                                color: AppColors.goldenPrimary,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
@@ -95,7 +139,13 @@ class _QiblaScreenState extends State<QiblaScreen> {
             }
 
             if (state is QiblaSuccess) {
-              return Center(child: QiblaCompassWidget(qiblaAngle: state.angle));
+              return Center(
+                child: QiblaCompassWidget(
+                  qiblaAngle: state.angle,
+                  latitude: state.latitude,
+                  longitude: state.longitude,
+                ),
+              );
             }
 
             return Center(

@@ -13,10 +13,26 @@ class HadithCubit extends Cubit<HadithState> {
 
   Future<void> loadHadiths({String book = 'all', bool loadMore = false}) async {
     if (!loadMore) {
-      if (isClosed) return; // نتأكد من Cubit مفتوح
-      emit(HadithLoading());
+      if (isClosed) return;
+      currentBook = book;
       currentPage = 1;
       allHadiths.clear();
+
+      // 1. عرض الأحاديث المخزنة محلياً فوراً لمنع شاشة التحميل اللانهائية
+      final cached = repository.getCachedHadiths(book: book);
+      if (cached.isNotEmpty) {
+        allHadiths.addAll(cached);
+        emit(
+          HadithLoaded(
+            hadiths: List.from(allHadiths),
+            total: allHadiths.length,
+            currentPage: 1,
+            hasMore: false,
+          ),
+        );
+      } else {
+        emit(HadithLoading());
+      }
     }
 
     try {
@@ -27,21 +43,34 @@ class HadithCubit extends Cubit<HadithState> {
         limit: 20,
       );
 
-      allHadiths.addAll(response.hadiths);
+      if (!loadMore) {
+        allHadiths.clear();
+      }
+
+      final existingIds = allHadiths.map((h) => h.id).toSet();
+      for (final h in response.hadiths) {
+        if (!existingIds.contains(h.id)) {
+          allHadiths.add(h);
+        }
+      }
+
       final hasMore = allHadiths.length < response.total;
 
       if (isClosed) return;
       emit(
         HadithLoaded(
           hadiths: List.from(allHadiths),
-          total: response.total,
+          total: response.total > allHadiths.length ? response.total : allHadiths.length,
           currentPage: currentPage,
           hasMore: hasMore,
         ),
       );
     } catch (e) {
       if (isClosed) return;
-      emit(HadithError(e.toString()));
+      // إذا كانت الأحاديث معروضة بالفعل من الكاش، نبقي عليها ولا نظهر شاشة الخطأ
+      if (allHadiths.isEmpty) {
+        emit(HadithError(e.toString()));
+      }
     }
   }
 

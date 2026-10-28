@@ -71,8 +71,10 @@ class _LastReadBannerState extends State<LastReadBanner> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    SurahDetailScreen(surahId: _lastRead!.surahId),
+                builder: (context) => SurahDetailScreen(
+                  surahId: _lastRead!.surahId,
+                  initialAyahNumber: _lastRead!.ayahNumber,
+                ),
               ),
             ).then((_) => _loadLastRead());
           }

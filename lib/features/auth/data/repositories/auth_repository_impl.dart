@@ -6,6 +6,7 @@ import '../datasources/auth_local_datasource.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../datasources/user_firestore_datasource.dart';
 import '../models/user_model.dart';
+import '../../../../../core/utils/image_helper.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -148,6 +149,73 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(user);
     } on Failure catch (failure) {
       debugPrint('❌ [Auth] فشل تسجيل الدخول بجوجل: ${failure.message}');
+      return Left(failure);
+    } catch (e) {
+      debugPrint('❌ [Auth] خطأ غير متوقع: ${e.toString()}');
+      return Left(AuthFailure('حدث خطأ غير متوقع: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserModel>> signInWithFacebook() async {
+    try {
+      debugPrint('🔐 [Auth] محاولة تسجيل الدخول بـ Facebook');
+
+      var user = await remoteDataSource.signInWithFacebook();
+      debugPrint('✅ [Auth] تم تسجيل الدخول بـ Facebook بنجاح');
+
+      try {
+        debugPrint('📥 [Auth] جلب بيانات المستخدم من Firestore...');
+        final UserModel? firestoreUser = await firestoreDataSource.getUserData(
+          user.id,
+        );
+
+        if (firestoreUser != null) {
+          user = firestoreUser;
+          debugPrint('✅ [Auth] تم جلب البيانات من Firestore بنجاح');
+          debugPrint(
+            '📸 [Auth] Photo exists: ${firestoreUser.photoBase64 != null}, length: ${firestoreUser.photoBase64?.length ?? 0}',
+          );
+        } else {
+          if (user.photoBase64 == null) {
+            final nameForInitials = (user.displayName != null && user.displayName!.isNotEmpty)
+                ? user.displayName!
+                : (user.email.isNotEmpty ? user.email : 'User');
+            final photoBase64 = await ImageHelper.generateInitialsAvatarBase64(
+              nameForInitials,
+            );
+            user = user.copyWith(photoBase64: photoBase64, updatePhoto: true);
+          }
+          await firestoreDataSource.saveUserData(user);
+          debugPrint('✅ [Auth] تم حفظ بيانات مستخدم Facebook في Firestore');
+        }
+      } catch (e) {
+        debugPrint('⚠️ [Auth] خطأ في التعامل مع بيانات Firestore: $e');
+      }
+
+      debugPrint('💾 [Auth] حفظ البيانات محلياً...');
+      await localDataSource.cacheUser(user);
+      debugPrint('✅ [Auth] تم حفظ البيانات محلياً');
+
+      return Right(user);
+    } on Failure catch (failure) {
+      debugPrint('❌ [Auth] فشل تسجيل الدخول بـ Facebook: ${failure.message}');
+      return Left(failure);
+    } catch (e) {
+      debugPrint('❌ [Auth] خطأ غير متوقع: ${e.toString()}');
+      return Left(AuthFailure('حدث خطأ غير متوقع: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> sendPasswordResetEmail(String email) async {
+    try {
+      debugPrint('📧 [Auth] إرسال رابط إعادة تعيين كلمة المرور إلى: $email');
+      await remoteDataSource.sendPasswordResetEmail(email);
+      debugPrint('✅ [Auth] تم إرسال رابط إعادة التعيين بنجاح');
+      return const Right(null);
+    } on Failure catch (failure) {
+      debugPrint('❌ [Auth] فشل إرسال رابط التعيين: ${failure.message}');
       return Left(failure);
     } catch (e) {
       debugPrint('❌ [Auth] خطأ غير متوقع: ${e.toString()}');

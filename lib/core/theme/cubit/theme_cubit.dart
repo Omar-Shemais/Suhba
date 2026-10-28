@@ -7,7 +7,8 @@ import 'theme_state.dart';
 class ThemeCubit extends Cubit<ThemeState> {
   static const String _themeKey = 'app_theme_mode';
 
-  ThemeCubit() : super(const ThemeInitial()) {
+  ThemeCubit({ThemeMode initialTheme = ThemeMode.system})
+      : super(ThemeLoaded(initialTheme)) {
     _loadTheme();
   }
 

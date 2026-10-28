@@ -6,6 +6,11 @@ class MainHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SafeArea(child: MainHomeViewBody()));
+    return const Scaffold(
+      body: SafeArea(
+        top: false,
+        child: MainHomeViewBody(),
+      ),
+    );
   }
 }

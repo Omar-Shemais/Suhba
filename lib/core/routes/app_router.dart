@@ -6,9 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamic_app/features/hadith/presentation/pages/hadith_screen.dart';
 import 'package:islamic_app/features/hadith/presentation/pages/hadith_search_screen.dart';
 import 'package:islamic_app/features/azkar/presentation/pages/azkar_screen.dart';
+import 'package:islamic_app/features/azkar/presentation/pages/morning_azkar.dart';
+import 'package:islamic_app/features/azkar/presentation/pages/evening_azkar_screen.dart';
+import 'package:islamic_app/features/azkar/presentation/pages/after_prayer_azkar_screen.dart';
+import 'package:islamic_app/features/duaa/presentation/pages/duaa_screen.dart';
 import 'package:islamic_app/features/qibla/presentation/pages/qibla_screen.dart';
-import 'package:islamic_app/features/tasbeeh/presentation/pages/tasbeeh_screen.dart';
+import 'package:islamic_app/features/sibha/views/screens/sibha_view.dart';
 import 'package:islamic_app/features/quran/presentation/pages/mushaf_reader_screen.dart';
+import 'package:islamic_app/features/quran/presentation/pages/quran_screen.dart';
 import 'package:islamic_app/features/quran/presentation/pages/radio_screen.dart';
 import 'package:islamic_app/features/quran/presentation/surah_search_screen.dart';
 import 'package:islamic_app/features/nearest_mosque/presentation/pages/nearest_masjed_screen.dart';
@@ -17,6 +22,7 @@ import '../../features/auth/presentation/cubit/auth_state.dart';
 import '../../features/app/presentation/pages/splash_screen.dart';
 import '../../features/app/presentation/pages/welcome_screen.dart';
 import '../../features/app/presentation/pages/home_screen.dart';
+import '../../features/calendar/presentation/pages/calendar_screen.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
@@ -28,17 +34,25 @@ import '../../features/community/presentation/pages/premium_community_page.dart'
 import '../../features/community/presentation/pages/premium_create_post_page.dart';
 import '../../features/community/presentation/cubits/community/community_cubit.dart';
 import '../../features/community/community_injector.dart' as community_di;
+import '../../features/khatmah/presentation/pages/khatmah_screen.dart';
+import '../../features/fasting/presentation/pages/fasting_sunan_screen.dart';
+import '../../features/settings/presentation/pages/notification_settings_screen.dart';
+import '../../features/notification/presentation/pages/notifications_screen.dart';
 import 'app_routes.dart';
 
 /// Router configuration for the app with auth guards
 class AppRouter {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
   final AuthCubit authCubit;
+  final String initialLocation;
 
-  AppRouter(this.authCubit);
+  AppRouter(this.authCubit, {this.initialLocation = AppRoutes.home});
 
   /// Get the router configuration
   GoRouter get router => GoRouter(
-    initialLocation: AppRoutes.splash,
+    navigatorKey: navigatorKey,
+    initialLocation: initialLocation,
     debugLogDiagnostics: true,
     redirect: _handleRedirect,
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
@@ -47,7 +61,13 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.splash,
         name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       ),
 
       // Welcome Route (for unauthenticated users)
@@ -61,7 +81,14 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.home,
         name: 'home',
-        builder: (context, state) => const HomeScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          transitionDuration: const Duration(milliseconds: 700),
+          child: const HomeScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       ),
 
       // Auth Routes (Login & Register)
@@ -101,6 +128,12 @@ class AppRouter {
         name: 'mushaf',
         builder: (context, state) => const MushafReaderScreen(),
       ),
+      //quran Route
+      GoRoute(
+        path: AppRoutes.quran,
+        name: 'quran',
+        builder: (context, state) => const QuranScreen(),
+      ),
       //radio Route
       GoRoute(
         path: AppRoutes.radio,
@@ -130,6 +163,27 @@ class AppRouter {
         path: AppRoutes.azkar,
         name: 'azkar',
         builder: (context, state) => const AzkarScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.morningAzkar,
+        name: 'morningAzkar',
+        builder: (context, state) => const MorningAzkar(),
+      ),
+      GoRoute(
+        path: AppRoutes.eveningAzkar,
+        name: 'eveningAzkar',
+        builder: (context, state) => const EveningAzkarScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.afterPrayerAzkar,
+        name: 'afterPrayerAzkar',
+        builder: (context, state) => const AfterPrayerAzkarScreen(),
+      ),
+      // duaa Route
+      GoRoute(
+        path: AppRoutes.duaa,
+        name: 'duaa',
+        builder: (context, state) => const DuaaScreen(),
       ),
       //tasbeh Route
       // GoRoute(
@@ -189,7 +243,42 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.tasbeeh,
         name: 'tasbeeh',
-        builder: (context, state) => const TasbeehScreen(),
+        builder: (context, state) => const SibhaView(),
+      ),
+
+      // Calendar Route
+      GoRoute(
+        path: AppRoutes.calendar,
+        name: 'calendar',
+        builder: (context, state) => const CalendarScreen(),
+      ),
+
+      // Khatmah Route
+      GoRoute(
+        path: AppRoutes.khatmah,
+        name: 'khatmah',
+        builder: (context, state) => const KhatmahScreen(),
+      ),
+
+      // Fasting Sunan Route
+      GoRoute(
+        path: AppRoutes.fastingSunan,
+        name: 'fasting-sunan',
+        builder: (context, state) => const FastingSunanScreen(),
+      ),
+
+      // Notification Settings Route
+      GoRoute(
+        path: AppRoutes.notificationSettings,
+        name: 'notification-settings',
+        builder: (context, state) => const NotificationSettingsScreen(),
+      ),
+
+      // Notifications Feed Route
+      GoRoute(
+        path: AppRoutes.notifications,
+        name: 'notifications',
+        builder: (context, state) => const NotificationsScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

@@ -87,22 +87,23 @@ class AppTheme {
   static ThemeData dark() {
     return ThemeData(
       colorScheme: ColorScheme.dark(
-        primary: AppColors.goldenPrimary, // Golden for dark theme
-        secondary: AppColors.brownPrimary,
-        surface: const Color(0xFF1A1A1A),
-        onPrimary: AppColors.blackColor,
+        primary: const Color(0xFF2E7D5E), // Islamic emerald green
+        secondary: AppColors.goldenSecondary,
+        surface: const Color(0xFF1E2125),
+        surfaceContainer: const Color(0xFF282C32),
+        onPrimary: AppColors.whiteColor,
         onSecondary: AppColors.whiteColor,
         onSurface: AppColors.whiteColor,
         error: const Color(0xFFCF6679),
       ),
-      scaffoldBackgroundColor: const Color(0xFF121212),
+      scaffoldBackgroundColor: const Color(0xFF1E2125),
       useMaterial3: true,
       brightness: Brightness.dark,
       fontFamily: 'poppins',
 
       // AppBar theme
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.backgroundDark,
+        backgroundColor: Color(0xFF282C32),
         foregroundColor: AppColors.whiteColor,
         elevation: 0,
         centerTitle: true,
@@ -110,9 +111,12 @@ class AppTheme {
 
       // Card theme
       cardTheme: CardThemeData(
-        color: const Color(0xFF1E1E1E),
+        color: const Color(0xFF282C32),
         elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: Color(0xFF383E46), width: 1),
+        ),
       ),
 
       // Elevated button theme

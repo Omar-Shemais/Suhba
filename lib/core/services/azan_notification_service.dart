@@ -4,6 +4,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:islamic_app/core/services/notification_settings_manager.dart';
 
 class AzanNotificationService {
   static final AzanNotificationService _instance =
@@ -119,17 +120,26 @@ class AzanNotificationService {
     Map<String, String> prayerTimes,
   ) async {
     try {
-      final enabled = await isNotificationsEnabled();
-      if (!enabled) {
-        debugPrint('⚠️ الإشعارات معطلة');
+      final masterEnabled = await NotificationSettingsManager.isMasterEnabled();
+      if (!masterEnabled) {
+        debugPrint('⚠️ الإشعارات العامة معطلة من المستخدم');
+        for (int id = 1; id <= 5; id++) {
+          await _notifications.cancel(id);
+        }
         return;
       }
 
+      final prayersMasterEnabled =
+          await NotificationSettingsManager.isPrayerMasterEnabled();
+      final fajrSpecificEnabled =
+          await NotificationSettingsManager.isFajrSpecificEnabled();
+
       debugPrint('🔔 بدء جدولة الإشعارات...');
 
-      // ✅ إلغاء الإشعارات القديمة
-      await _notifications.cancelAll();
-      debugPrint('✅ تم إلغاء الإشعارات القديمة');
+      // ✅ إلغاء إشعارات الصلوات السابقة
+      for (int id = 1; id <= 5; id++) {
+        await _notifications.cancel(id);
+      }
 
       final prayers = {
         'fajr': {'name_ar': 'الفجر', 'name_en': 'Fajr', 'id': 1, 'emoji': '🌅'},
@@ -165,6 +175,22 @@ class AzanNotificationService {
           continue;
         }
 
+        // تحديد ما إذا كان يجب جدولة هذه الصلاة بناءً على رغبة المستخدم
+        bool shouldSchedule = false;
+        if (prayerKey == 'fajr') {
+          // يمكن تفعيل صلاة الفجر مخصوص حتى لو كانت باقي الصلوات مغلقة
+          shouldSchedule = fajrSpecificEnabled || prayersMasterEnabled;
+        } else {
+          final individualEnabled =
+              await NotificationSettingsManager.isPrayerIndividualEnabled(prayerKey);
+          shouldSchedule = prayersMasterEnabled && individualEnabled;
+        }
+
+        if (!shouldSchedule) {
+          debugPrint('⏸️ تم تخطي إشعار $prayerKey بناءً على إعدادات المستخدم');
+          continue;
+        }
+
         final scheduledTime = _parseTimeToSchedule(prayerTime);
         if (scheduledTime == null) {
           debugPrint('⚠️ فشل تحليل وقت $prayerKey: $prayerTime');
@@ -183,6 +209,9 @@ class AzanNotificationService {
         scheduledCount++;
         debugPrint('✅ تم جدولة ${entry.value['name_ar']} في $scheduledTime');
       }
+
+      // جدولة سنن الصيام ويوم الجمعة والختمة
+      await NotificationSettingsManager.scheduleAllSunanNotifications();
 
       debugPrint('✅ تم جدولة $scheduledCount إشعارات بنجاح');
 

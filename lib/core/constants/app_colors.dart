@@ -23,15 +23,36 @@ class AppColors {
   /// Container Color - #FAF2EB
   static const Color containerColor = Color(0xFFfaf2eb);
 
+  /// Container Dark Color (for Dark Mode cards) - #282C32
+  static const Color containerDarkColor = Color(0xFF282C32);
+
   // Additional colors for better UI
   /// White Color
   static const Color whiteColor = Color(0xFFFFFFFF);
 
-  /// Background Color (Light)
-  static const Color backgroundLight = Color(0xFFFAFAFA);
+  /// Background Color (Light) - Warm Sand Beige
+  static const Color backgroundLight = Color(0xFFFAF5ED);
 
-  /// Background Color (Dark)
-  static const Color backgroundDark = Color(0xFF121212);
+  /// Background Color (Dark) - Slate Charcoal Dark Gray (Matching Khatmah Theme)
+  static const Color backgroundDark = Color(0xFF1E2125);
+
+  /// Dark Card Color
+  static const Color darkCard = Color(0xFF282C32);
+
+  /// Dark Nested Card / Input Color
+  static const Color darkCardNested = Color(0xFF21252A);
+
+  /// Dark Border Color
+  static const Color darkBorder = Color(0xFF383E46);
+
+  /// Light Border Color
+  static const Color lightBorder = Color(0xFFEADBCE);
+
+  /// Islamic Forest Green (Light Mode)
+  static const Color islamicGreenLight = Color(0xFF143427);
+
+  /// Islamic Emerald Green (Dark Mode)
+  static const Color islamicGreenDark = Color(0xFF2E7D5E);
 
   /// Text Color (Primary)
   static const Color textPrimary = blackColor;

@@ -14,7 +14,11 @@ class QiblaCubit extends Cubit<QiblaState> {
 
     result.fold(
       (failure) => emit(QiblaFailure(failure.message)),
-      (angle) => emit(QiblaSuccess(angle)),
+      (data) => emit(QiblaSuccess(
+        angle: data.angle,
+        latitude: data.latitude,
+        longitude: data.longitude,
+      )),
     );
   }
 }

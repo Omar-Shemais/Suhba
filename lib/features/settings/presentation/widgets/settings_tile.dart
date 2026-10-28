@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../core/constants/app_colors.dart';
 
 class SettingsTile extends StatelessWidget {
   final IconData icon;
@@ -20,36 +19,36 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.r),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(11),
+              padding: EdgeInsets.all(10.r),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.goldenPrimary.withValues(alpha: .12),
-                    AppColors.goldenPrimary.withValues(alpha: .08),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                color: const Color(0xFF143427).withValues(
+                  alpha: isDark ? 0.35 : 0.08,
                 ),
                 borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.goldenPrimary.withValues(alpha: .08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                border: Border.all(
+                  color: const Color(0xFF143427).withValues(
+                    alpha: isDark ? 0.3 : 0.12,
                   ),
-                ],
+                  width: 1,
+                ),
               ),
-              child: Icon(icon, color: AppColors.goldenPrimary, size: 21),
+              child: Icon(
+                icon,
+                color: isDark ? const Color(0xFFE5C992) : const Color(0xFF143427),
+                size: 21.sp,
+              ),
             ),
-            SizedBox(width: 18.w),
+            SizedBox(width: 14.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,22 +56,21 @@ class SettingsTile extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 15.5.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.brownPrimary,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? const Color(0xFFF7ECE1) : const Color(0xFF38291B),
                       letterSpacing: -0.2,
-                      height: 1.3.h,
                     ),
                   ),
                   if (subtitle != null) ...[
-                    SizedBox(height: 5.h),
+                    SizedBox(height: 3.h),
                     Text(
                       subtitle!,
                       style: TextStyle(
-                        fontSize: 13.sp,
-                        color: AppColors.brownSecondary.withValues(alpha: .8),
+                        fontSize: 12.sp,
+                        color: isDark ? Colors.white60 : const Color(0xFF736152),
                         fontWeight: FontWeight.w500,
-                        height: 1.2.h,
+                        height: 1.25,
                       ),
                     ),
                   ],
@@ -81,9 +79,9 @@ class SettingsTile extends StatelessWidget {
             ),
             trailing ??
                 Icon(
-                  Icons.arrow_forward_ios,
-                  size: 15,
-                  color: AppColors.brownSecondary.withValues(alpha: .5),
+                  Icons.chevron_left_rounded,
+                  size: 22.sp,
+                  color: isDark ? Colors.white38 : const Color(0xFF8C7A6B),
                 ),
           ],
         ),

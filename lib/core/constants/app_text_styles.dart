@@ -15,8 +15,8 @@ class AppTextStyles {
   // 🕌 نصوص القرآن الكريم
   static TextStyle quranText = TextStyle(
     fontFamily: 'Amiri',
-    fontSize: 25.sp,
-    height: 2.h,
+    fontSize: 22.5.sp,
+    height: 2.2.h,
     letterSpacing: 0,
   );
 

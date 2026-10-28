@@ -23,8 +23,12 @@ class CustomShimmer extends StatelessWidget {
     return Container(
       margin: margin,
       child: Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-        highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+        baseColor: isDark
+            ? const Color(0xFF282C32)
+            : const Color(0xFFEADBCE).withValues(alpha: 0.5),
+        highlightColor: isDark
+            ? const Color(0xFF383E46)
+            : const Color(0xFFFAF5ED),
         child: Container(
           width: width,
           height: height,

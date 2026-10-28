@@ -15,6 +15,8 @@ import 'package:islamic_app/features/quran/data/repositories/quran_repo.dart';
 import 'package:islamic_app/features/quran/presentation/cubit/audio_cubit.dart';
 import 'package:islamic_app/core/constants/storage_constants.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 // Auth imports
 import 'package:islamic_app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:islamic_app/features/auth/data/datasources/user_firestore_datasource.dart';
@@ -28,6 +30,9 @@ import 'package:islamic_app/features/settings/data/datasources/settings_local_da
 import 'package:islamic_app/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:islamic_app/features/settings/domain/repositories/settings_repository.dart';
 import 'package:islamic_app/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:islamic_app/features/sibha/bussiness_logic/sibha_cubit/sibha_cubit.dart';
+import 'package:islamic_app/features/sibha/data/data_source/local_data_source.dart';
+import 'package:islamic_app/features/sibha/data/repository/sibha_repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -69,7 +74,14 @@ void setupServiceLocator() {
   );
 
   getIt.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(box: Hive.box(StorageConstants.userBoxName)),
+    () => AuthLocalDataSourceImpl(
+      box: Hive.isBoxOpen(StorageConstants.userBoxName)
+          ? Hive.box(StorageConstants.userBoxName)
+          : null,
+      prefs: getIt.isRegistered<SharedPreferences>()
+          ? getIt<SharedPreferences>()
+          : null,
+    ),
   );
 
   // Auth Repository
@@ -105,8 +117,8 @@ void setupServiceLocator() {
     () => Dio(
       BaseOptions(
         baseUrl: ApiConstants.hadithApiBase,
-        connectTimeout: const Duration(seconds: 20),
-        receiveTimeout: const Duration(seconds: 20),
+        connectTimeout: const Duration(seconds: 4),
+        receiveTimeout: const Duration(seconds: 4),
         responseType: ResponseType.json,
       ),
     )..interceptors.add(LogInterceptor(requestBody: true, responseBody: true)),
@@ -115,5 +127,16 @@ void setupServiceLocator() {
   // Hadith Repository
   getIt.registerLazySingleton<HadithRepository>(
     () => HadithRepositoryImpl(dio: getIt<Dio>(instanceName: 'hadithDio')),
+  );
+
+  // Sibha
+  getIt.registerLazySingleton<SibhaLocalDataSource>(
+    () => SibhaLocalDataSource(),
+  );
+  getIt.registerLazySingleton<SibhaRepository>(
+    () => SibhaRepository(sibhaLocalDataSource: getIt<SibhaLocalDataSource>()),
+  );
+  getIt.registerFactory<SibhaCubit>(
+    () => SibhaCubit(getIt<SibhaRepository>()),
   );
 }

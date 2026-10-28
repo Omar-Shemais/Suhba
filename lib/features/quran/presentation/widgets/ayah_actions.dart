@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
-import 'package:islamic_app/features/quran/data/helpers/ayah_share_manager.dart';
 import 'package:islamic_app/features/quran/data/helpers/last_read_storage.dart';
+import 'ayah_share_bottom_sheet.dart';
 
 import '../cubit/audio_cubit.dart';
 import '../cubit/audio_state.dart';
@@ -34,21 +34,32 @@ class AyahActions extends StatefulWidget {
 }
 
 class _AyahActionsState extends State<AyahActions> {
-  bool _isLastRead = false;
+  late bool _isLastRead;
 
   @override
   void initState() {
     super.initState();
-    _checkIfLastRead();
+    _isLastRead = LastReadManager.isAyahLastRead(
+      widget.surahId,
+      widget.ayahNumber,
+    );
+    LastReadManager.lastReadUpdated.addListener(_onLastReadUpdated);
   }
 
-  Future<void> _checkIfLastRead() async {
-    final lastRead = await LastReadManager.getLastRead();
-    if (mounted && !lastRead.isDefault) {
+  @override
+  void dispose() {
+    LastReadManager.lastReadUpdated.removeListener(_onLastReadUpdated);
+    super.dispose();
+  }
+
+  void _onLastReadUpdated() {
+    final updated = LastReadManager.isAyahLastRead(
+      widget.surahId,
+      widget.ayahNumber,
+    );
+    if (_isLastRead != updated && mounted) {
       setState(() {
-        _isLastRead =
-            lastRead.surahId == widget.surahId &&
-            lastRead.ayahNumber == widget.ayahNumber;
+        _isLastRead = updated;
       });
     }
   }
@@ -62,15 +73,11 @@ class _AyahActionsState extends State<AyahActions> {
     );
 
     if (mounted) {
-      setState(() {
-        _isLastRead = true;
-      });
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.bookmark_added, color: Colors.white),
+              const Icon(Icons.bookmark_added, color: Colors.white),
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
@@ -94,85 +101,40 @@ class _AyahActionsState extends State<AyahActions> {
   void _showShareOptions() {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => AyahShareBottomSheet(
+        arabicText: widget.arabicText,
+        translation: widget.translation,
+        surahNumber: widget.surahId,
+        ayahNumber: widget.ayahNumber,
+        surahName: widget.surahName,
       ),
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                'share_ayah'.tr(),
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isDark
-                      ? AppColors.primaryDarkColor
-                      : AppColors.primaryLightColor,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              ListTile(
-                leading: Icon(
-                  Icons.image,
-                  color: isDark
-                      ? AppColors.primaryDarkColor
-                      : AppColors.primaryLightColor,
-                ),
-                title: Text('share_as_image'.tr()),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await AyahShareManager.shareAyahAsImage(
-                    arabicText: widget.arabicText,
-                    translation: widget.translation,
-                    surahNumber: widget.surahId,
-                    ayahNumber: widget.ayahNumber,
-                    surahName: widget.surahName,
-                    context: context,
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.text_fields,
-                  color: isDark
-                      ? AppColors.primaryDarkColor
-                      : AppColors.primaryLightColor,
-                ),
-                title: const Text('share_as_text').tr(),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await AyahShareManager.shareAyahAsText(
-                    arabicText: widget.arabicText,
-                    translation: widget.translation,
-                    surahNumber: widget.surahId,
-                    ayahNumber: widget.ayahNumber,
-                    surahName: widget.surahName,
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
+  }
+
+  bool _isRelevantAudioState(AudioState? state) {
+    if (state == null) return false;
+    if (state is AudioPlayingAyah) {
+      return state.currentSurahId == widget.surahId &&
+          state.currentAyahNumber == widget.ayahNumber;
+    }
+    if (state is AudioPlaying) {
+      return state.currentSurahId == widget.surahId;
+    }
+    if (state is AudioPaused) {
+      return state.currentSurahId == widget.surahId;
+    }
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AudioCubit, AudioState>(
+      buildWhen: (previous, current) {
+        return _isRelevantAudioState(previous) ||
+            _isRelevantAudioState(current);
+      },
       builder: (context, state) {
         final cubit = context.read<AudioCubit>();
 

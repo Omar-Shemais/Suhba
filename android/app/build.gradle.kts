@@ -16,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.zbooma.suhbah"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -25,10 +25,7 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-
+    // Replaced legacy kotlinOptions with compilerOptions DSL
     defaultConfig {
         applicationId = "com.zbooma.suhbah"
         minSdk = flutter.minSdkVersion
@@ -97,4 +94,10 @@ dependencies {
     
     // 💡 Important: You also need this for 'androidx.media.app.NotificationCompat.MediaStyle'
     implementation("androidx.media:media:1.7.0")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+    }
 }

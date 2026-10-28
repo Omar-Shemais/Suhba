@@ -13,6 +13,7 @@ class MushafVerse {
   final String textArabic;
   final String textEnglish;
   final bool isNewSurah;
+  final int? pageNumber;
 
   MushafVerse({
     required this.surahId,
@@ -22,5 +23,7 @@ class MushafVerse {
     required this.textArabic,
     required this.textEnglish,
     this.isNewSurah = false,
+    this.pageNumber,
   });
 }
+

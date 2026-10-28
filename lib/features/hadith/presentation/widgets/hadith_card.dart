@@ -1,19 +1,26 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
 import 'package:islamic_app/core/constants/app_text_styles.dart';
 import 'package:islamic_app/core/constants/assets.dart';
 import '../../data/models/hadith_model.dart';
 
-class HadithCard extends StatelessWidget {
+class HadithCard extends StatefulWidget {
   final HadithModel hadith;
 
   const HadithCard({super.key, required this.hadith});
 
   @override
+  State<HadithCard> createState() => _HadithCardState();
+}
+
+class _HadithCardState extends State<HadithCard> {
+  bool _showEnglish = false;
+
+  @override
   Widget build(BuildContext context) {
+    final hadith = widget.hadith;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
@@ -22,13 +29,19 @@ class HadithCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: isDark
+                ? const Color(0xFF383E46)
+                : const Color(0xFFEADBCE),
+            width: 1.2,
+          ),
           gradient: LinearGradient(
-            colors: [
-              isDark ? AppColors.primaryDarkColor : AppColors.primaryLightColor,
-              isDark
-                  ? AppColors.primaryDarkColor.withOpacity(0.1)
-                  : AppColors.primaryLightColor.withOpacity(0.1),
-            ],
+            colors: isDark
+                ? const [Color(0xFF282C32), Color(0xFF21252A)]
+                : [
+                    AppColors.primaryLightColor,
+                    AppColors.primaryLightColor.withOpacity(0.1),
+                  ],
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
           ),
@@ -169,65 +182,135 @@ class HadithCard extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 12.h),
 
-                  // English Translation Section
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(16.r),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.1)
-                            : Colors.grey.shade300,
-                        width: 1.w,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // English Narrator (if exists)
-                        if (hadith.englishNarrator != null) ...[
-                          Text(
-                            hadith.englishNarrator!,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontStyle: FontStyle.italic,
+                  // زر التبديل لإظهار / إخفاء الترجمة الإنجليزية كخيار مخصص
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          setState(() => _showEnglish = !_showEnglish);
+                        },
+                        borderRadius: BorderRadius.circular(10.r),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : const Color(0xFF143427).withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(10.r),
+                            border: Border.all(
                               color: isDark
-                                  ? Colors.white60
-                                  : Colors.grey.shade600,
-                              height: 1.5.h,
+                                  ? Colors.white.withValues(alpha: 0.15)
+                                  : const Color(0xFF143427).withValues(alpha: 0.2),
+                              width: 1,
                             ),
                           ),
-                          SizedBox(height: 12.h),
-                          Divider(
-                            color: isDark
-                                ? Colors.white.withOpacity(0.1)
-                                : Colors.grey.shade300,
-                            thickness: 1,
-                          ),
-                          SizedBox(height: 12.h),
-                        ],
-
-                        // English Text
-                        Text(
-                          hadith.hadithEnglish,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            height: 1.7.h,
-                            color: isDark
-                                ? Colors.white.withOpacity(0.9)
-                                : Colors.grey.shade800,
-                            fontWeight: FontWeight.w500,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.translate_rounded,
+                                size: 15.sp,
+                                color: isDark
+                                    ? AppColors.primaryLightColor
+                                    : const Color(0xFF143427),
+                              ),
+                              SizedBox(width: 6.w),
+                              Flexible(
+                                child: Text(
+                                  _showEnglish ? 'إخفاء الترجمة الإنجليزية' : 'عرض الترجمة بالإنجليزية',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11.5.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark
+                                        ? AppColors.primaryLightColor
+                                        : const Color(0xFF143427),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 4.w),
+                              Icon(
+                                _showEnglish
+                                    ? Icons.keyboard_arrow_up_rounded
+                                    : Icons.keyboard_arrow_down_rounded,
+                                size: 17.sp,
+                                color: isDark
+                                    ? AppColors.primaryLightColor
+                                    : const Color(0xFF143427),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
+
+                  // قسم الترجمة الإنجليزية (يظهر فقط إذا اختار المستخدم ذلك)
+                  if (_showEnglish) ...[
+                    SizedBox(height: 12.h),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(16.r),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.grey.shade300,
+                          width: 1.w,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // English Narrator (if exists)
+                          if (hadith.englishNarrator != null) ...[
+                            Text(
+                              hadith.englishNarrator!,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontStyle: FontStyle.italic,
+                                color: isDark
+                                    ? Colors.white60
+                                    : Colors.grey.shade600,
+                                height: 1.5.h,
+                              ),
+                            ),
+                            SizedBox(height: 12.h),
+                            Divider(
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.1)
+                                  : Colors.grey.shade300,
+                              thickness: 1,
+                            ),
+                            SizedBox(height: 12.h),
+                          ],
+
+                          // English Text
+                          Text(
+                            hadith.hadithEnglish,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              height: 1.7.h,
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.9)
+                                  : Colors.grey.shade800,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
 
                   SizedBox(height: 8.h),
                 ],

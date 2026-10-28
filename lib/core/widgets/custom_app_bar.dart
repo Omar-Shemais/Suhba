@@ -38,7 +38,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             // أيقونة العودة
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded),
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 20,
+                color: isDark ? Colors.white : const Color(0xFF38291D),
+              ),
               onPressed: onBack ?? () => Navigator.pop(context),
             ),
 
@@ -47,7 +51,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.subHead,
+                style: AppTextStyles.subHead.copyWith(
+                  color: isDark ? Colors.white : const Color(0xFF38291D),
+                ),
               ),
             ),
 
@@ -64,7 +70,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 tooltip: 'اختيار القارئ',
               )
             else if (leadingIcon != null)
-              IconButton(icon: Icon(leadingIcon), onPressed: onMore ?? () {}),
+              IconButton(icon: Icon(leadingIcon), onPressed: onMore ?? () {})
+            else
+              const SizedBox(width: 48),
           ],
         ),
       ),

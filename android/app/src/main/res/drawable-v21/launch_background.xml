@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
+<!-- Native Android Splash Screen for API 21+ -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="?android:colorBackground" />
+    <!-- Warm ivory background matching Flutter splash palette (#FAF5ED) -->
+    <item>
+        <color android:color="#FAF5ED" />
+    </item>
 
-    <!-- You can insert your own image assets here -->
-    <!-- <item>
+    <!-- App icon in center (using launcher icon) -->
+    <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/launch_image" />
-    </item> -->
+            android:src="@mipmap/ic_launcher" />
+    </item>
 </layer-list>

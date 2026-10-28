@@ -1,32 +1,22 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
 import '../../data/models/mushaf_models.dart';
 import 'mushaf_text_builder.dart';
 
-class MushafPageWidget extends StatefulWidget {
+class MushafPageWidget extends StatelessWidget {
   final MushafPage page;
   final Function(bool)? onZoomChanged;
-  final double textScale; // إضافة حجم النص
+  final double textScale;
 
   const MushafPageWidget({
     super.key,
     required this.page,
     this.onZoomChanged,
-    this.textScale = 1.0, // القيمة الافتراضية
+    this.textScale = 1.0,
   });
-
-  @override
-  State<MushafPageWidget> createState() => _MushafPageWidgetState();
-}
-
-class _MushafPageWidgetState extends State<MushafPageWidget> {
-  final TransformationController _controller = TransformationController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,55 +24,58 @@ class _MushafPageWidgetState extends State<MushafPageWidget> {
     final locale = Localizations.localeOf(context);
     final isArabic = locale.languageCode == 'ar';
 
-    return GestureDetector(
-      onDoubleTap: () => _handleDoubleTap(),
-      child: Container(
-        color: isDark
-            ? AppColors.primaryDarkColor
-            : AppColors.primaryLightColor,
-        child: InteractiveViewer(
-          transformationController: _controller,
-          minScale: 1.0,
-          maxScale: 3.0,
-          panEnabled: true,
-          scaleEnabled: true,
-          constrained: false,
-          onInteractionStart: (_) => widget.onZoomChanged?.call(true),
-          onInteractionEnd: (_) => _handleInteractionEnd(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-              minHeight: MediaQuery.of(context).size.height,
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      color: isDark ? const Color(0xFF1E2125) : const Color(0xFFFAF5ED),
+      child: SafeArea(
+        top: false,
+        bottom: false,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF282C32) : Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: isDark ? const Color(0xFF383E46) : const Color(0xFFEADBCE),
+              width: 1.2,
             ),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              width: MediaQuery.of(context).size.width,
-              child: MushafTextBuilder.buildContinuousText(
-                verses: widget.page.verses,
-                isDark: isDark,
-                isArabic: isArabic,
-                textScale: widget.textScale, // تمرير حجم النص
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.25 : 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
-            ),
+            ],
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: constraints.maxWidth,
+                    child: SingleChildScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: MushafTextBuilder.buildContinuousText(
+                          verses: page.verses,
+                          isDark: isDark,
+                          isArabic: isArabic,
+                          textScale: textScale,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
     );
-  }
-
-  void _handleDoubleTap() {
-    final currentScale = _controller.value.getMaxScaleOnAxis();
-    final newScale = currentScale > 1.3 ? 1.0 : 1.5;
-
-    setState(() {
-      // ignore: deprecated_member_use
-      _controller.value = Matrix4.identity()..scale(newScale);
-    });
-    widget.onZoomChanged?.call(newScale != 1.0);
-  }
-
-  void _handleInteractionEnd() {
-    final scale = _controller.value.getMaxScaleOnAxis();
-    widget.onZoomChanged?.call(scale > 1.01);
   }
 }

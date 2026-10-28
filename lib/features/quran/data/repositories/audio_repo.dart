@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:islamic_app/core/constants/api_constance.dart';
+import 'package:islamic_app/core/network/dio_client.dart';
 import '../models/audio_model.dart';
 
 abstract class AudioRepository {
@@ -37,23 +39,56 @@ class AudioRepositoryImpl implements AudioRepository {
     }
   }
 
-  // ✅ تحميل بيانات الراديو من JSON
+  // ✅ تحميل بيانات الراديو المفلترة والمصنفة (عربي فقط - قرآن 15، أحاديث 15، أذكار، أدعية 15)
   Future<List<RadioStationModel>> _loadRadioData() async {
-    if (_cachedRadios != null) return _cachedRadios!;
+    if (_cachedRadios != null && _cachedRadios!.isNotEmpty) {
+      return _cachedRadios!;
+    }
 
+    // 1. تحميل القائمة المحلية المنسقة والمحققة مسبقاً (فورية وبدون إنترنت)
+    List<RadioStationModel> localStations = [];
     try {
       final String jsonString = await rootBundle.loadString(
         'assets/data/radio_stations.json',
       );
       final List<dynamic> jsonData = json.decode(jsonString);
-
-      _cachedRadios = jsonData
-          .map((json) => RadioStationModel.fromJson(json))
+      localStations = jsonData
+          .map((item) => RadioStationModel.fromJson(item as Map<String, dynamic>))
           .toList();
+    } catch (_) {}
+
+    if (localStations.isNotEmpty) {
+      _cachedRadios = localStations;
       return _cachedRadios!;
-    } catch (e) {
-      throw Exception('Failed to load radio data: $e');
     }
+
+    // 2. Fallback: جلب البيانات من MP3Quran API v3 مع فلترة صارمة للمحتوى العربي
+    try {
+      final response = await DioClient.getData(
+        endPoint: ApiConstance.mp3QuranRadios,
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        final Map<String, dynamic> data = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : response.data as Map<String, dynamic>;
+        final List<dynamic> radiosList = data['radios'] as List<dynamic>? ?? [];
+        if (radiosList.isNotEmpty) {
+          // استبعاد أي إذاعة ليست باللغة العربية (ترجمات اللغات الأجنبية)
+          final arabicList = radiosList.where((item) {
+            final name = (item['name'] ?? '').toString();
+            final url = (item['url'] ?? '').toString().toLowerCase();
+            return !name.contains('ترجمة') && !url.contains('translation');
+          }).toList();
+
+          _cachedRadios = arabicList
+              .map((item) => RadioStationModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+          return _cachedRadios!;
+        }
+      }
+    } catch (_) {}
+
+    return localStations;
   }
 
   @override

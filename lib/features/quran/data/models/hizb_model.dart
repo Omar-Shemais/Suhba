@@ -1,0 +1,82 @@
+class HizbItem {
+  final int number;
+  final String name;
+  final String startSurahName;
+  final int startSurahId;
+  final int startAyah;
+  final String startAyahText;
+  final int juzNumber;
+
+  const HizbItem({
+    required this.number,
+    required this.name,
+    required this.startSurahName,
+    required this.startSurahId,
+    required this.startAyah,
+    required this.startAyahText,
+    required this.juzNumber,
+  });
+
+  static const List<HizbItem> ahzab = [
+    HizbItem(number: 1, name: 'الحزب الأول', startSurahName: 'الفاتحة', startSurahId: 1, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', juzNumber: 1),
+    HizbItem(number: 2, name: 'الحزب الثاني', startSurahName: 'البقرة', startSurahId: 2, startAyah: 75, startAyahText: '۞ أَفَتَطْمَعُونَ أَن يُؤْمِنُوا لَكُمْ', juzNumber: 1),
+    HizbItem(number: 3, name: 'الحزب الثالث', startSurahName: 'البقرة', startSurahId: 2, startAyah: 142, startAyahText: '۞ سَيَقُولُ السُّفَهَاءُ مِنَ النَّاسِ', juzNumber: 2),
+    HizbItem(number: 4, name: 'الحزب الرابع', startSurahName: 'البقرة', startSurahId: 2, startAyah: 203, startAyahText: '۞ وَاذْكُرُوا اللَّهَ فِي أَيَّامٍ مَّعْدُودَاتٍ', juzNumber: 2),
+    HizbItem(number: 5, name: 'الحزب الخامس', startSurahName: 'البقرة', startSurahId: 2, startAyah: 253, startAyahText: '۞ تِلْكَ الرُّسُلُ فَضَّلْنَا بَعْضَهُمْ عَلَىٰ بَعْضٍ', juzNumber: 3),
+    HizbItem(number: 6, name: 'الحزب السادس', startSurahName: 'آل عمران', startSurahId: 3, startAyah: 15, startAyahText: '۞ قُلْ أَؤُنَبِّئُكُم بِخَيْرٍ مِّن ذَٰلِكُمْ', juzNumber: 3),
+    HizbItem(number: 7, name: 'الحزب السابع', startSurahName: 'آل عمران', startSurahId: 3, startAyah: 93, startAyahText: '۞ كُلُّ الطَّعَامِ كَانَ حِلًّا لِّبَنِي إِسْرَائِيلَ', juzNumber: 4),
+    HizbItem(number: 8, name: 'الحزب الثامن', startSurahName: 'آل عمران', startSurahId: 3, startAyah: 171, startAyahText: '۞ يَسْتَبْشِرُونَ بِنِعْمَةٍ مِّنَ اللَّهِ وَفَضْلٍ', juzNumber: 4),
+    HizbItem(number: 9, name: 'الحزب التاسع', startSurahName: 'النساء', startSurahId: 4, startAyah: 24, startAyahText: '۞ وَالْمُحْصَنَاتُ مِنَ النِّسَاءِ إِلَّا مَا مَلَكَتْ', juzNumber: 5),
+    HizbItem(number: 10, name: 'الحزب العاشر', startSurahName: 'النساء', startSurahId: 4, startAyah: 88, startAyahText: '۞ فَمَا لَكُمْ فِي الْمُنَافِقِينَ فِئَتَيْنِ', juzNumber: 5),
+    HizbItem(number: 11, name: 'الحزب الحادي عشر', startSurahName: 'النساء', startSurahId: 4, startAyah: 148, startAyahText: '۞ لَّا يُحِبُّ اللَّهُ الْجَهْرَ بِالسُّوءِ مِنَ الْقَوْلِ', juzNumber: 6),
+    HizbItem(number: 12, name: 'الحزب الثاني عشر', startSurahName: 'المائدة', startSurahId: 5, startAyah: 27, startAyahText: '۞ وَاتْلُ عَلَيْهِمْ نَبَأَ ابْنَيْ آدَمَ بِالْحَقِّ', juzNumber: 6),
+    HizbItem(number: 13, name: 'الحزب الثالث عشر', startSurahName: 'المائدة', startSurahId: 5, startAyah: 82, startAyahText: '۞ لَتَجِدَنَّ أَشَدَّ النَّاسِ عَدَاوَةً لِّلَّذِينَ آمَنُوا', juzNumber: 7),
+    HizbItem(number: 14, name: 'الحزب الرابع عشر', startSurahName: 'الأنعام', startSurahId: 6, startAyah: 36, startAyahText: '۞ إِنَّمَا يَسْتَجِيبُ الَّذِينَ يَسْمَعُونَ', juzNumber: 7),
+    HizbItem(number: 15, name: 'الحزب الخامس عشر', startSurahName: 'الأنعام', startSurahId: 6, startAyah: 111, startAyahText: '۞ وَلَوْ أَنَّنَا نَزَّلْنَا إِلَيْهِمُ الْمَلَائِكَةَ', juzNumber: 8),
+    HizbItem(number: 16, name: 'الحزب السادس عشر', startSurahName: 'الأعراف', startSurahId: 7, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ المص', juzNumber: 8),
+    HizbItem(number: 17, name: 'الحزب السابع عشر', startSurahName: 'الأعراف', startSurahId: 7, startAyah: 88, startAyahText: '۞ قَالَ الْمَلَأُ الَّذِينَ اسْتَكْبَرُوا مِن قَوْمِهِ', juzNumber: 9),
+    HizbItem(number: 18, name: 'الحزب الثامن عشر', startSurahName: 'الأعراف', startSurahId: 7, startAyah: 171, startAyahText: '۞ وَإِذْ نَتَقْنَا الْجَبَلَ فَوْقَهُمْ كَأَنَّهُ ظُلَّةٌ', juzNumber: 9),
+    HizbItem(number: 19, name: 'الحزب التاسع عشر', startSurahName: 'الأنفال', startSurahId: 8, startAyah: 41, startAyahText: '۞ وَاعْلَمُوا أَنَّمَا غَنِمْتُم مِّن شَيْءٍ', juzNumber: 10),
+    HizbItem(number: 20, name: 'الحزب العشرون', startSurahName: 'التوبة', startSurahId: 9, startAyah: 34, startAyahText: '۞ يَا أَيُّهَا الَّذِينَ آمَنُوا إِنَّ كَثِيرًا مِّنَ الْأَحْبَارِ', juzNumber: 10),
+    HizbItem(number: 21, name: 'الحزب الحادي والعشرون', startSurahName: 'التوبة', startSurahId: 9, startAyah: 93, startAyahText: '۞ إِنَّمَا السَّبِيلُ عَلَى الَّذِينَ يَسْتَأْذِنُونَكَ', juzNumber: 11),
+    HizbItem(number: 22, name: 'الحزب الثاني والعشرون', startSurahName: 'يونس', startSurahId: 10, startAyah: 26, startAyahText: '۞ لِّلَّذِينَ أَحْسَنُوا الْحُسْنَىٰ وَزِيَادَةٌ', juzNumber: 11),
+    HizbItem(number: 23, name: 'الحزب الثالث والعشرون', startSurahName: 'هود', startSurahId: 11, startAyah: 6, startAyahText: '۞ وَمَا مِن دَابَّةٍ فِي الْأَرْضِ إِلَّا عَلَى اللَّهِ رِزْقُهَا', juzNumber: 12),
+    HizbItem(number: 24, name: 'الحزب الرابع والعشرون', startSurahName: 'هود', startSurahId: 11, startAyah: 84, startAyahText: '۞ وَإِلَىٰ مَدْيَنَ أَخَاهُمْ شُعَيْبًا', juzNumber: 12),
+    HizbItem(number: 25, name: 'الحزب الخامس والعشرون', startSurahName: 'يوسف', startSurahId: 12, startAyah: 53, startAyahText: '۞ وَمَا أُبَرِّئُ نَفْسِي ۚ إِنَّ النَّفْسَ لَأَمَّارَةٌ بِالسُّوءِ', juzNumber: 13),
+    HizbItem(number: 26, name: 'الحزب السادس والعشرون', startSurahName: 'الرعد', startSurahId: 13, startAyah: 19, startAyahText: '۞ أَفَمَن يَعْلَمُ أَنَّمَا أُنزِلَ إِلَيْكَ مِن رَّبِّكَ الْحَقُّ', juzNumber: 13),
+    HizbItem(number: 27, name: 'الحزب السابع والعشرون', startSurahName: 'الحجر', startSurahId: 15, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ الر ۚ تِلْكَ آيَاتُ الْكِتَابِ', juzNumber: 14),
+    HizbItem(number: 28, name: 'الحزب الثامن والعشرون', startSurahName: 'النحل', startSurahId: 16, startAyah: 51, startAyahText: '۞ وَقَالَ اللَّهُ لَا تَتَّخِذُوا إِلَٰهَيْنِ اثْنَيْنِ', juzNumber: 14),
+    HizbItem(number: 29, name: 'الحزب التاسع والعشرون', startSurahName: 'الإسراء', startSurahId: 17, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ سُبْحَانَ الَّذِي أَسْرَىٰ', juzNumber: 15),
+    HizbItem(number: 30, name: 'الحزب الثلاثون', startSurahName: 'الإسراء', startSurahId: 17, startAyah: 99, startAyahText: '۞ أَوَلَمْ يَرَوْا أَنَّ اللَّهَ الَّذِي خَلَقَ السَّمَاوَاتِ', juzNumber: 15),
+    HizbItem(number: 31, name: 'الحزب الحادي والثلاثون', startSurahName: 'الكهف', startSurahId: 18, startAyah: 75, startAyahText: '۞ قَالَ أَلَمْ أَقُل لَّكَ إِنَّكَ لَن تَسْتَطِيعَ مَعِيَ صَبْرًا', juzNumber: 16),
+    HizbItem(number: 32, name: 'الحزب الثاني والثلاثون', startSurahName: 'طه', startSurahId: 20, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ طه', juzNumber: 16),
+    HizbItem(number: 33, name: 'الحزب الثالث والثلاثون', startSurahName: 'الأنبياء', startSurahId: 21, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ اقْتَرَبَ لِلنَّاسِ حِسَابُهُمْ', juzNumber: 17),
+    HizbItem(number: 34, name: 'الحزب الرابع والثلاثون', startSurahName: 'الحج', startSurahId: 22, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ يَا أَيُّهَا النَّاسُ اتَّقُوا رَبَّكُمْ', juzNumber: 17),
+    HizbItem(number: 35, name: 'الحزب الخامس والثلاثون', startSurahName: 'المؤمنون', startSurahId: 23, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قَدْ أَفْلَحَ الْمُؤْمِنُونَ', juzNumber: 18),
+    HizbItem(number: 36, name: 'الحزب السادس والثلاثون', startSurahName: 'النور', startSurahId: 24, startAyah: 21, startAyahText: '۞ يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تَتَّبِعُوا خُطُوَاتِ الشَّيْطَانِ', juzNumber: 18),
+    HizbItem(number: 37, name: 'الحزب السابع والثلاثون', startSurahName: 'الفرقان', startSurahId: 25, startAyah: 21, startAyahText: '۞ وَقَالَ الَّذِينَ لَا يَرْجُونَ لِقَاءَنَا', juzNumber: 19),
+    HizbItem(number: 38, name: 'الحزب الثامن والثلاثون', startSurahName: 'الشعراء', startSurahId: 26, startAyah: 111, startAyahText: '۞ قَالُوا أَنُؤْمِنُ لَكَ وَاتَّبَعَكَ الْأَرْذَلُونَ', juzNumber: 19),
+    HizbItem(number: 39, name: 'الحزب التاسع والثلاثون', startSurahName: 'النمل', startSurahId: 27, startAyah: 56, startAyahText: '۞ فَمَا كَانَ جَوَابَ قَوْمِهِ إِلَّا أَن قَالُوا', juzNumber: 20),
+    HizbItem(number: 40, name: 'الحزب الأربعون', startSurahName: 'القصص', startSurahId: 28, startAyah: 51, startAyahText: '۞ وَلَقَدْ وَصَّلْنَا لَهُمُ الْقَوْلَ لَعَلَّهُمْ يَتَذَكَّرُونَ', juzNumber: 20),
+    HizbItem(number: 41, name: 'الحزب الحادي والأربعون', startSurahName: 'العنكبوت', startSurahId: 29, startAyah: 46, startAyahText: '۞ وَلَا تُجَادِلُوا أَهْلَ الْكِتَابِ إِلَّا بِالَّتِي هِيَ أَحْسَنُ', juzNumber: 21),
+    HizbItem(number: 42, name: 'الحزب الثاني والأربعون', startSurahName: 'لقمان', startSurahId: 31, startAyah: 22, startAyahText: '۞ وَمَن يُسْلِمْ وَجْهَهُ إِلَى اللَّهِ وَهُوَ مُحْسِنٌ', juzNumber: 21),
+    HizbItem(number: 43, name: 'الحزب الثالث والأربعون', startSurahName: 'الأحزاب', startSurahId: 33, startAyah: 31, startAyahText: '۞ وَمَن يَقْنُتْ مِنكُنَّ لِلَّهِ وَرَسُولِهِ وَتَعْمَلْ صَالِحًا', juzNumber: 22),
+    HizbItem(number: 44, name: 'الحزب الرابع والأربعون', startSurahName: 'سبأ', startSurahId: 34, startAyah: 24, startAyahText: '۞ قُلْ مَن يَرْزُقُكُم مِّنَ السَّمَاوَاتِ وَالْأَرْضِ', juzNumber: 22),
+    HizbItem(number: 45, name: 'الحزب الخامس والأربعون', startSurahName: 'يس', startSurahId: 36, startAyah: 28, startAyahText: '۞ وَمَا أَنزَلْنَا عَلَىٰ قَوْمِهِ مِن بَعْدِهِ مِن جُندٍ', juzNumber: 23),
+    HizbItem(number: 46, name: 'الحزب السادس والأربعون', startSurahName: 'الصافات', startSurahId: 37, startAyah: 145, startAyahText: '۞ فَنَبَذْنَاهُ بِالْعَرَاءِ وَهُوَ سَقِيمٌ', juzNumber: 23),
+    HizbItem(number: 47, name: 'الحزب السابع والأربعون', startSurahName: 'الزمر', startSurahId: 39, startAyah: 32, startAyahText: '۞ فَمَنْ أَظْلَمُ مِمَّن كَذَبَ عَلَى اللَّهِ', juzNumber: 24),
+    HizbItem(number: 48, name: 'الحزب الثامن والأربعون', startSurahName: 'غافر', startSurahId: 40, startAyah: 41, startAyahText: '۞ وَيَا قَوْمِ مَا لِي أَدْعُوكُمْ إِلَى النَّجَاةِ', juzNumber: 24),
+    HizbItem(number: 49, name: 'الحزب التاسع والأربعون', startSurahName: 'فصلت', startSurahId: 41, startAyah: 47, startAyahText: '۞ إِلَيْهِ يُرَدُّ عِلْمُ السَّاعَةِ', juzNumber: 25),
+    HizbItem(number: 50, name: 'الحزب الخمسون', startSurahName: 'الزخرف', startSurahId: 43, startAyah: 24, startAyahText: '۞ قَالَ أَوَلَوْ جِئْتُكُم بِأَهْدَىٰ مِمَّا وَجَدتُّمْ', juzNumber: 25),
+    HizbItem(number: 51, name: 'الحزب الحادي والخمسون', startSurahName: 'الأحقاف', startSurahId: 46, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ حم', juzNumber: 26),
+    HizbItem(number: 52, name: 'الحزب الثاني والخمسون', startSurahName: 'الفتح', startSurahId: 48, startAyah: 18, startAyahText: '۞ لَّقَدْ رَضِيَ اللَّهُ عَنِ الْمُؤْمِنِينَ إِذْ يُبَايِعُونَكَ', juzNumber: 26),
+    HizbItem(number: 53, name: 'الحزب الثالث والخمسون', startSurahName: 'الذاريات', startSurahId: 51, startAyah: 31, startAyahText: '۞ قَالَ فَمَا خَطْبُكُمْ أَيُّهَا الْمُرْسَلُونَ', juzNumber: 27),
+    HizbItem(number: 54, name: 'الحزب الرابع والخمسون', startSurahName: 'الرحمن', startSurahId: 55, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ الرَّحْمَٰنُ', juzNumber: 27),
+    HizbItem(number: 55, name: 'الحزب الخامس والخمسون', startSurahName: 'المجادلة', startSurahId: 58, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قَدْ سَمِعَ اللَّهُ قَوْلَ', juzNumber: 28),
+    HizbItem(number: 56, name: 'الحزب السادس والخمسون', startSurahName: 'الجمعة', startSurahId: 62, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ يُسَبِّحُ لِلَّهِ مَا فِي السَّمَاوَاتِ', juzNumber: 28),
+    HizbItem(number: 57, name: 'الحزب السابع والخمسون', startSurahName: 'الملك', startSurahId: 67, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ تَبَارَكَ الَّذِي بِيَدِهِ الْمُلْكُ', juzNumber: 29),
+    HizbItem(number: 58, name: 'الحزب الثامن والخمسون', startSurahName: 'الجن', startSurahId: 72, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ أُوحِيَ إِلَيَّ', juzNumber: 29),
+    HizbItem(number: 59, name: 'الحزب التاسع والخمسون', startSurahName: 'النبأ', startSurahId: 78, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ عَمَّ يَتَسَاءَلُونَ', juzNumber: 30),
+    HizbItem(number: 60, name: 'الحزب الستون', startSurahName: 'الأعلى', startSurahId: 87, startAyah: 1, startAyahText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ سَبِّحِ اسْمَ رَبِّكَ الْأَعْلَى', juzNumber: 30),
+  ];
+}

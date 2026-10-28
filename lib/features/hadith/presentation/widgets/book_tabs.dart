@@ -53,31 +53,34 @@ class BookTabs extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: ChoiceChip(
               backgroundColor: isDark
-                  ? AppColors.primaryDarkColor.withOpacity(0.3)
-                  : AppColors.primaryLightColor.withOpacity(0.3),
+                  ? const Color(0xFF282C32)
+                  : const Color(0xFFFCFAF7),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.r),
                 side: BorderSide(
                   color: isSelected
                       ? (isDark
-                            ? AppColors.primaryDarkColor
-                            : AppColors.primaryLightColor)
-                      : Colors.transparent,
-                  width: 1.5.w,
+                            ? const Color(0xFF2E7D5E)
+                            : const Color(0xFF143427))
+                      : (isDark
+                            ? const Color(0xFF383E46)
+                            : const Color(0xFFEADBCE)),
+                  width: 1.2.w,
                 ),
               ),
-
-              label: Text(bookName, style: TextStyle(fontSize: 16.sp)),
+              label: Text(bookName, style: TextStyle(fontSize: 14.sp)),
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) onBookSelected(bookKey);
               },
-
               selectedColor: isDark
-                  ? AppColors.primaryDarkColor
-                  : AppColors.primaryLightColor,
+                  ? const Color(0xFF2E7D5E)
+                  : const Color(0xFF143427),
               labelStyle: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? Colors.white70 : const Color(0xFF736152)),
               ),
             ),
           );

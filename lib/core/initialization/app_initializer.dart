@@ -10,6 +10,7 @@ import '../constants/storage_constants.dart';
 import '../network/supabase_client.dart';
 import '../../features/community/community_injector.dart';
 import '../../features/azkar/data/repositories/azkar_repo.dart';
+import '../../features/azkar/services/azkar_notification_service.dart';
 
 class AppInitializer {
   AppInitializer._();
@@ -77,10 +78,28 @@ class AppInitializer {
     debugPrint('📦 [AppInit] Phase 1: Critical services...');
 
     // 1. SharedPreferences (Fast & usually safe, do first)
-    await SharedPreferences.getInstance();
-    debugPrint('✅ [AppInit] SharedPreferences initialized');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!getIt.isRegistered<SharedPreferences>()) {
+        getIt.registerSingleton<SharedPreferences>(prefs);
+      }
+      debugPrint('✅ [AppInit] SharedPreferences initialized');
+    } catch (e) {
+      debugPrint('⚠️ [AppInit] SharedPreferences init error: $e');
+    }
 
-    // 2. Firebase
+    // 2. Hive / Local Cache (CRITICAL: must be opened before Phase 2 DI)
+    try {
+      await CacheHelper.init();
+      await CacheHelper.openBox(StorageConstants.userBoxName);
+      await CacheHelper.openBox(StorageConstants.settingsBoxName);
+      await CacheHelper.openBox(StorageConstants.quranBoxName);
+      debugPrint('✅ [AppInit] Hive initialized');
+    } catch (e) {
+      debugPrint('⚠️ [AppInit] Hive init failed: $e');
+    }
+
+    // 3. Firebase (Restores persistent auth credentials)
     try {
       if (Firebase.apps.isEmpty) {
         await Firebase.initializeApp(
@@ -94,22 +113,19 @@ class AppInitializer {
       debugPrint('⚠️ [AppInit] Firebase init error: $e');
     }
 
-    // 3. Notifications (Can be flaky on iOS if permissions are weird)
+    // 4. Notifications (Non-blocking: permissions shouldn't block the phase 1 timeout)
     try {
       final notificationService = AzanNotificationService();
-      await notificationService.initialize();
-      debugPrint('✅ [AppInit] Notifications initialized');
+      notificationService.initialize().catchError((e) {
+        debugPrint('⚠️ [AppInit] Notification init failed: $e');
+      });
+      final azkarNotificationService = AzkarNotificationService();
+      azkarNotificationService.initialize().catchError((e) {
+        debugPrint('⚠️ [AppInit] Azkar notification init failed: $e');
+      });
+      debugPrint('✅ [AppInit] Notifications triggered');
     } catch (e) {
-      debugPrint('⚠️ [AppInit] Notification init failed: $e');
-    }
-
-    // 4. Hive
-    try {
-      await CacheHelper.init();
-      await CacheHelper.openBox(StorageConstants.userBoxName);
-      debugPrint('✅ [AppInit] Hive initialized');
-    } catch (e) {
-      debugPrint('⚠️ [AppInit] Hive init failed: $e');
+      debugPrint('⚠️ [AppInit] Notification init error: $e');
     }
   }
 
@@ -148,9 +164,9 @@ class AppInitializer {
   /// Phase 4: Background Preloading
   static void _initializePhase4() {
     debugPrint('📦 [AppInit] Phase 4: Background preload...');
-    AzkarRepo.getMorningAzkar()
+    AzkarRepo.preloadAllAzkar()
         .then((_) {
-          debugPrint('✅ [AppInit] Azkar preloaded');
+          debugPrint('✅ [AppInit] All Azkar preloaded');
         })
         .catchError((e) {
           debugPrint('⚠️ [AppInit] Azkar preload failed: $e');

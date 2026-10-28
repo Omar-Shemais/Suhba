@@ -2,8 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:islamic_app/core/routes/app_routes.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 import '../widgets/book_tabs.dart';
@@ -48,11 +46,7 @@ class _HadithsViewBodyState extends State<HadithsViewBody> {
 
         CustomAppBar(
           title: 'hadith'.tr(),
-          leadingIcon: Icons.search,
           showReciterIcon: false,
-          onMore: () {
-            GoRouter.of(context).push(AppRoutes.hadithSearch);
-          },
         ),
         SizedBox(height: 8.h),
         // Book Tabs
@@ -140,6 +134,12 @@ class _HadithsViewBodyState extends State<HadithsViewBody> {
 
                 return ListView.builder(
                   controller: _scrollController,
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  cacheExtent: 1500,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: true,
                   itemCount: state.hadiths.length + (state.hasMore ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == state.hadiths.length) {

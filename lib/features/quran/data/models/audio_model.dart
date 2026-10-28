@@ -47,16 +47,34 @@ class ReciterModel {
 
   String getAudioUrl(int surahNumber) {
     final surahCode = surahNumber.toString().padLeft(3, '0');
-    return '$baseUrl/$subfolder/$surahCode.mp3';
+    if (baseUrl.isNotEmpty && subfolder.isNotEmpty) {
+      return '$baseUrl/$subfolder/$surahCode.mp3';
+    }
+    return 'https://cdn.mp3quran.net/audio/mishary-alafasy/r1/$surahCode.mp3';
   }
 
   String getAyahAudioUrl(int surahNumber, int ayahNumber) {
-    final reciterCode = _getReciterCode();
-    final ayahGlobalNumber = _calculateGlobalAyahNumber(
-      surahNumber,
-      ayahNumber,
-    );
-    return 'https://cdn.islamic.network/quran/audio/128/$reciterCode/$ayahGlobalNumber.mp3';
+    final sCode = surahNumber.toString().padLeft(3, '0');
+    final aCode = ayahNumber.toString().padLeft(3, '0');
+    final folder = _getEveryAyahFolder();
+    return 'https://everyayah.com/data/$folder/$sCode$aCode.mp3';
+  }
+
+  String _getEveryAyahFolder() {
+    switch (id) {
+      case 1:
+        return 'Alafasy_128kbps';
+      case 2:
+        return 'Abdul_Basit_Murattal_192kbps';
+      case 3:
+        return 'Ghamadi_40kbps';
+      case 4:
+        return 'MaherAlMuaiqly128kbps';
+      case 5:
+        return 'Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net';
+      default:
+        return 'Alafasy_128kbps';
+    }
   }
 
   int _calculateGlobalAyahNumber(int surahNumber, int ayahInSurah) {
@@ -194,9 +212,9 @@ class ReciterModel {
       case 1:
         return 'ar.alafasy';
       case 2:
-        return 'ar.alafasy';
+        return 'ar.abdulbasitmurattal';
       case 3:
-        return 'ar.alafasy';
+        return 'ar.saadalghamidi';
       case 4:
         return 'ar.mahermuaiqly';
       case 5:
@@ -213,6 +231,7 @@ class RadioStationModel {
   final String arabicName;
   final String url;
   final String? recentDate;
+  final String category; // 'quran', 'hadith', 'azkar'
 
   RadioStationModel({
     required this.id,
@@ -220,16 +239,55 @@ class RadioStationModel {
     required this.arabicName,
     required this.url,
     this.recentDate,
+    this.category = 'quran',
   });
 
   factory RadioStationModel.fromJson(Map<String, dynamic> json) {
+    final name = json['name'] as String? ?? '';
+    final arabicName = json['arabic_name'] as String? ?? name;
+    final id = json['id'] is int
+        ? json['id'] as int
+        : int.tryParse(json['id']?.toString() ?? '0') ?? 0;
+    final category = json['category'] as String? ?? _inferCategory(name, arabicName, id);
+
     return RadioStationModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      arabicName: json['arabic_name'] as String,
-      url: json['url'] as String,
+      id: id,
+      name: name,
+      arabicName: arabicName,
+      url: json['url'] as String? ?? '',
       recentDate: json['recent_date'] as String?,
+      category: category,
     );
+  }
+
+  static String _inferCategory(String name, String arabicName, int id) {
+    final text = '$name $arabicName'.toLowerCase();
+    if (text.contains('سيد رمضان')) {
+      return 'quran';
+    }
+    if (text.contains('الصباح') ||
+        text.contains('المساء') ||
+        text.contains('الرقية') ||
+        text.contains('رقية')) {
+      return 'azkar';
+    }
+    if (text.contains('بخاري') ||
+        text.contains('مسلم') ||
+        text.contains('حديث') ||
+        text.contains('سنة') ||
+        text.contains('سيرة') ||
+        text.contains('رياض الصالحين') ||
+        text.contains('الشمائل') ||
+        text.contains('الصحابة') ||
+        text.contains('أنبياء') ||
+        text.contains('فقه') ||
+        text.contains('فتاوى') ||
+        text.contains('تفسير') ||
+        text.contains('شهر رمضان') ||
+        text.contains('فضائل رمضان')) {
+      return 'hadith';
+    }
+    return 'quran';
   }
 
   Map<String, dynamic> toJson() {
@@ -239,6 +297,7 @@ class RadioStationModel {
       'arabic_name': arabicName,
       'url': url,
       'recent_date': recentDate,
+      'category': category,
     };
   }
 }

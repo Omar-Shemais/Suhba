@@ -3,13 +3,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Background gradient similar to Flutter splash -->
     <item>
-        <shape android:shape="rectangle">
-            <gradient
-                android:angle="90"
-                android:startColor="#FFF8E1"
-                android:endColor="#FFE4B5"
-                android:type="linear" />
-        </shape>
+        <color android:color="#FAF5ED" />
     </item>
 
     <!-- App icon in center (using launcher icon) -->

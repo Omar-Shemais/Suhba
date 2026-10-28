@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -22,8 +25,14 @@ abstract class AuthRemoteDataSource {
   /// Sign in with Google
   Future<UserModel> signInWithGoogle();
 
+  /// Sign in with Facebook
+  Future<UserModel> signInWithFacebook();
+
   /// Sign in with Apple
   Future<UserModel> signInWithApple();
+
+  /// Send password reset email
+  Future<void> sendPasswordResetEmail(String email);
 
   /// Complete Google Sign In with Firebase after confirmation
   Future<UserModel> completeGoogleSignIn();
@@ -164,26 +173,118 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<UserModel> signInWithFacebook() async {
+    try {
+      final facebookProvider = OAuthProvider('facebook.com');
+      facebookProvider.addScope('email');
+      facebookProvider.addScope('public_profile');
+
+      final userCredential = await _firebaseAuth.signInWithProvider(
+        facebookProvider,
+      );
+
+      if (userCredential.user == null) {
+        throw const AuthFailure('فشل تسجيل الدخول باستخدام Facebook.');
+      }
+
+      var user = UserModel.fromFirebaseUser(userCredential.user!);
+
+      if (userCredential.user!.photoURL != null) {
+        final photoBase64 = await ImageHelper.urlToBase64(
+          userCredential.user!.photoURL!,
+        );
+        if (photoBase64 != null) {
+          user = user.copyWith(photoBase64: photoBase64, updatePhoto: true);
+        }
+      }
+
+      return user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'web-context-cancelled' ||
+          e.code == 'popup-closed-by-user' ||
+          e.code == 'canceled') {
+        throw const AuthFailure('تم إلغاء تسجيل الدخول بواسطة المستخدم.');
+      }
+      if (e.code == 'channel-error' ||
+          (e.message != null && e.message!.contains('signInWithProvider'))) {
+        throw const AuthFailure(
+          'تسجيل الدخول عبر Facebook غير مفعل بعد في Firebase Console. يرجى تفعيل موفّر Facebook في لوحة تحكم Firebase أولاً.',
+        );
+      }
+      throw _handleFirebaseAuthException(e);
+    } on PlatformException catch (e) {
+      if (e.code == 'channel-error' ||
+          (e.message != null && e.message!.contains('signInWithProvider'))) {
+        throw const AuthFailure(
+          'تسجيل الدخول عبر Facebook غير مفعل بعد في Firebase Console. يرجى تفعيل موفّر Facebook في لوحة تحكم Firebase أولاً.',
+        );
+      }
+      throw AuthFailure('حدث خطأ في منصة التشغيل: ${e.message ?? e.code}');
+    } catch (e) {
+      final str = e.toString();
+      if (str.contains('signInWithProvider') || str.contains('channel-error')) {
+        throw const AuthFailure(
+          'تسجيل الدخول عبر Facebook غير مفعل بعد في Firebase Console. يرجى تفعيل موفّر Facebook في لوحة تحكم Firebase أولاً.',
+        );
+      }
+      throw AuthFailure(
+        'حدث خطأ أثناء تسجيل الدخول بواسطة Facebook: $str',
+      );
+    }
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw _handleFirebaseAuthException(e);
+    } catch (e) {
+      throw AuthFailure('حدث خطأ أثناء إرسال رابط إعادة التعيين: ${e.toString()}');
+    }
+  }
+
+  @override
   Future<UserModel> signInWithApple() async {
     try {
-      // Request Apple ID credential
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
+      UserCredential userCredential;
+      String? appleDisplayName;
 
-      // Create OAuth credential for Firebase
-      final oAuthCredential = OAuthProvider('apple.com').credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
+      if (!kIsWeb && Platform.isIOS) {
+        // Native Apple ID dialog on iOS
+        final appleCredential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+        );
 
-      // Sign in to Firebase with Apple credential
-      final userCredential = await _firebaseAuth.signInWithCredential(
-        oAuthCredential,
-      );
+        final oAuthCredential = OAuthProvider('apple.com').credential(
+          idToken: appleCredential.identityToken,
+          accessToken: appleCredential.authorizationCode,
+        );
+
+        userCredential = await _firebaseAuth.signInWithCredential(
+          oAuthCredential,
+        );
+
+        if (appleCredential.givenName != null ||
+            appleCredential.familyName != null) {
+          appleDisplayName = [
+            appleCredential.givenName,
+            appleCredential.familyName,
+          ].where((name) => name != null && name.isNotEmpty).join(' ');
+        }
+      } else {
+        // Android / Web / other: use Firebase OAuthProvider
+        final appleProvider = OAuthProvider('apple.com');
+        appleProvider.addScope('email');
+        appleProvider.addScope('name');
+
+        userCredential = await _firebaseAuth.signInWithProvider(
+          appleProvider,
+        );
+      }
 
       if (userCredential.user == null) {
         throw const AuthFailure('فشل تسجيل الدخول باستخدام Apple.');
@@ -193,31 +294,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // For first-time Apple sign in, update display name if provided
       if (userCredential.additionalUserInfo?.isNewUser == true) {
-        String? displayName;
+        if (appleDisplayName != null && appleDisplayName.isNotEmpty) {
+          await userCredential.user!.updateDisplayName(appleDisplayName);
+          await userCredential.user!.reload();
 
-        // Try to construct display name from Apple's name components
-        if (appleCredential.givenName != null ||
-            appleCredential.familyName != null) {
-          displayName = [
-            appleCredential.givenName,
-            appleCredential.familyName,
-          ].where((name) => name != null && name.isNotEmpty).join(' ');
-
-          if (displayName.isNotEmpty) {
-            await userCredential.user!.updateDisplayName(displayName);
-            await userCredential.user!.reload();
-
-            // Refresh user model with updated name
-            final updatedUser = _firebaseAuth.currentUser;
-            if (updatedUser != null) {
-              user = UserModel.fromFirebaseUser(updatedUser);
-            }
+          final updatedUser = _firebaseAuth.currentUser;
+          if (updatedUser != null) {
+            user = UserModel.fromFirebaseUser(updatedUser);
           }
         }
 
-        // Generate initials avatar for Apple sign-in
         final nameForInitials =
-            displayName ?? user.displayName ?? user.email ?? 'User';
+            appleDisplayName ?? user.displayName ?? (user.email.isNotEmpty ? user.email : 'User');
         final photoBase64 = await ImageHelper.generateInitialsAvatarBase64(
           nameForInitials,
         );
@@ -226,7 +314,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return user;
     } on SignInWithAppleAuthorizationException catch (e) {
-      // Handle Apple-specific exceptions
       switch (e.code) {
         case AuthorizationErrorCode.canceled:
           throw const AuthFailure('تم إلغاء تسجيل الدخول بواسطة المستخدم.');
@@ -242,10 +329,35 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           throw AuthFailure('حدث خطأ: ${e.code}');
       }
     } on FirebaseAuthException catch (e) {
+      if (e.code == 'web-context-cancelled' ||
+          e.code == 'popup-closed-by-user' ||
+          e.code == 'canceled') {
+        throw const AuthFailure('تم إلغاء تسجيل الدخول بواسطة المستخدم.');
+      }
+      if (e.code == 'channel-error' ||
+          (e.message != null && e.message!.contains('signInWithProvider'))) {
+        throw const AuthFailure(
+          'تسجيل الدخول عبر Apple غير مفعل بعد في Firebase Console. يرجى تفعيل موفّر Apple في لوحة تحكم Firebase أولاً.',
+        );
+      }
       throw _handleFirebaseAuthException(e);
+    } on PlatformException catch (e) {
+      if (e.code == 'channel-error' ||
+          (e.message != null && e.message!.contains('signInWithProvider'))) {
+        throw const AuthFailure(
+          'تسجيل الدخول عبر Apple غير مفعل بعد في Firebase Console. يرجى تفعيل موفّر Apple في لوحة تحكم Firebase أولاً.',
+        );
+      }
+      throw AuthFailure('حدث خطأ في منصة التشغيل: ${e.message ?? e.code}');
     } catch (e) {
+      final str = e.toString();
+      if (str.contains('signInWithProvider') || str.contains('channel-error')) {
+        throw const AuthFailure(
+          'تسجيل الدخول عبر Apple غير مفعل بعد في Firebase Console. يرجى تفعيل موفّر Apple في لوحة تحكم Firebase أولاً.',
+        );
+      }
       throw AuthFailure(
-        'حدث خطأ أثناء تسجيل الدخول بواسطة Apple: ${e.toString()}',
+        'حدث خطأ أثناء تسجيل الدخول بواسطة Apple: $str',
       );
     }
   }
@@ -272,15 +384,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthFailure('لا يوجد مستخدم مسجل دخول');
       }
 
-      print(
+      debugPrint(
         '🗑️ [Remote] Deleting Firebase Auth account for user: ${user.uid}',
       );
 
       await user.delete();
 
-      print('✅ [Remote] Firebase Auth account deleted successfully');
+      debugPrint('✅ [Remote] Firebase Auth account deleted successfully');
     } on FirebaseAuthException catch (e) {
-      print('❌ [Remote] Firebase Auth deletion error: ${e.code}');
+      debugPrint('❌ [Remote] Firebase Auth deletion error: ${e.code}');
 
       if (e.code == 'requires-recent-login') {
         throw const AuthFailure(
@@ -290,7 +402,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       throw AuthFailure('فشل حذف الحساب: ${e.message}');
     } catch (e) {
-      print('❌ [Remote] Unexpected error: $e');
+      debugPrint('❌ [Remote] Unexpected error: $e');
       throw AuthFailure('حدث خطأ غير متوقع: ${e.toString()}');
     }
   }
@@ -355,6 +467,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
       case 'requires-recent-login':
         return const AuthFailure('يجب إعادة تسجيل الدخول لإجراء هذه العملية.');
+      case 'channel-error':
+        if (e.message != null && e.message!.contains('signInWithProvider')) {
+          return const AuthFailure(
+            'تسجيل الدخول عبر Facebook غير مفعل بعد في Firebase Console. يرجى تفعيل موفّر Facebook في لوحة تحكم Firebase.',
+          );
+        }
+        return AuthFailure('حدث خطأ في الاتصال: ${e.message ?? e.code}');
+      case 'CONFIGURATION_NOT_FOUND':
+        return const AuthFailure(
+          'موفّر تسجيل الدخول غير مفعل في Firebase Console. يرجى تفعيله في Sign-in method.',
+        );
       default:
         return AuthFailure('حدث خطأ: ${e.message ?? e.code}');
     }

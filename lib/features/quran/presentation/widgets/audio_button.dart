@@ -22,11 +22,17 @@ class AudioButton extends StatelessWidget {
         // 1. Check if THIS Surah is the one currently active
         final bool isCurrentSurah =
             (state is AudioPlaying && state.currentSurahId == surahId) ||
+            (state is AudioPlayingAyah && state.currentSurahId == surahId) ||
             (state is AudioPaused && state.currentSurahId == surahId);
 
         // 2. Determine playing status
-        final bool isPlaying = state is AudioPlaying && isCurrentSurah;
+        final bool isPlaying =
+            (state is AudioPlaying || state is AudioPlayingAyah) && isCurrentSurah;
         final bool isPaused = state is AudioPaused && isCurrentSurah;
+
+        if (!isPlaying && !isPaused) {
+          return const SizedBox.shrink();
+        }
 
         IconData icon;
         String label;
@@ -34,12 +40,9 @@ class AudioButton extends StatelessWidget {
         if (isPlaying) {
           icon = Icons.pause_circle_filled_rounded;
           label = "Pause_Audio".tr();
-        } else if (isPaused) {
+        } else {
           icon = Icons.play_circle_fill_rounded;
           label = "Resume_Audio".tr();
-        } else {
-          icon = Icons.play_arrow_rounded;
-          label = "Play_Audio".tr();
         }
 
         return GestureDetector(
@@ -62,7 +65,7 @@ class AudioButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(30.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),

@@ -3,70 +3,118 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
-import 'package:islamic_app/core/constants/app_text_styles.dart';
 import '../../data/models/audio_model.dart';
 import '../cubit/audio_cubit.dart';
 import '../cubit/audio_state.dart';
 
 class RadioStationCard extends StatelessWidget {
   final RadioStationModel station;
+  final int index;
 
-  const RadioStationCard({super.key, required this.station});
+  const RadioStationCard({
+    super.key,
+    required this.station,
+    this.index = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Listen to AudioCubit directly.
-    // The UI now automatically updates if the Notification stops the radio!
     return BlocBuilder<AudioCubit, AudioState>(
       builder: (context, state) {
-        // Check if THIS station is the one currently playing
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final primaryColor =
+            isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427);
+
         final isPlayingThis =
             state is AudioPlayingRadio && state.url == station.url;
 
-        return Card(
-          margin: const EdgeInsets.only(bottom: 18),
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            side: BorderSide(
+        return Container(
+          margin: EdgeInsets.only(bottom: 12.h),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF282C32) : const Color(0xFFFCFAF7),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
               color: isPlayingThis
-                  ? AppColors.primaryColor
-                  : Colors.transparent,
-              width: 2.w,
+                  ? primaryColor
+                  : (isDark ? const Color(0xFF383E46) : const Color(0xFFEADBCE)),
+              width: isPlayingThis ? 1.8.w : 1.w,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.05 : 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16.r),
-            onTap: () {
-              if (isPlayingThis) {
-                // 🛑 Stop Radio
-                context.read<AudioCubit>().stop();
-              } else {
-                // ▶️ Play Radio
-                context.read<AudioCubit>().playRadio(
-                  station.url,
-                  stationName: station.name, // Make sure to pass the name!
-                );
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  _RadioIcon(isPlaying: isPlayingThis),
-                  SizedBox(width: 16.w),
-                  Expanded(
-                    child: _StationInfo(
-                      station: station,
-                      isPlaying: isPlayingThis,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20.r),
+              onTap: () {
+                if (isPlayingThis) {
+                  context.read<AudioCubit>().stop();
+                } else {
+                  context.read<AudioCubit>().playRadio(
+                    station.url,
+                    stationName: station.name,
+                  );
+                }
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                child: Row(
+                  children: [
+                    // زر التشغيل الدائري الفاخر ذو الإطار الذهبي على اليسار
+                    Container(
+                      width: 42.w,
+                      height: 42.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark
+                            ? const Color(0xFF261E16)
+                            : const Color(0xFF2C2219),
+                        border: Border.all(
+                          color: const Color(0xFFC7A87A),
+                          width: 1.5.w,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          isPlayingThis
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 24.sp,
+                        ),
+                      ),
                     ),
-                  ),
-                  Icon(
-                    isPlayingThis ? Icons.pause_circle : Icons.play_circle,
-                    color: AppColors.primaryColor,
-                    size: 36,
-                  ),
-                ],
+                    SizedBox(width: 14.w),
+
+                    // اسم المحطة والإذاعة في المنتصف
+                    Expanded(
+                      child: _StationInfo(
+                        station: station,
+                        isPlaying: isPlayingThis,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+
+                    // أيقونة المحطة على اليمين (تتناوب بين الأخضر الغابي والبني البرونزي)
+                    _RadioIcon(
+                      isPlaying: isPlayingThis,
+                      category: station.category,
+                      index: index,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -76,30 +124,59 @@ class RadioStationCard extends StatelessWidget {
   }
 }
 
-// ... _RadioIcon and _StationInfo classes remain the same ...
-// Keep your existing _RadioIcon and _StationInfo classes below this
 class _RadioIcon extends StatelessWidget {
   final bool isPlaying;
-  const _RadioIcon({required this.isPlaying});
+  final String category;
+  final int index;
+
+  const _RadioIcon({
+    required this.isPlaying,
+    required this.category,
+    required this.index,
+  });
+
+  IconData _getIcon() {
+    if (isPlaying) return Icons.graphic_eq_rounded;
+    switch (category) {
+      case 'hadith':
+        return Icons.auto_stories_rounded;
+      case 'azkar':
+        return Icons.wb_sunny_rounded;
+      case 'quran':
+      default:
+        return Icons.menu_book_rounded;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // التناوب الجمالي كما في الصورة المرجعية: كارت أخضر داكن وكارت بني برونزي
+    final iconBgColor = index.isEven
+        ? const Color(0xFF143427) // أخضر غابي ملكي
+        : const Color(0xFF4A3525); // بني برونزي دافئ
+
     return Container(
-      width: 60.w,
-      height: 60.h,
+      width: 48.w,
+      height: 48.w,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primaryColor,
-            AppColors.primaryColor.withOpacity(0.4), // Fixed .withValues
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12.r),
+        color: iconBgColor,
+        borderRadius: BorderRadius.circular(14.r),
+        boxShadow: isPlaying
+            ? [
+                BoxShadow(
+                  color: iconBgColor.withValues(alpha: 0.35),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ]
+            : null,
       ),
-      child: Icon(
-        isPlaying ? Icons.pause : Icons.radio,
-        color: Colors.white,
-        size: 32,
+      child: Center(
+        child: Icon(
+          _getIcon(),
+          color: Colors.white,
+          size: 24.sp,
+        ),
       ),
     );
   }
@@ -113,47 +190,66 @@ class _StationInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          station.arabicName,
-          style: AppTextStyles.subHead,
-        ), // Ensure style exists
-        SizedBox(height: 4.h),
-        Text(
-          station.name,
-          style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-        ), // Fallback style
-        if (isPlaying) ...[SizedBox(height: 8.h), const _LiveIndicator()],
-      ],
-    );
-  }
-}
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final title =
+        station.arabicName.isNotEmpty ? station.arabicName : station.name;
+    final showSubtitle =
+        station.name.isNotEmpty && station.name != station.arabicName;
 
-class _LiveIndicator extends StatelessWidget {
-  const _LiveIndicator();
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 8.w,
-          height: 8.h,
-          decoration: const BoxDecoration(
-            color: Colors.redAccent, // Changed to Red for "Live" look
-            shape: BoxShape.circle,
-          ),
-        ),
-        SizedBox(width: 6.w),
         Text(
-          "live".tr(),
+          title,
+          textAlign: TextAlign.right,
           style: TextStyle(
-            color: Colors.redAccent,
-            fontSize: 12.sp,
+            fontSize: 14.5.sp,
             fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : const Color(0xFF38291D),
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
+        if (showSubtitle) ...[
+          SizedBox(height: 3.h),
+          Text(
+            station.name,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontSize: 11.5.sp,
+              color: isDark ? Colors.white60 : const Color(0xFF8C7A6B),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+        if (isPlaying) ...[
+          SizedBox(height: 4.h),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "live".tr(),
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 5.w),
+              Container(
+                width: 7.w,
+                height: 7.w,
+                decoration: const BoxDecoration(
+                  color: Colors.redAccent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }

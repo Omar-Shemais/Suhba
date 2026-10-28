@@ -9,29 +9,29 @@ ThemeData darkTheme = ThemeData(
 
   // Color Scheme
   colorScheme: const ColorScheme.dark(
-    primary: AppColors.goldenPrimary,
+    primary: Color(0xFF2E7D5E), // Islamic emerald green
     secondary: AppColors.goldenSecondary,
-    tertiary: AppColors.goldenPrimary,
-    surface: Color(0xFF1A1A1A),
-    surfaceContainer: Color(0xFF1E1E1E),
-    onPrimary: AppColors.blackColor,
+    tertiary: Color(0xFF2E7D5E),
+    surface: Color(0xFF1E2125), // Slate dark gray (matching Khatmah theme)
+    surfaceContainer: Color(0xFF282C32),
+    onPrimary: AppColors.whiteColor,
     onSecondary: AppColors.whiteColor,
     onSurface: AppColors.whiteColor,
-    onSurfaceVariant: Color(0xFFB8B8B8),
+    onSurfaceVariant: Color(0xFFA6AFB8),
     error: Color(0xFFCF6679),
-    outline: Color(0xFF424242),
+    outline: Color(0xFF383E46),
   ),
 
-  // Scaffold Background
-  scaffoldBackgroundColor: const Color(0xFF121212),
+  // Scaffold Background (Slate Charcoal Dark Gray matching Khatmah Screen)
+  scaffoldBackgroundColor: const Color(0xFF1E2125),
 
   // AppBar Theme
   appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFF1E1E1E),
+    backgroundColor: Color(0xFF282C32),
     foregroundColor: AppColors.whiteColor,
     elevation: 0,
     centerTitle: true,
-    iconTheme: IconThemeData(color: AppColors.goldenPrimary, size: 24),
+    iconTheme: IconThemeData(color: Color(0xFFF0F2F5), size: 24),
     titleTextStyle: TextStyle(
       color: AppColors.whiteColor,
       fontSize: 20,
@@ -136,10 +136,13 @@ ThemeData darkTheme = ThemeData(
 
   // Card Theme
   cardTheme: CardThemeData(
-    color: const Color(0xFF1E1E1E),
+    color: const Color(0xFF282C32),
     elevation: 2,
     shadowColor: Colors.black.withValues(alpha: 0.3),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: const BorderSide(color: Color(0xFF383E46), width: 1),
+    ),
     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   ),
 
@@ -193,19 +196,19 @@ ThemeData darkTheme = ThemeData(
   // Input Decoration Theme
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: const Color(0xFF1E1E1E),
+    fillColor: const Color(0xFF21252A),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Color(0xFF424242), width: 1),
+      borderSide: const BorderSide(color: Color(0xFF383E46), width: 1),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Color(0xFF424242), width: 1),
+      borderSide: const BorderSide(color: Color(0xFF383E46), width: 1),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.goldenPrimary, width: 2),
+      borderSide: const BorderSide(color: Color(0xFF2E7D5E), width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -234,9 +237,9 @@ ThemeData darkTheme = ThemeData(
 
   // Bottom Navigation Bar Theme
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Color(0xFF1A1A1A),
-    selectedItemColor: AppColors.goldenPrimary,
-    unselectedItemColor: Color(0xFF9E9E9E),
+    backgroundColor: Color(0xFF21252A),
+    selectedItemColor: Color(0xFF2E7D5E),
+    unselectedItemColor: Color(0xFFA6AFB8),
     type: BottomNavigationBarType.fixed,
     elevation: 8,
     selectedLabelStyle: TextStyle(
@@ -272,15 +275,21 @@ ThemeData darkTheme = ThemeData(
   switchTheme: SwitchThemeData(
     thumbColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return AppColors.goldenPrimary;
+        return const Color(0xFFC7A87A);
       }
       return const Color(0xFF757575);
     }),
     trackColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return AppColors.goldenPrimary.withValues(alpha: 0.5);
+        return const Color(0xFF143427);
       }
       return const Color(0xFF424242);
+    }),
+    trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return Colors.transparent;
+      }
+      return Colors.white24;
     }),
   ),
 
@@ -299,9 +308,12 @@ ThemeData darkTheme = ThemeData(
 
   // Dialog Theme
   dialogTheme: DialogThemeData(
-    backgroundColor: const Color(0xFF1E1E1E),
+    backgroundColor: const Color(0xFF282C32),
     elevation: 8,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: const BorderSide(color: Color(0xFF383E46), width: 1),
+    ),
     titleTextStyle: const TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.bold,
@@ -313,6 +325,12 @@ ThemeData darkTheme = ThemeData(
       color: Color(0xFFB8B8B8),
       fontFamily: 'poppins',
     ),
+  ),
+
+  // Bottom Sheet Theme
+  bottomSheetTheme: const BottomSheetThemeData(
+    backgroundColor: Color(0xFF282C32),
+    surfaceTintColor: Colors.transparent,
   ),
 
   // Snackbar Theme
@@ -347,9 +365,9 @@ ThemeData darkTheme = ThemeData(
 
   // Progress Indicator Theme
   progressIndicatorTheme: const ProgressIndicatorThemeData(
-    color: AppColors.goldenPrimary,
-    linearTrackColor: Color(0xFF424242),
-    circularTrackColor: Color(0xFF424242),
+    color: Color(0xFFC7A87A),
+    linearTrackColor: Color(0xFF2A2A2A),
+    circularTrackColor: Color(0xFF2A2A2A),
   ),
 
   // Slider Theme

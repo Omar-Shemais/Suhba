@@ -44,12 +44,15 @@ class PrayerRepositoryImpl implements PrayerRepository {
       // ✅ استخدام endpoint الـ timings مع coordinates
       final endpoint = '${ApiConstants.aladhanBase}/timings/$formattedDate';
 
+      final prefs = await _getPrefs;
+      final savedMethod = prefs.getInt('prayer_calculation_method_id') ?? 5;
+
       final response = await DioClient.getData(
         endPoint: endpoint,
         queryParameters: {
           'latitude': latitude ?? 31.0409, // المنصورة (default)
           'longitude': longitude ?? 31.3785,
-          'method': 5, // المعيار المصري
+          'method': savedMethod,
         },
       );
 

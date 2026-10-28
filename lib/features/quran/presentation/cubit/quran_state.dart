@@ -38,3 +38,12 @@ class SurahDetailLoaded extends QuranState {
   @override
   List<Object?> get props => [surah];
 }
+
+class QuranSectionDetailLoaded extends QuranState {
+  final QuranSectionModel section;
+
+  const QuranSectionDetailLoaded(this.section);
+
+  @override
+  List<Object?> get props => [section];
+}

@@ -3,16 +3,19 @@ class AppRoutes {
   static const String welcome = '/welcome';
   static const String home = '/home';
   static const String quran = '/quran';
-  static const String quranSearch = '/radio';
-  static const String radio = '/mushaf';
-
-  static const String mushaf = '/quransearch';
+  static const String quranSearch = '/quran-search';
+  static const String radio = '/radio';
+  static const String mushaf = '/mushaf';
 
   static const String hadith = '/hadith';
   static const String hadithSearch = '/hadithSearch';
   static const String tasbeh = '/tasbeh';
 
   static const String azkar = '/azkar';
+  static const String morningAzkar = '/azkar/morning';
+  static const String eveningAzkar = '/azkar/evening';
+  static const String afterPrayerAzkar = '/azkar/after-prayer';
+  static const String duaa = '/duaa';
   static const String prayerTimes = '/prayer-times';
   static const String qibla = '/qibla';
   static const String tasbeeh = '/tasbeeh';
@@ -27,4 +30,8 @@ class AppRoutes {
   static const String privacyPolicy = '/privacy-policy';
   static const String helpSupport = '/help-support';
   static const String nearestMasjedScreen = '/nearestMasjedScreen';
+  static const String khatmah = '/khatmah';
+  static const String fastingSunan = '/fasting-sunan';
+  static const String notificationSettings = '/notification-settings';
+  static const String notifications = '/notifications';
 }

@@ -12,6 +12,14 @@ class QuranCubit extends Cubit<QuranState> {
   Future<void> loadSurahs() async {
     try {
       if (isClosed) return;
+
+      final cached = repository.getCachedSurahs();
+      if (cached != null && cached.isNotEmpty) {
+        _allSurahs = cached;
+        emit(QuranLoaded(cached));
+        return;
+      }
+
       emit(QuranLoading());
 
       final surahs = await repository.getAllSurahs();
@@ -28,6 +36,13 @@ class QuranCubit extends Cubit<QuranState> {
   Future<void> loadSurahById(int id) async {
     try {
       if (isClosed) return;
+
+      final cached = repository.getCachedSurahById(id);
+      if (cached != null && cached.verses.isNotEmpty) {
+        emit(SurahDetailLoaded(cached));
+        return;
+      }
+
       emit(QuranLoading());
 
       final surah = await repository.getSurahById(id);
@@ -38,6 +53,58 @@ class QuranCubit extends Cubit<QuranState> {
       if (isClosed) return;
       emit(QuranError(e.toString()));
     }
+  }
+
+  Future<void> loadJuzDetail(int juzNumber) async {
+    try {
+      if (isClosed) return;
+
+      // Instant cache check (0ms)
+      final cached = repository.getCachedJuzDetail(juzNumber);
+      if (cached != null) {
+        emit(QuranSectionDetailLoaded(cached));
+        repository.prefetchAdjacentAjza(juzNumber);
+        return;
+      }
+
+      emit(QuranLoading());
+
+      final section = await repository.getJuzDetail(juzNumber);
+
+      if (isClosed) return;
+      emit(QuranSectionDetailLoaded(section));
+    } catch (e) {
+      if (isClosed) return;
+      emit(QuranError(e.toString()));
+    }
+  }
+
+  Future<void> loadHizbDetail(int hizbNumber) async {
+    try {
+      if (isClosed) return;
+
+      // Instant cache check (0ms)
+      final cached = repository.getCachedHizbDetail(hizbNumber);
+      if (cached != null) {
+        emit(QuranSectionDetailLoaded(cached));
+        return;
+      }
+
+      emit(QuranLoading());
+
+      final section = await repository.getHizbDetail(hizbNumber);
+
+      if (isClosed) return;
+      emit(QuranSectionDetailLoaded(section));
+    } catch (e) {
+      if (isClosed) return;
+      emit(QuranError(e.toString()));
+    }
+  }
+
+  void preloadAllAjza() {
+    repository.prefetchAllAjzaInBackground();
+    repository.prefetchCommonSurahsInBackground();
   }
 
   void filterByType(String type) {

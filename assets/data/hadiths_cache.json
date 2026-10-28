@@ -1,0 +1,305 @@
+{
+  "hadiths": [
+    {
+      "id": 1,
+      "hadithArabic": "سَمِعْتُ عُمَرَ بْنَ الخَطَّابِ رَضِيَ اللَّهُ عَنْهُ عَلَى المِنْبَرِ قَالَ: سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ يَقُولُ: «إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى، فَمَنْ كَانَتْ هِجْرَتُهُ إِلَى دُنْيَا يُصِيبُهَا، أَوْ إِلَى امْرَأَةٍ يَنْكِحُهَا، فَهِجْرَتُهُ إِلَى مَا هَاجَرَ إِلَيْهِ».",
+      "hadithEnglish": "I heard Allah's Messenger (ﷺ) saying, \"The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended. So whoever emigrated for worldly benefits or for a woman to marry, his emigration was for what he emigrated for.\"",
+      "arabicNarrator": "عمر بن الخطاب رضي الله عنه",
+      "englishNarrator": "Narrated Umar bin Al-Khattab",
+      "bookSlug": "sahih-bukhari",
+      "volume": 1,
+      "hadithNumber": 1
+    },
+    {
+      "id": 2,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «الإِيمَانُ بِضْعٌ وَسِتُّونَ شُعْبَةً، وَالحَيَاءُ شُعْبَةٌ مِنَ الإِيمَانِ».",
+      "hadithEnglish": "The Prophet (ﷺ) said, \"Faith (Belief) consists of more than sixty branches (i.e. parts). And Haya (modesty) is a part of faith.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Huraira",
+      "bookSlug": "sahih-bukhari",
+      "volume": 1,
+      "hadithNumber": 9
+    },
+    {
+      "id": 3,
+      "hadithArabic": "عَنْ عَبْدِ اللَّهِ بْنِ عَمْرٍو رَضِيَ اللَّهُ عَنْهُمَا، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «المُسْلِمُ مَنْ سَلِمَ المُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ، وَالمُهَاجِرُ مَنْ هَجَرَ مَا نَهَى اللَّهُ عَنْهُ».",
+      "hadithEnglish": "The Prophet (ﷺ) said, \"A Muslim is the one who avoids harming Muslims with his tongue and hands. And a Muhajir (emigrant) is the one who gives up all what Allah has forbidden.\"",
+      "arabicNarrator": "عبد الله بن عمرو رضي الله عنهما",
+      "englishNarrator": "Narrated Abdullah bin Amr",
+      "bookSlug": "sahih-bukhari",
+      "volume": 1,
+      "hadithNumber": 10
+    },
+    {
+      "id": 4,
+      "hadithArabic": "عَنْ أَنَسٍ رَضِيَ اللَّهُ عَنْهُ، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ».",
+      "hadithEnglish": "The Prophet (ﷺ) said, \"None of you will have faith till he wishes for his (Muslim) brother what he likes for himself.\"",
+      "arabicNarrator": "أنس بن مالك رضي الله عنه",
+      "englishNarrator": "Narrated Anas",
+      "bookSlug": "sahih-bukhari",
+      "volume": 1,
+      "hadithNumber": 13
+    },
+    {
+      "id": 5,
+      "hadithArabic": "عَنْ عُثْمَانَ رَضِيَ اللَّهُ عَنْهُ، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «خَيْرُكُمْ مَنْ تَعَلَّمَ القُرْآنَ وَعَلَّمَهُ».",
+      "hadithEnglish": "The Prophet (ﷺ) said, \"The best among you (Muslims) are those who learn the Qur'an and teach it.\"",
+      "arabicNarrator": "عثمان بن عفان رضي الله عنه",
+      "englishNarrator": "Narrated Uthman",
+      "bookSlug": "sahih-bukhari",
+      "volume": 6,
+      "hadithNumber": 5027
+    },
+    {
+      "id": 6,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «كَلِمَتَانِ خَفِيفَتَانِ عَلَى اللِّسَانِ، ثَقِيلَتَانِ فِي المِيزَانِ، حَبِيبَتَانِ إِلَى الرَّحْمَنِ: سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ العَظِيمِ».",
+      "hadithEnglish": "Allah's Messenger (ﷺ) said, \"(There are) two words which are dear to the Beneficent (Allah) and very light (easy) for the tongue to say, but very heavy in weight in the balance. They are: 'Subhan Allah wa-bi hamdihi' and 'Subhan Allah Al-`Azim'\".",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Huraira",
+      "bookSlug": "sahih-bukhari",
+      "volume": 8,
+      "hadithNumber": 6406
+    },
+    {
+      "id": 7,
+      "hadithArabic": "عَنْ عَائِشَةَ رَضِيَ اللَّهُ عَنْهَا، أَنَّ رَسُولَ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «مَنْ أَحْدَثَ فِي أَمْرِنَا هَذَا مَا لَيْسَ فِيهِ، فَهُوَ رَدٌّ».",
+      "hadithEnglish": "Allah's Messenger (ﷺ) said, \"If somebody innovates something which is not in harmony with the principles of our religion, that thing is rejected.\"",
+      "arabicNarrator": "عائشة أم المؤمنين رضي الله عنها",
+      "englishNarrator": "Narrated Aisha",
+      "bookSlug": "sahih-bukhari",
+      "volume": 3,
+      "hadithNumber": 2697
+    },
+    {
+      "id": 8,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا، سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الجَنَّةِ».",
+      "hadithEnglish": "The Prophet (ﷺ) said: \"Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Huraira",
+      "bookSlug": "sahih-bukhari",
+      "volume": 1,
+      "hadithNumber": 71
+    },
+    {
+      "id": 9,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، أَنَّ رَسُولَ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «حَقُّ الْمُسْلِمِ عَلَى الْمُسْلِمِ سِتٌّ» قِيلَ: مَا هُنَّ يَا رَسُولَ اللهِ؟، قَالَ: «إِذَا لَقِيتَهُ فَسَلِّمْ عَلَيْهِ، وَإِذَا دَعَاكَ فَأَجِبْهُ، وَإِذَا اسْتَنْصَحَكَ فَانْصَحْ لَهُ، وَإِذَا عَطَسَ فَحَمِدَ اللهَ فَشَمِّتْهُ، وَإِذَا مَرِضَ فَعُدْهُ، وَإِذَا مَاتَ فَاتَّبِعْهُ».",
+      "hadithEnglish": "Abu Huraira reported Allah's Messenger (ﷺ) as saying: Six are the rights of a Muslim upon another Muslim: When you meet him, offer him greetings; when he invites you to a feast accept it; when he seeks your good counsel give it to him; when he sneezes and says, \"All praise is due to Allah,\" say, \"May Allah have mercy on you\"; when he is sick visit him, and when he dies follow him (his funeral).",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Huraira",
+      "bookSlug": "sahih-muslim",
+      "volume": 4,
+      "hadithNumber": 2162
+    },
+    {
+      "id": 10,
+      "hadithArabic": "عَنْ عُمَرَ بْنِ الْخَطَّابِ رَضِيَ اللَّهُ عَنْهُ، قَالَ: بَيْنَمَا نَحْنُ عِنْدَ رَسُولِ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ ذَاتَ يَوْمٍ، إِذْ طَلَعَ عَلَيْنَا رَجُلٌ شَدِيدُ بَيَاضِ الثِّيَابِ شَدِيدُ سَوَادِ الشَّعَرِ.. فَقَالَ: يَا مُحَمَّدُ أَخْبِرْنِي عَنِ الْإِسْلَامِ، فَقَالَ رَسُولُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «الْإِسْلَامُ أَنْ تَشْهَدَ أَنْ لَا إِلَهَ إِلَّا اللهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللهِ، وَتُقِيمَ الصَّلَاةَ، وَتُؤْتِيَ الزَّكَاةَ، وَتَصُومَ رَمَضَانَ، وَتَحُجَّ الْبَيْتَ إِنِ اسْتَطَعْتَ إِلَيْهِ سَبِيلًا»..",
+      "hadithEnglish": "It is narrated on the authority of Umar ibn al-Khattab that: One day when we were sitting with the Messenger of Allah (ﷺ) there appeared before us a man with very white clothes and very black hair... He said: Muhammad, tell me about Islam. The Messenger of Allah (ﷺ) replied: Islam is that you should testify that there is no god but Allah and that Muhammad is Allah's Messenger, that you should observe prayer, pay Zakat, fast during Ramadan, and perform Hajj to the House if you can find a way to it...",
+      "arabicNarrator": "عمر بن الخطاب رضي الله عنه",
+      "englishNarrator": "Narrated Umar bin Al-Khattab",
+      "bookSlug": "sahih-muslim",
+      "volume": 1,
+      "hadithNumber": 8
+    },
+    {
+      "id": 11,
+      "hadithArabic": "عَنْ تَمِيمٍ الدَّارِيِّ رَضِيَ اللَّهُ عَنْهُ، أَنَّ النَّبِيَّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «الدِّينُ النَّصِيحَةُ» قُلْنَا: لِمَنْ؟ قَالَ: «لِلَّهِ وَلِكِتَابِهِ وَلِرَسُولِهِ وَلِأَئِمَّةِ الْمُسْلِمِينَ وَعَامَّتِهِمْ».",
+      "hadithEnglish": "It is narrated on the authority of Tamim ad-Dari that the Prophet (ﷺ) observed: \"Religion is sincere counsel.\" We said: \"To whom?\" He said: \"To Allah and to His Book and to His Messenger and to the leaders of the Muslims and to the common folk.\"",
+      "arabicNarrator": "تميم الداري رضي الله عنه",
+      "englishNarrator": "Narrated Tamim ad-Dari",
+      "bookSlug": "sahih-muslim",
+      "volume": 1,
+      "hadithNumber": 55
+    },
+    {
+      "id": 12,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، أَنَّ رَسُولَ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «مَنْ دَعَا إِلَى هُدًى، كَانَ لَهُ مِنَ الْأَجْرِ مِثْلُ أُجُورِ مَنْ تَبِعَهُ، لَا يَنْقُصُ ذَلِكَ مِنْ أُجُورِهِمْ شَيْئًا، وَمَنْ دَعَا إِلَى ضَلَالَةٍ، كَانَ عَلَيْهِ مِنَ الْإِثْمِ مِثْلُ آثَامِ مَنْ تَبِعَهُ، لَا يَنْقُصُ ذَلِكَ مِنْ آثَامِهِمْ شَيْئًا».",
+      "hadithEnglish": "Abu Huraira reported Allah's Messenger (ﷺ) as saying: \"He who called (people) to guidance, there would be reward for him like the rewards of those who adhered to it, without their reward being diminished in any respect. And he who called (people) to error, he shall have to bear the burden of its sin like that of those who committed it, without their sins being diminished in any respect.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Huraira",
+      "bookSlug": "sahih-muslim",
+      "volume": 4,
+      "hadithNumber": 2674
+    },
+    {
+      "id": 13,
+      "hadithArabic": "عَنْ أَبِي مَالِكٍ الْأَشْعَرِيِّ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «الطُّهُورُ شَطْرُ الْإِيمَانِ، وَالْحَمْدُ لِلَّهِ تَمْلَأُ الْمِيزَانَ، وَسُبْحَانَ اللهِ وَالْحَمْدُ لِلَّهِ تَمْلَآَنِ - أَوْ تَمْلَأُ - مَا بَيْنَ السَّمَاوَاتِ وَالْأَرْضِ، وَالصَّلَاةُ نُورٌ، وَالصَّدَقَةُ بُرْهَانٌ، وَالصَّبْرُ ضِيَاءٌ، وَالْقُرْآنُ حُجَّةٌ لَكَ أَوْ عَلَيْكَ، كُلُّ النَّاسِ يَغْدُو فَبَايِعٌ نَفْسَهُ فَمُعْتِقُهَا أَوْ مُوبِقُهَا».",
+      "hadithEnglish": "Abu Malik at-Ash'ari reported: The Messenger of Allah (ﷺ) said: \"Cleanliness is half of faith and Alhamdulillah (Praise be to Allah) fills the scale, and SubhanAllah (Glory be to Allah) and Alhamdulillah fill that which is between heaven and earth; and prayer is a light, and charity is a proof, and patience is illumination, and the Qur'an is an argument for you or against you. Every person starts his day as a vendor of his soul, either freeing it or bringing about its ruin.\"",
+      "arabicNarrator": "أبو مالك الأشعري رضي الله عنه",
+      "englishNarrator": "Narrated Abu Malik al-Ash'ari",
+      "bookSlug": "sahih-muslim",
+      "volume": 1,
+      "hadithNumber": 223
+    },
+    {
+      "id": 14,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، أَنَّ رَسُولَ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «إِنَّ أَوَّلَ مَا يُحَاسَبُ بِهِ العَبْدُ يَوْمَ القِيَامَةِ مِنْ عَمَلِهِ صَلَاتُهُ، فَإِنْ صَلَحَتْ فَقَدْ أَفْلَحَ وَأَنْجَحَ، وَإِنْ فَسَدَتْ فَقَدْ خَابَ وَخَسِرَ».",
+      "hadithEnglish": "It was narrated from Abu Hurairah that the Messenger of Allah (ﷺ) said: \"The first thing for which a person will be brought to account on the Day of Resurrection is his prayer. If it is sound, then he will have succeeded and prospered, but if it is corrupt, then he will have failed and lost.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Hurairah",
+      "bookSlug": "sunan-nasai",
+      "volume": 1,
+      "hadithNumber": 465
+    },
+    {
+      "id": 15,
+      "hadithArabic": "عَنْ أَنَسِ بْنِ مَالِكٍ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «مَنْ صَلَّى عَلَيَّ صَلَاةً وَاحِدَةً، صَلَّى اللَّهُ عَلَيْهِ عَشْرَ صَلَوَاتٍ، وَحُطَّتْ عَنْهُ عَشْرُ خَطِيئَاتٍ، وَرُفِعَتْ لَهُ عَشْرُ دَرَجَاتٍ».",
+      "hadithEnglish": "It was narrated that Anas bin Malik said: \"The Messenger of Allah (ﷺ) said: Whoever sends salah upon me once, Allah will send salah upon him tenfold, and will erase ten sins from him, and will raise him ten degrees in status.\"",
+      "arabicNarrator": "أنس بن مالك رضي الله عنه",
+      "englishNarrator": "Narrated Anas bin Malik",
+      "bookSlug": "sunan-nasai",
+      "volume": 3,
+      "hadithNumber": 1297
+    },
+    {
+      "id": 16,
+      "hadithArabic": "عَنْ عَائِشَةَ رَضِيَ اللَّهُ عَنْهَا، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «السِّوَاكُ مَطْهَرَةٌ لِلْفَمِ، مَرْضَاةٌ لِلرَّبِّ».",
+      "hadithEnglish": "It was narrated from Aisha that the Prophet (ﷺ) said: \"The Siwak is a purification for the mouth and is pleasing to the Lord.\"",
+      "arabicNarrator": "عائشة أم المؤمنين رضي الله عنها",
+      "englishNarrator": "Narrated Aisha",
+      "bookSlug": "sunan-nasai",
+      "volume": 1,
+      "hadithNumber": 5
+    },
+    {
+      "id": 17,
+      "hadithArabic": "عَنْ أَبِي الدَّرْدَاءِ رَضِيَ اللَّهُ عَنْهُ، قَالَ: سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ يَقُولُ: «مَنْ سَلَكَ طَرِيقًا يَبْتَغِي فِيهِ عِلْمًا سَلَكَ اللَّهُ بِهِ طَرِيقًا إِلَى الجَنَّةِ، وَإِنَّ المَلَائِكَةَ لَتَضَعُ أَجْنِحَتَهَا رِضًا لِطَالِبِ العِلْمِ، وَإِنَّ العَالِمَ لَيَسْتَغْفِرُ لَهُ مَنْ فِي السَّمَاوَاتِ وَمَنْ فِي الأَرْضِ حَتَّى الحِيتَانُ فِي المَاءِ».",
+      "hadithEnglish": "Narrated AbudDarda: I heard the Messenger of Allah (ﷺ) say: \"If anyone travels on a road in search of knowledge, Allah will cause him to travel on one of the roads of Paradise. The angels will lower their wings in their great pleasure with one who seeks knowledge, the inhabitants of the heavens and the earth and (even) the fish in the deep waters will ask forgiveness for the learned man.\"",
+      "arabicNarrator": "أبو الدرداء رضي الله عنه",
+      "englishNarrator": "Narrated AbudDarda",
+      "bookSlug": "abu-dawood",
+      "volume": 3,
+      "hadithNumber": 3641
+    },
+    {
+      "id": 18,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، أَنَّ رَسُولَ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «لَا يَشْكُرُ اللَّهَ مَنْ لَا يَشْكُرُ النَّاسَ».",
+      "hadithEnglish": "Narrated Abu Hurairah: The Prophet (ﷺ) said: \"He who does not thank the people does not thank Allah.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Hurairah",
+      "bookSlug": "abu-dawood",
+      "volume": 4,
+      "hadithNumber": 4811
+    },
+    {
+      "id": 19,
+      "hadithArabic": "عَنْ أَبِي أُمَامَةَ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «أَنَا زَعِيمٌ بِبَيْتٍ فِي رَبَضِ الجَنَّةِ لِمَنْ تَرَكَ المِرَاءَ وَإِنْ كَانَ مُحِقًّا، وَبِبَيْتٍ فِي وَسَطِ الجَنَّةِ لِمَنْ تَرَكَ الكَذِبَ وَإِنْ كَانَ مَازِحًا، وَبِبَيْتٍ فِي أَعْلَى الجَنَّةِ لِمَنْ حَسُنَ خُلُقُهُ».",
+      "hadithEnglish": "Narrated Abu Umamah: The Prophet (ﷺ) said: \"I guarantee a house in the surroundings of Paradise for a man who avoids quarrelling even if he were in the right, a house in the middle of Paradise for a man who avoids lying even if he were joking, and a house in the upper part of Paradise for a man who made his character good.\"",
+      "arabicNarrator": "أبو أمامة الباهلي رضي الله عنه",
+      "englishNarrator": "Narrated Abu Umamah",
+      "bookSlug": "abu-dawood",
+      "volume": 4,
+      "hadithNumber": 4800
+    },
+    {
+      "id": 20,
+      "hadithArabic": "عَنْ أَبِي ذَرٍّ وَمُعَاذِ بْنِ جَبَلٍ رَضِيَ اللَّهُ عَنْهُمَا، أَنَّ رَسُولَ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «اتَّقِ اللَّهِ حَيْثُمَا كُنْتَ، وَأَتْبِعِ السَّيِّئَةَ الحَسَنَةَ تَمْحُهَا، وَخَالِقِ النَّاسَ بِخُلُقٍ حَسَنٍ».",
+      "hadithEnglish": "Abu Dharr and Mu'adh bin Jabal narrated that the Messenger of Allah (ﷺ) said: \"Have Taqwa of Allah wherever you are, and follow an evil deed with a good one to wipe it out, and treat the people with good behavior.\"",
+      "arabicNarrator": "أبو ذر ومعاذ بن جبل رضي الله عنهما",
+      "englishNarrator": "Narrated Abu Dharr and Mu'adh",
+      "bookSlug": "al-tirmidhi",
+      "volume": 4,
+      "hadithNumber": 1987
+    },
+    {
+      "id": 21,
+      "hadithArabic": "عَنْ عَبْدِ اللَّهِ بْنِ عَبَّاسٍ رَضِيَ اللَّهُ عَنْهُمَا، قَالَ: كُنْتُ خَلْفَ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ يَوْمًا، فَقَالَ: «يَا غُلَامُ إِنِّي أُعَلِّمُكَ كَلِمَاتٍ: احْفَظِ اللَّهَ يَحْفَظْكَ، احْفَظِ اللَّهَ تَجِدْهُ تُجَاهَكَ، إِذَا سَأَلْتَ فَاسْأَلِ اللَّهَ، وَإِذَا اسْتَعَنْتَ فَاسْتَعِنْ بِاللَّهِ، وَاعْلَمْ أَنَّ الأُمَّةَ لَوِ اجْتَمَعَتْ عَلَى أَنْ يَنْفَعُوكَ بِشَيْءٍ لَمْ يَنْفَعُوكَ إِلَّا بِشَيْءٍ قَدْ كَتَبَهُ اللَّهُ لَكَ، وَلَوِ اجْتَمَعُوا عَلَى أَنْ يَضُرُّوكَ بِشَيْءٍ لَمْ يَضُرُّوكَ إِلَّا بِشَيْءٍ قَدْ كَتَبَهُ اللَّهُ عَلَيْكَ، رُفِعَتِ الأَقْلَامُ وَجَفَّتِ الصُّحُفُ».",
+      "hadithEnglish": "Ibn Abbas narrated: \"One day I was behind the Prophet (ﷺ) and he said to me: Young man, I shall teach you some words (of advice): Be mindful of Allah and Allah will protect you. Be mindful of Allah and you will find Him in front of you. If you ask, ask Allah; if you seek help, seek help from Allah. Know that if the nation were to gather together to benefit you with something, they would not benefit you except with that which Allah has already recorded for you; and if they were to gather to harm you, they would not harm you except with that which Allah has already recorded against you. The pens have been lifted and the pages have dried.\"",
+      "arabicNarrator": "عبد الله بن عباس رضي الله عنهما",
+      "englishNarrator": "Narrated Ibn Abbas",
+      "bookSlug": "al-tirmidhi",
+      "volume": 4,
+      "hadithNumber": 2516
+    },
+    {
+      "id": 22,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «مِنْ حُسْنِ إِسْلَامِ المَرْءِ تَرْكُهُ مَا لَا يَعْنِيهِ».",
+      "hadithEnglish": "Abu Hurairah narrated that the Messenger of Allah (ﷺ) said: \"Indeed, part of the excellence of a person's Islam is that he leaves that which does not concern him.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Hurairah",
+      "bookSlug": "al-tirmidhi",
+      "volume": 4,
+      "hadithNumber": 2317
+    },
+    {
+      "id": 23,
+      "hadithArabic": "عَنْ سَلَمَةَ بْنِ عُبَيْدِ اللَّهِ بْنِ مِحْصَنٍ الخَطْمِيِّ، عَنْ أَبِيهِ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «مَنْ أَصْبَحَ مِنْكُمْ آمِنًا فِي سِرْبِهِ، مُعَافًى فِي جَسَدِهِ، عِنْدَهُ قُوتُ يَوْمِهِ، فَكَأَنَّمَا حِيزَتْ لَهُ الدُّنْيَا بِحَذَافِيرِهَا».",
+      "hadithEnglish": "Salamah bin Ubaidullah bin Mihsan Al-Khatmi narrated from his father that the Messenger of Allah (ﷺ) said: \"Whoever among you wakes up secure in his property, healthy in his body, having his food for the day, it is as if the whole world was brought for him.\"",
+      "arabicNarrator": "عبيد الله بن محصن رضي الله عنه",
+      "englishNarrator": "Narrated Ubaidullah bin Mihsan",
+      "bookSlug": "al-tirmidhi",
+      "volume": 4,
+      "hadithNumber": 2346
+    },
+    {
+      "id": 24,
+      "hadithArabic": "عَنْ أَنَسِ بْنِ مَالِكٍ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «طَلَبُ العِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ».",
+      "hadithEnglish": "It was narrated that Anas bin Malik said: \"The Messenger of Allah (ﷺ) said: Seeking knowledge is a duty upon every Muslim.\"",
+      "arabicNarrator": "أنس بن مالك رضي الله عنه",
+      "englishNarrator": "Narrated Anas bin Malik",
+      "bookSlug": "ibn-e-majah",
+      "volume": 1,
+      "hadithNumber": 224
+    },
+    {
+      "id": 25,
+      "hadithArabic": "عَنْ جَابِرِ بْنِ عَبْدِ اللَّهِ رَضِيَ اللَّهُ عَنْهُمَا، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «أَفْضَلُ الذِّكْرِ لَا إِلَهَ إِلَّا اللَّهُ، وَأَفْضَلُ الدُّعَاءِ الحَمْدُ لِلَّهِ».",
+      "hadithEnglish": "It was narrated that Jabir bin Abdullah said: \"The Messenger of Allah (ﷺ) said: The best of remembrance is 'La ilaha illallah' (There is no god worthy of worship except Allah), and the best of supplication is 'Al-Hamdu Lillah' (Praise be to Allah).\"",
+      "arabicNarrator": "جابر بن عبد الله رضي الله عنهما",
+      "englishNarrator": "Narrated Jabir bin Abdullah",
+      "bookSlug": "ibn-e-majah",
+      "volume": 5,
+      "hadithNumber": 3800
+    },
+    {
+      "id": 26,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، أَنَّ رَسُولَ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «المُؤْمِنُ القَوِيُّ خَيْرٌ وَأَحَبُّ إِلَى اللَّهِ مِنَ المُؤْمِنِ الضَّعِيفِ، وَفِي كُلٍّ خَيْرٌ، احْرِصْ عَلَى مَا يَنْفَعُكَ، وَاسْتَعِنْ بِاللَّهِ وَلَا تَعْجِزْ، وَإِنْ أَصَابَكَ شَيْءٌ فَلَا تَقُلْ لَوْ أَنِّي فَعَلْتُ كَانَ كَذَا وَكَذَا، وَلَكِنْ قُلْ قَدَرُ اللَّهِ وَمَا شَاءَ فَعَلَ».",
+      "hadithEnglish": "It was narrated that Abu Hurairah said: \"The Messenger of Allah (ﷺ) said: The strong believer is better and more beloved to Allah than the weak believer, although both are good. Strive for that which will benefit you, seek the help of Allah and do not feel helpless. If anything befalls you, do not say: 'If only I had done such and such', but say: 'Qaddar Allah wa ma sha'a fa'al' (It is the decree of Allah and He does whatever He wills).\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Hurairah",
+      "bookSlug": "ibn-e-majah",
+      "volume": 1,
+      "hadithNumber": 79
+    },
+    {
+      "id": 27,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «تَهَادَوْا تَحَابُّوا».",
+      "hadithEnglish": "The Prophet (ﷺ) said: \"Give gifts to one another, and you will love one another.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Huraira",
+      "bookSlug": "sahih-bukhari",
+      "volume": 2,
+      "hadithNumber": 594
+    },
+    {
+      "id": 28,
+      "hadithArabic": "عَنْ أَنَسٍ رَضِيَ اللَّهُ عَنْهُ، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «يَسِّرُوا وَلاَ تُعَسِّرُوا، وَبَشِّرُوا، وَلاَ تُنَفِّرُوا».",
+      "hadithEnglish": "The Prophet (ﷺ) said, \"Make things easy and do not make them difficult, cheer the people up by conveying glad tidings to them and do not repulse them.\"",
+      "arabicNarrator": "أنس بن مالك رضي الله عنه",
+      "englishNarrator": "Narrated Anas bin Malik",
+      "bookSlug": "sahih-bukhari",
+      "volume": 1,
+      "hadithNumber": 69
+    },
+    {
+      "id": 29,
+      "hadithArabic": "عَنْ سَهْلِ بْنِ سَعْدٍ رَضِيَ اللَّهُ عَنْهُ، قَالَ: قَالَ رَسُولُ اللَّهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «أَنَا وَكَافِلُ اليَتِيمِ فِي الجَنَّةِ هَكَذَا» وَأَشَارَ بِالسَّبَّابَةِ وَالوُسْطَى، وَفَرَّجَ بَيْنَهُمَا شَيْئًا.",
+      "hadithEnglish": "Allah's Messenger (ﷺ) said, \"I and the one who looks after an orphan will be like this in Paradise,\" showing his middle and index fingers and separating them.",
+      "arabicNarrator": "سهل بن سعد رضي الله عنه",
+      "englishNarrator": "Narrated Sahl bin Sad",
+      "bookSlug": "sahih-bukhari",
+      "volume": 7,
+      "hadithNumber": 5304
+    },
+    {
+      "id": 30,
+      "hadithArabic": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ، عَنِ النَّبِيِّ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ قَالَ: «السَّاعِي عَلَى الأَرْمَلَةِ وَالمِسْكِينِ، كَالْمُجَاهِدِ فِي سَبِيلِ اللَّهِ، أَوِ القَائِمِ اللَّيْلَ الصَّائِمِ النَّهَارَ».",
+      "hadithEnglish": "The Prophet (ﷺ) said, \"The one who looks after a widow or a poor person is like a Mujahid (warrior) who fights for Allah's Cause, or like him who performs prayers all the night and fasts all the day.\"",
+      "arabicNarrator": "أبو هريرة رضي الله عنه",
+      "englishNarrator": "Narrated Abu Huraira",
+      "bookSlug": "sahih-muslim",
+      "volume": 4,
+      "hadithNumber": 2982
+    }
+  ],
+  "total": 30
+}

@@ -65,14 +65,7 @@ class AyahCard extends StatelessWidget {
             style: AppTextStyles.quranText,
           ),
 
-          SizedBox(height: 16.h),
 
-          // الترجمة
-          Text(
-            ayah.translation,
-            textAlign: TextAlign.left,
-            style: AppTextStyles.secondary,
-          ),
 
           SizedBox(height: 16.h),
 

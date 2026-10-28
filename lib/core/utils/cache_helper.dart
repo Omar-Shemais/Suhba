@@ -5,11 +5,11 @@ class CacheHelper {
     await Hive.initFlutter();
   }
 
-  static Future<Box<T>> openBox<T>(String boxName) async {
+  static Future<Box> openBox(String boxName) async {
     if (!Hive.isBoxOpen(boxName)) {
-      return await Hive.openBox<T>(boxName);
+      return await Hive.openBox(boxName);
     }
-    return Hive.box<T>(boxName);
+    return Hive.box(boxName);
   }
 
   static Future<void> saveData<T>({
@@ -17,7 +17,7 @@ class CacheHelper {
     required String key,
     required T value,
   }) async {
-    final box = await openBox<T>(boxName);
+    final box = await openBox(boxName);
     await box.put(key, value);
   }
 
@@ -25,8 +25,32 @@ class CacheHelper {
     required String boxName,
     required String key,
   }) async {
-    final box = await openBox<T>(boxName);
-    return box.get(key);
+    final box = await openBox(boxName);
+    final value = box.get(key);
+    if (value == null) return null;
+    return value as T?;
+  }
+
+  static bool isBoxOpen(String boxName) => Hive.isBoxOpen(boxName);
+
+  static Box? getBox(String boxName) {
+    if (Hive.isBoxOpen(boxName)) {
+      return Hive.box(boxName);
+    }
+    return null;
+  }
+
+  static T? getDataSync<T>({
+    required String boxName,
+    required String key,
+  }) {
+    if (Hive.isBoxOpen(boxName)) {
+      final box = Hive.box(boxName);
+      final value = box.get(key);
+      if (value == null) return null;
+      return value as T?;
+    }
+    return null;
   }
 
   static Future<void> removeData({

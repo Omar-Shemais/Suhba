@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
 import 'package:islamic_app/core/constants/app_text_styles.dart';
+import '../../data/helpers/quran_reading_mode_helper.dart';
+import 'quran_reading_mode_sheet.dart';
 import '../pages/mushaf_reader_screen.dart';
 import '../pages/radio_screen.dart';
 
@@ -17,11 +19,23 @@ class SurahTabs extends StatelessWidget {
         Text('Alquran'.tr(), style: AppTextStyles.subHead),
         const Spacer(),
         GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MushafReaderScreen()),
-            );
+          onTap: () async {
+            final currentMode = await QuranReadingModeHelper.getScrollMode();
+            if (context.mounted) {
+              await QuranReadingModeSheet.show(
+                context,
+                currentMode: currentMode,
+                onModeSelected: (mode) {
+                  QuranReadingModeHelper.saveScrollMode(mode);
+                },
+              );
+            }
+            if (context.mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MushafReaderScreen()),
+              );
+            }
           },
           child: TapContainer(
             isdark: isdark,
