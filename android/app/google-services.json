@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "473520189953",
+    "project_id": "suhbah-ffd5f",
+    "storage_bucket": "suhbah-ffd5f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473520189953:android:913ba2e064b9d7f930c600",
+        "android_client_info": {
+          "package_name": "com.seg.suhbah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfeRHDZhfUOM_v70pUNx7YxUoyAtJAFKs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473520189953:android:70d4778a5055d58730c600",
+        "android_client_info": {
+          "package_name": "com.zbooma.suhbah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfeRHDZhfUOM_v70pUNx7YxUoyAtJAFKs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
