@@ -206,114 +206,171 @@ class HomeQuickActionsGrid extends StatelessWidget {
   }
 
   void _showMoreFeaturesSheet(BuildContext context, bool isDark) {
+    bool isDismissing = false;
+    void dismissSheet(BuildContext ctx) {
+      if (!isDismissing && Navigator.canPop(ctx)) {
+        isDismissing = true;
+        Navigator.pop(ctx);
+      }
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      enableDrag: true,
+      isDismissible: true,
       backgroundColor: isDark ? const Color(0xFF282C32) : const Color(0xFFFAF5ED),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       builder: (ctx) {
         return SafeArea(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 40.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 1. Drag handle & Header - Dedicated touch area for dragging downwards to dismiss
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onVerticalDragUpdate: (details) {
+                  if (details.primaryDelta != null && details.primaryDelta! > 5) {
+                    dismissSheet(ctx);
+                  }
+                },
+                onVerticalDragEnd: (details) {
+                  if (details.primaryVelocity != null && details.primaryVelocity! > 80) {
+                    dismissSheet(ctx);
+                  }
+                },
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 10.h),
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 44.w,
+                          height: 4.5.h,
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.25)
+                                : Colors.black.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          'المزيد من المميزات',
+                          style: TextStyle(
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : const Color(0xFF38291D),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 18.h),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(
-                      'المزيد من المميزات',
-                      style: TextStyle(
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : const Color(0xFF38291D),
+                ),
+              ),
+
+              // 2. Scrollable features list with drag-down-to-dismiss support
+              Flexible(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is OverscrollNotification && notification.overscroll < -8) {
+                      dismissSheet(ctx);
+                      return true;
+                    } else if (notification is ScrollUpdateNotification) {
+                      if (notification.metrics.pixels <= 0 && (notification.scrollDelta ?? 0) < -10) {
+                        dismissSheet(ctx);
+                        return true;
+                      }
+                    }
+                    return false;
+                  },
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildMoreTile(
+                            ctx,
+                            icon: Icons.auto_stories_rounded,
+                            iconColor: const Color(0xFF2E8555),
+                            title: 'خِتمة القرآن الكريم',
+                            subtitle: 'خطة وجدول ذكي لختم القرآن وتتبع الورد اليومي',
+                            onTap: () {
+                              dismissSheet(ctx);
+                              GoRouter.of(context).push(AppRoutes.khatmah);
+                            },
+                          ),
+                          _buildMoreTile(
+                            ctx,
+                            icon: Icons.checklist_rtl_rounded,
+                            iconColor: const Color(0xFF143427),
+                            title: 'الفروض والسنن',
+                            subtitle:
+                                'متابعة الصلوات الخمس، السنن الرواتب، وصيام التطوع',
+                            onTap: () {
+                              dismissSheet(ctx);
+                              GoRouter.of(context).push(AppRoutes.fastingSunan);
+                            },
+                          ),
+                          _buildMoreTile(
+                            ctx,
+                            icon: Icons.radio_rounded,
+                            iconColor: const Color(0xFF4A7C59),
+                            title: 'إذاعة القرآن الكريم',
+                            subtitle: 'استمع للبث المباشر لإذاعات القرآن',
+                            onTap: () {
+                              dismissSheet(ctx);
+                              GoRouter.of(context).push(AppRoutes.radio);
+                            },
+                          ),
+                          _buildMoreTile(
+                            ctx,
+                            icon: Icons.calendar_month_rounded,
+                            iconColor: const Color(0xFF2C8C7E),
+                            title: 'التقويم الهجري والميلادي',
+                            subtitle: 'عرض التاريخ الهجري ومناسبات الشهر',
+                            onTap: () {
+                              dismissSheet(ctx);
+                              GoRouter.of(context).push(AppRoutes.calendar);
+                            },
+                          ),
+                          _buildMoreTile(
+                            ctx,
+                            icon: Icons.notifications_active_rounded,
+                            iconColor: const Color(0xFF38291D),
+                            title: 'إعدادات الإشعارات والأذان',
+                            subtitle: 'التحكم بإشعارات الصلاة والفجر والسنن والختمة',
+                            onTap: () {
+                              dismissSheet(ctx);
+                              GoRouter.of(context).push(AppRoutes.notificationSettings);
+                            },
+                          ),
+                          _buildMoreTile(
+                            ctx,
+                            icon: Icons.help_outline_rounded,
+                            iconColor: const Color(0xFF7E57C2),
+                            title: 'المساعدة والدعم',
+                            subtitle: 'تواصل معنا أو أرسل اقتراحك',
+                            onTap: () {
+                              dismissSheet(ctx);
+                              GoRouter.of(context).push(AppRoutes.helpSupport);
+                            },
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.h),
-                  _buildMoreTile(
-                    ctx,
-                    icon: Icons.auto_stories_rounded,
-                    iconColor: const Color(0xFF2E8555),
-                    title: 'خِتمة القرآن الكريم',
-                    subtitle: 'خطة وجدول ذكي لختم القرآن وتتبع الورد اليومي',
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      GoRouter.of(context).push(AppRoutes.khatmah);
-                    },
-                  ),
-                  _buildMoreTile(
-                    ctx,
-                    icon: Icons.checklist_rtl_rounded,
-                    iconColor: const Color(0xFF143427),
-                    title: 'الفروض والسنن',
-                    subtitle:
-                        'متابعة الصلوات الخمس، السنن الرواتب، وصيام التطوع',
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      GoRouter.of(context).push(AppRoutes.fastingSunan);
-                    },
-                  ),
-                  _buildMoreTile(
-                    ctx,
-                    icon: Icons.radio_rounded,
-                    iconColor: const Color(0xFF4A7C59),
-                    title: 'إذاعة القرآن الكريم',
-                    subtitle: 'استمع للبث المباشر لإذاعات القرآن',
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      GoRouter.of(context).push(AppRoutes.radio);
-                    },
-                  ),
-                  _buildMoreTile(
-                    ctx,
-                    icon: Icons.calendar_month_rounded,
-                    iconColor: const Color(0xFF2C8C7E),
-                    title: 'التقويم الهجري والميلادي',
-                    subtitle: 'عرض التاريخ الهجري ومناسبات الشهر',
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      GoRouter.of(context).push(AppRoutes.calendar);
-                    },
-                  ),
-                  _buildMoreTile(
-                    ctx,
-                    icon: Icons.notifications_active_rounded,
-                    iconColor: const Color(0xFF38291D),
-                    title: 'إعدادات الإشعارات والأذان',
-                    subtitle: 'التحكم بإشعارات الصلاة والفجر والسنن والختمة',
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      GoRouter.of(context).push(AppRoutes.notificationSettings);
-                    },
-                  ),
-                  _buildMoreTile(
-                    ctx,
-                    icon: Icons.help_outline_rounded,
-                    iconColor: const Color(0xFF7E57C2),
-                    title: 'المساعدة والدعم',
-                    subtitle: 'تواصل معنا أو أرسل اقتراحك',
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      GoRouter.of(context).push(AppRoutes.helpSupport);
-                    },
-                  ),
-                  SizedBox(height: 10.h),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         );
       },

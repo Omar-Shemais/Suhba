@@ -131,4 +131,36 @@ void main() {
     await tester.drag(find.byType(PageView), const Offset(-300, 0));
     await tester.pumpAndSettle();
   });
+
+  testWidgets('Tapping المزيد opens bottom sheet and dragging downwards dismisses it',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(375, 812),
+        builder: (context, child) => const MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: HomeQuickActionsGrid(),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Tap on 'المزيد'
+    await tester.tap(find.text('المزيد'));
+    await tester.pumpAndSettle();
+
+    // Verify sheet is open
+    expect(find.text('المزيد من المميزات'), findsOneWidget);
+    expect(find.text('خِتمة القرآن الكريم'), findsOneWidget);
+
+    // Drag downwards on the sheet title / handle
+    await tester.drag(find.text('المزيد من المميزات'), const Offset(0, 300));
+    await tester.pumpAndSettle();
+
+    // Verify sheet is dismissed
+    expect(find.text('المزيد من المميزات'), findsNothing);
+  });
 }
