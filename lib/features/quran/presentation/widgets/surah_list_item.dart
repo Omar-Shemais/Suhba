@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/assets.dart';
 import '../../data/models/quran_models.dart';
 import 'islamic_surah_badge.dart';
+import 'surah_download_bottom_sheet.dart';
+import '../../data/services/surah_audio_download_service.dart';
 
 class SurahListItem extends StatelessWidget {
   final SurahModel surah;
@@ -147,7 +149,38 @@ class SurahListItem extends StatelessWidget {
                     ),
                   ),
 
-                  // 4. المعلم الإسلامي الدائري في أقصى اليسار
+                  // 4. مؤشر وزر التحميل السريع والمعلم الإسلامي في اليسار
+                  ValueListenableBuilder<int>(
+                    valueListenable: SurahAudioDownloadService().statusNotifier,
+                    builder: (context, _, __) {
+                      final isDownloaded = SurahAudioDownloadService()
+                          .isSurahLocallyDownloaded(surah.id);
+                      return IconButton(
+                        icon: Icon(
+                          isDownloaded
+                              ? Icons.check_circle_rounded
+                              : Icons.download_for_offline_outlined,
+                          size: 22.sp,
+                          color: isDownloaded
+                              ? const Color(0xFF2E7D5E)
+                              : (isDark
+                                  ? const Color(0xFFB5A495)
+                                  : const Color(0xFF143427)),
+                        ),
+                        tooltip: isDownloaded
+                            ? 'السورة محملة (جاهزة للاستماع بدون نت)'
+                            : 'تحميل السورة للاستماع بدون نت',
+                        onPressed: () {
+                          SurahDownloadBottomSheet.show(
+                            context,
+                            surahId: surah.id,
+                            surahName: _cleanSurahName(surah.name),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(width: 2.w),
                   _buildSurahEmblem(isDark),
                 ],
               ),

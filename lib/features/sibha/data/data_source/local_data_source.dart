@@ -23,9 +23,14 @@ class SibhaLocalDataSource {
       'meaning_en': 'There is no god but Allah',
     },
     {
-      'name_ar': 'أَسْتَغْفِرُ اللَّهَ',
-      'name_en': 'Astaghfirullah',
-      'meaning_en': 'I seek forgiveness from Allah',
+      'name_ar': 'اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ',
+      'name_en': "Allahumma salli wa sallim 'ala nabiyyina Muhammad",
+      'meaning_en': 'O Allah, send blessings and peace upon our Prophet Muhammad',
+    },
+    {
+      'name_ar': 'أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',
+      'name_en': 'Astaghfirullah wa atubu ilayh',
+      'meaning_en': 'I seek forgiveness from Allah and repent to Him',
     },
     {
       'name_ar': 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
@@ -33,9 +38,9 @@ class SibhaLocalDataSource {
       'meaning_en': 'There is no power nor strength except with Allah',
     },
     {
-      'name_ar': 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ',
-      'name_en': "Allahumma salli 'ala Muhammad",
-      'meaning_en': 'O Allah, send blessings upon Muhammad',
+      'name_ar': 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ',
+      'name_en': 'Subhan Allahi wa bihamdihi, Subhan Allahil Azeem',
+      'meaning_en': 'Glory be to Allah and His praise, Glory be to Allah the Almighty',
     },
     {
       'name_ar': 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
@@ -56,6 +61,11 @@ class SibhaLocalDataSource {
       'name_ar': 'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
       'name_en': "Hasbunallahu wa ni'mal wakeel",
       'meaning_en': 'Allah is sufficient for us and He is the best Disposer of affairs',
+    },
+    {
+      'name_ar': 'سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَلَا إِلَهَ إِلَّا اللَّهُ، وَاللَّهُ أَكْبَرُ',
+      'name_en': 'Subhan Allah, walhamdulillah, wa la ilaha illa Allah, wallahu akbar',
+      'meaning_en': 'Glory be to Allah, praise be to Allah, there is no god but Allah, and Allah is the Greatest',
     },
   ];
 

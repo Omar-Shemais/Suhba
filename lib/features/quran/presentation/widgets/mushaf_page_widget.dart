@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/constants/app_colors.dart';
 import '../../data/models/mushaf_models.dart';
 import 'mushaf_text_builder.dart';
 

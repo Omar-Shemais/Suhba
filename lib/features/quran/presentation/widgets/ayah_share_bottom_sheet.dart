@@ -38,6 +38,7 @@ class _AyahShareBottomSheetState extends State<AyahShareBottomSheet> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     precacheImage(const AssetImage(AssetsData.logo), context);
+    precacheImage(const AssetImage(AssetsData.logoDark), context);
   }
 
   @override

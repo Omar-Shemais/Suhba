@@ -11,6 +11,8 @@ import '../../data/models/mushaf_models.dart';
 import 'mushaf_page_widget.dart';
 import 'quran_auto_scroll_sidebar.dart';
 import 'quran_reading_mode_sheet.dart';
+import 'surah_download_bottom_sheet.dart';
+import '../../data/services/surah_audio_download_service.dart';
 
 class MushafPageViewer extends StatefulWidget {
   final List<MushafPage> pages;
@@ -317,6 +319,55 @@ class _MushafPageViewerState extends State<MushafPageViewer> {
                         IconButton(
                           icon: Icon(Icons.format_list_numbered_rounded, size: 18.sp, color: isDark ? Colors.white70 : Colors.black54),
                           onPressed: () => _showPageJumpDialog(context, isArabic),
+                        ),
+
+                        // زر تحميل السورة للاستماع بدون نت مع مؤشر التحميل (صح)
+                        ValueListenableBuilder<int>(
+                          valueListenable:
+                              SurahAudioDownloadService().statusNotifier,
+                          builder: (context, _, __) {
+                            int? curSurahId;
+                            String curSurahName = '';
+                            if (widget.currentPage >= 0 &&
+                                widget.currentPage < widget.pages.length) {
+                              final verses =
+                                  widget.pages[widget.currentPage].verses;
+                              final firstV = verses.firstOrNull;
+                              if (firstV != null) {
+                                curSurahId = firstV.surahId;
+                                curSurahName = firstV.surahNameArabic.isNotEmpty
+                                    ? firstV.surahNameArabic
+                                    : firstV.surahName;
+                              }
+                            }
+                            final isDownloaded = curSurahId != null &&
+                                SurahAudioDownloadService()
+                                    .isSurahLocallyDownloaded(curSurahId);
+
+                            return IconButton(
+                              icon: Icon(
+                                isDownloaded
+                                    ? Icons.check_circle_rounded
+                                    : Icons.download_for_offline_outlined,
+                                size: 19.sp,
+                                color: isDownloaded
+                                    ? const Color(0xFF2E7D5E)
+                                    : AppColors.goldenPrimary,
+                              ),
+                              tooltip: isDownloaded
+                                  ? 'السورة محملة (جاهزة للاستماع بدون نت)'
+                                  : 'تحميل السورة بدون نت',
+                              onPressed: () {
+                                if (curSurahId != null) {
+                                  SurahDownloadBottomSheet.show(
+                                    context,
+                                    surahId: curSurahId,
+                                    surahName: curSurahName,
+                                  );
+                                }
+                              },
+                            );
+                          },
                         ),
 
                         // الذهاب للعلامة

@@ -138,7 +138,7 @@ class _HomeHeaderWidgetState extends State<HomeHeaderWidget> {
                   Hero(
                     tag: 'app_logo',
                     child: Image.asset(
-                      AssetsData.logo,
+                      isDark ? AssetsData.logoDark : AssetsData.logo,
                       height: 52.h,
                       fit: BoxFit.contain,
                     ),

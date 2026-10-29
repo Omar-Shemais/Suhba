@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:islamic_app/features/quran/data/models/audio_model.dart';
-import 'package:islamic_app/features/quran/data/repositories/audio_repo.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

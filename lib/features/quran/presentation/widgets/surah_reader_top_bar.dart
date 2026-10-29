@@ -7,6 +7,8 @@ import 'package:islamic_app/core/constants/app_colors.dart';
 import '../cubit/audio_cubit.dart';
 import '../../data/helpers/quran_reading_mode_helper.dart';
 import 'quran_reading_mode_sheet.dart';
+import 'surah_download_bottom_sheet.dart';
+import '../../data/services/surah_audio_download_service.dart';
 
 class SurahReaderTopBar extends StatelessWidget {
   final String surahName;
@@ -185,12 +187,12 @@ class SurahReaderTopBar extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: Row(
             children: [
-              // 1. زر الرجوع على اليمين كما طلب المستخدم تماماً
+              // 1. زر الرجوع على اليمين (يشير دائماً لليسار بحسب إرشادات AGENTS.md)
               IconButton(
                 icon: Icon(
-                  Icons.arrow_forward_ios_rounded,
+                  Icons.arrow_back_ios_new_rounded,
                   size: 20.sp,
-                  color: isDark ? Colors.white : const Color(0xFF231B15),
+                  color: isDark ? Colors.white : const Color(0xFF38291D),
                 ),
                 onPressed: () => Navigator.pop(context),
               ),
@@ -231,78 +233,155 @@ class SurahReaderTopBar extends StatelessWidget {
                 ),
               ),
 
-              // 3. على اليسار: قائمة الخيارات (بدون زر السيف كما طلب المستخدم تماماً)
-              PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  color: isDark ? Colors.white70 : const Color(0xFF38291B),
-                  size: 22.sp,
-                ),
-                color: isDark ? const Color(0xFF282C32) : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                onSelected: (value) {
-                  if (value == 'audio') {
-                    context.read<AudioCubit>().playSurah(surahId, title: 'سورة $surahName');
-                  } else if (value == 'mode') {
-                    QuranReadingModeSheet.show(
-                      context,
-                      currentMode: currentMode,
-                      onModeSelected: onModeChanged,
-                    );
-                  } else if (value == 'translation') {
-                    onToggleTranslation(!showTranslation);
-                  }
+              // 3. على اليسار: زر التحميل للعمل بدون نت وقائمة الخيارات
+              ValueListenableBuilder<int>(
+                valueListenable: SurahAudioDownloadService().statusNotifier,
+                builder: (context, _, __) {
+                  final isDownloaded = SurahAudioDownloadService()
+                      .isSurahLocallyDownloaded(surahId);
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          isDownloaded
+                              ? Icons.check_circle_rounded
+                              : Icons.download_for_offline_outlined,
+                          color: isDownloaded
+                              ? const Color(0xFF2E7D5E)
+                              : (isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF143427)),
+                          size: 22.sp,
+                        ),
+                        tooltip: isDownloaded
+                            ? 'السورة محملة (جاهزة للاستماع بدون نت)'
+                            : 'تحميل السورة للعمل بدون نت',
+                        onPressed: () {
+                          SurahDownloadBottomSheet.show(
+                            context,
+                            surahId: surahId,
+                            surahName: 'سورة $surahName',
+                          );
+                        },
+                      ),
+                      PopupMenuButton<String>(
+                        icon: Icon(
+                          Icons.more_vert_rounded,
+                          color:
+                              isDark ? Colors.white70 : const Color(0xFF38291D),
+                          size: 22.sp,
+                        ),
+                        color: isDark ? const Color(0xFF282C32) : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        onSelected: (value) {
+                          if (value == 'audio') {
+                            context
+                                .read<AudioCubit>()
+                                .playSurah(surahId, title: 'سورة $surahName');
+                          } else if (value == 'download') {
+                            SurahDownloadBottomSheet.show(
+                              context,
+                              surahId: surahId,
+                              surahName: 'سورة $surahName',
+                            );
+                          } else if (value == 'mode') {
+                            QuranReadingModeSheet.show(
+                              context,
+                              currentMode: currentMode,
+                              onModeSelected: onModeChanged,
+                            );
+                          } else if (value == 'translation') {
+                            onToggleTranslation(!showTranslation);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'download',
+                            child: Row(
+                              textDirection: TextDirection.rtl,
+                              children: [
+                                Icon(
+                                  isDownloaded
+                                      ? Icons.check_circle_rounded
+                                      : Icons.download_for_offline_rounded,
+                                  color: isDownloaded
+                                      ? const Color(0xFF2E7D5E)
+                                      : const Color(0xFF143427),
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 10.w),
+                                Text(
+                                  isDownloaded
+                                      ? 'السورة محملة (بدون نت)'
+                                      : 'تحميل السورة (بدون نت)',
+                                  style: TextStyle(
+                                    fontFamily: 'Amiri',
+                                    fontSize: 14.sp,
+                                    color: isDownloaded
+                                        ? const Color(0xFF2E7D5E)
+                                        : null,
+                                    fontWeight: isDownloaded
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'audio',
+                            child: Row(
+                              textDirection: TextDirection.rtl,
+                              children: [
+                                Icon(
+                                  Icons.volume_up_rounded,
+                                  color: AppColors.goldenPrimary,
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 10.w),
+                                Text(
+                                  'تشغيل السورة صوتياً',
+                                  style: TextStyle(
+                                    fontFamily: 'Amiri',
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'mode',
+                            child: Row(
+                              textDirection: TextDirection.rtl,
+                              children: [
+                                Icon(
+                                  currentMode == QuranScrollMode.vertical
+                                      ? Icons.auto_stories_rounded
+                                      : Icons.view_day_rounded,
+                                  color: AppColors.goldenPrimary,
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 10.w),
+                                Text(
+                                  currentMode == QuranScrollMode.vertical
+                                      ? 'التبديل إلى تصفح أفقي (صفحات)'
+                                      : 'التبديل إلى تمرير رأسي',
+                                  style: TextStyle(
+                                    fontFamily: 'Amiri',
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
                 },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'audio',
-                    child: Row(
-                      textDirection: TextDirection.rtl,
-                      children: [
-                        Icon(
-                          Icons.volume_up_rounded,
-                          color: AppColors.goldenPrimary,
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          'تشغيل السورة صوتياً',
-                          style: TextStyle(
-                            fontFamily: 'Amiri',
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'mode',
-                    child: Row(
-                      textDirection: TextDirection.rtl,
-                      children: [
-                        Icon(
-                          currentMode == QuranScrollMode.vertical
-                              ? Icons.auto_stories_rounded
-                              : Icons.view_day_rounded,
-                          color: AppColors.goldenPrimary,
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          currentMode == QuranScrollMode.vertical
-                              ? 'التبديل إلى تصفح أفقي (صفحات)'
-                              : 'التبديل إلى تمرير رأسي',
-                          style: TextStyle(
-                            fontFamily: 'Amiri',
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

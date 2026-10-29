@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:go_router/go_router.dart';
-import 'package:islamic_app/core/constants/app_colors.dart';
 import 'package:islamic_app/core/constants/assets.dart';
 import 'package:islamic_app/core/routes/app_routes.dart';
 import '../../../quran/presentation/pages/quran_section_detail_screen.dart';

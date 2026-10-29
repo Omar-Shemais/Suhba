@@ -22,6 +22,9 @@ import 'mushaf_surah_header.dart';
 import 'quran_auto_scroll_sidebar.dart';
 import 'reciter_selector_dialog.dart';
 import 'surah_loading_shimmer.dart';
+import 'surah_download_bottom_sheet.dart';
+import '../../data/services/surah_audio_download_service.dart';
+import '../pages/tafsir_screen.dart';
 
 class SurahDetailViewBody extends StatefulWidget {
   final int surahId;
@@ -433,47 +436,117 @@ class _SurahDetailViewBodyState extends State<SurahDetailViewBody> {
               ),
             ),
 
-            // 3. على اليسار: زر اختيار القارئ المتناسق مع الثيمات
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  showReciterSelector(context, getIt<AudioRepository>());
-                },
-                borderRadius: BorderRadius.circular(50.r),
-                child: Container(
-                  width: 38.w,
-                  height: 38.w,
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF21252A)
-                        : const Color(0xFFF7EFE4),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF383E46)
-                          : const Color(0xFFEADBCE),
-                      width: 1.1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(
-                          alpha: isDark ? 0.2 : 0.04,
+            // 3. على اليسار: زر تحميل السورة وزر اختيار القارئ
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // زر تحميل السورة للاستماع بدون إنترنت ومؤشر التنزيل
+                ValueListenableBuilder<int>(
+                  valueListenable: SurahAudioDownloadService().statusNotifier,
+                  builder: (context, _, __) {
+                    final isDownloaded = SurahAudioDownloadService()
+                        .isSurahLocallyDownloaded(surah.id);
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          SurahDownloadBottomSheet.show(
+                            context,
+                            surahId: surah.id,
+                            surahName: 'سورة $cleanName',
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(50.r),
+                        child: Container(
+                          width: 38.w,
+                          height: 38.w,
+                          decoration: BoxDecoration(
+                            color: isDownloaded
+                                ? (isDark
+                                    ? const Color(0xFF1E382B)
+                                    : const Color(0xFFE8F1EC))
+                                : (isDark
+                                    ? const Color(0xFF21252A)
+                                    : const Color(0xFFF7EFE4)),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isDownloaded
+                                  ? const Color(0xFF2E7D5E)
+                                  : (isDark
+                                      ? const Color(0xFF383E46)
+                                      : const Color(0xFFEADBCE)),
+                              width: 1.1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(
+                                  alpha: isDark ? 0.2 : 0.04,
+                                ),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isDownloaded
+                                ? Icons.check_circle_rounded
+                                : Icons.download_for_offline_rounded,
+                            color: isDownloaded
+                                ? const Color(0xFF2E7D5E)
+                                : (isDark
+                                    ? const Color(0xFFF7ECE1)
+                                    : const Color(0xFF143427)),
+                            size: 20.sp,
+                          ),
                         ),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
                       ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.record_voice_over_rounded,
-                    color: isDark
-                        ? const Color(0xFFF7ECE1)
-                        : const Color(0xFF143427),
-                    size: 19.sp,
+                    );
+                  },
+                ),
+                SizedBox(width: 8.w),
+                // زر اختيار القارئ المتناسق مع الثيمات
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      showReciterSelector(context, getIt<AudioRepository>());
+                    },
+                    borderRadius: BorderRadius.circular(50.r),
+                    child: Container(
+                      width: 38.w,
+                      height: 38.w,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF21252A)
+                            : const Color(0xFFF7EFE4),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark
+                              ? const Color(0xFF383E46)
+                              : const Color(0xFFEADBCE),
+                          width: 1.1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.2 : 0.04,
+                            ),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.record_voice_over_rounded,
+                        color: isDark
+                            ? const Color(0xFFF7ECE1)
+                            : const Color(0xFF143427),
+                        size: 19.sp,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -763,113 +836,161 @@ class _SurahDetailViewBodyState extends State<SurahDetailViewBody> {
               ),
             ),
             const Divider(height: 24, thickness: 0.6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildActionItem(
-                  icon: Icons.play_circle_fill_rounded,
-                  label: 'استماع',
-                  color: AppColors.goldenPrimary,
-                  onTap: () {
-                    Navigator.pop(bottomContext);
-                    LastReadManager.saveLastRead(
-                      surahId: surahId,
-                      ayahNumber: verse.id,
-                      surahName: surahName,
-                      surahNameArabic: surahName,
-                      totalVerses: totalVerses,
-                    );
-                    audioCubit.playAyah(
-                      surahId,
-                      verse.id,
-                      totalVerses: totalVerses,
-                    );
-                  },
-                ),
-                _buildActionItem(
-                  icon: Icons.bookmark_add_rounded,
-                  label: 'حفظ علامة',
-                  color: AppColors.goldenPrimary,
-                  onTap: () async {
-                    Navigator.pop(bottomContext);
-                    await LastReadManager.saveLastRead(
-                      surahId: surahId,
-                      ayahNumber: verse.id,
-                      surahName: surahName,
-                      surahNameArabic: surahName,
-                      totalVerses: totalVerses,
-                    );
-                    setState(() {
-                      _resolvedTargetAyah = verse.id;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Row(
-                          children: [
-                            const Icon(
-                              Icons.bookmark_added_rounded,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 8.w),
-                            Expanded(
-                              child: Text(
-                                'تم حفظ $surahName (الآية ${verse.id}) في متابعة القراءة',
-                                style: TextStyle(fontSize: 13.5.sp),
-                              ),
-                            ),
-                          ],
-                        ),
-                        backgroundColor: const Color(0xFF143427),
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _buildActionItem(
-                  icon: Icons.copy_rounded,
-                  label: 'نسخ',
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  onTap: () {
-                    Navigator.pop(bottomContext);
-                    Clipboard.setData(
-                      ClipboardData(text: '${verse.text} ﴿${verse.id}﴾'),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('تم نسخ الآية الكريمة'),
-                        backgroundColor: AppColors.goldenPrimary,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _buildActionItem(
-                  icon: Icons.share_rounded,
-                  label: 'مشاركة',
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  onTap: () {
-                    Navigator.pop(bottomContext);
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (ctx) => AyahShareBottomSheet(
-                        arabicText: verse.text,
-                        translation: verse.translation,
-                        surahNumber: surahId,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildActionItem(
+                    icon: Icons.play_circle_fill_rounded,
+                    label: 'استماع',
+                    color: AppColors.goldenPrimary,
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      LastReadManager.saveLastRead(
+                        surahId: surahId,
                         ayahNumber: verse.id,
                         surahName: surahName,
-                      ),
-                    );
-                  },
-                ),
-              ],
+                        surahNameArabic: surahName,
+                        totalVerses: totalVerses,
+                      );
+                      audioCubit.playAyah(
+                        surahId,
+                        verse.id,
+                        totalVerses: totalVerses,
+                      );
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.menu_book_rounded,
+                    label: 'تفسير',
+                    color: const Color(0xFF143427),
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TafsirScreen(
+                            surahId: surahId,
+                            ayahNumber: verse.id,
+                            surahName: surahName,
+                            initialArabicText: verse.text,
+                            totalVerses: totalVerses,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  ValueListenableBuilder<int>(
+                    valueListenable: SurahAudioDownloadService().statusNotifier,
+                    builder: (context, _, __) {
+                      final isDownloaded = SurahAudioDownloadService()
+                          .isSurahLocallyDownloaded(surahId);
+                      return _buildActionItem(
+                        icon: isDownloaded
+                            ? Icons.check_circle_rounded
+                            : Icons.download_for_offline_rounded,
+                        label: isDownloaded ? 'السورة محملة' : 'تحميل السورة',
+                        color: isDownloaded
+                            ? const Color(0xFF2E7D5E)
+                            : const Color(0xFF143427),
+                        onTap: () {
+                          Navigator.pop(bottomContext);
+                          SurahDownloadBottomSheet.show(
+                            context,
+                            surahId: surahId,
+                            surahName: surahName,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.bookmark_add_rounded,
+                    label: 'حفظ علامة',
+                    color: AppColors.goldenPrimary,
+                    onTap: () async {
+                      Navigator.pop(bottomContext);
+                      await LastReadManager.saveLastRead(
+                        surahId: surahId,
+                        ayahNumber: verse.id,
+                        surahName: surahName,
+                        surahNameArabic: surahName,
+                        totalVerses: totalVerses,
+                      );
+                      setState(() {
+                        _resolvedTargetAyah = verse.id;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(
+                            children: [
+                              const Icon(
+                                Icons.bookmark_added_rounded,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 8.w),
+                              Expanded(
+                                child: Text(
+                                  'تم حفظ $surahName (الآية ${verse.id}) في متابعة القراءة',
+                                  style: TextStyle(fontSize: 13.5.sp),
+                                ),
+                              ),
+                            ],
+                          ),
+                          backgroundColor: const Color(0xFF143427),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.copy_rounded,
+                    label: 'نسخ',
+                    color: isDark ? Colors.white70 : Colors.black87,
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      Clipboard.setData(
+                        ClipboardData(text: '${verse.text} ﴿${verse.id}﴾'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('تم نسخ الآية الكريمة'),
+                          backgroundColor: AppColors.goldenPrimary,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.share_rounded,
+                    label: 'مشاركة',
+                    color: isDark ? Colors.white70 : Colors.black87,
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (ctx) => AyahShareBottomSheet(
+                          arabicText: verse.text,
+                          translation: verse.translation,
+                          surahNumber: surahId,
+                          ayahNumber: verse.id,
+                          surahName: surahName,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -948,58 +1069,118 @@ class _SurahDetailViewBodyState extends State<SurahDetailViewBody> {
           label = 'تشغيل سورة $cleanName';
         }
 
-        return GestureDetector(
-          onTap: () {
-            if (isPlaying) {
-              audioCubit.pause();
-            } else if (isPaused || isCompletedWithNextAyah) {
-              audioCubit.resume();
-            } else {
-              audioCubit.playSurah(
-                surah.id,
-                title: 'سورة $cleanName',
-              );
-            }
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 11.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFF143427),
-              borderRadius: BorderRadius.circular(30.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1.2,
-              ),
-            ),
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, color: Colors.white, size: 22.sp),
-                  SizedBox(width: 8.w),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontFamily: 'Amiri',
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                onTap: () {
+                  if (isPlaying) {
+                    audioCubit.pause();
+                  } else if (isPaused || isCompletedWithNextAyah) {
+                    audioCubit.resume();
+                  } else {
+                    audioCubit.playSurah(
+                      surah.id,
+                      title: 'سورة $cleanName',
+                    );
+                  }
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 11.h),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF143427),
+                    borderRadius: BorderRadius.circular(30.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1.2,
                     ),
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, color: Colors.white, size: 22.sp),
+                      SizedBox(width: 8.w),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontFamily: 'Amiri',
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              SizedBox(width: 8.w),
+              ValueListenableBuilder<int>(
+                valueListenable: SurahAudioDownloadService().statusNotifier,
+                builder: (context, _, __) {
+                  final isDownloaded = SurahAudioDownloadService()
+                      .isSurahLocallyDownloaded(surah.id);
+                  return GestureDetector(
+                    onTap: () {
+                      SurahDownloadBottomSheet.show(
+                        context,
+                        surahId: surah.id,
+                        surahName: 'سورة $cleanName',
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(11.h),
+                      decoration: BoxDecoration(
+                        color: isDownloaded
+                            ? (isDark
+                                ? const Color(0xFF1E382B)
+                                : const Color(0xFFE8F1EC))
+                            : (isDark
+                                ? const Color(0xFF282C32)
+                                : Colors.white),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: isDownloaded
+                              ? const Color(0xFF2E7D5E)
+                              : const Color(0xFF143427),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Icon(
+                        isDownloaded
+                            ? Icons.check_circle_rounded
+                            : Icons.download_for_offline_rounded,
+                        color: isDownloaded
+                            ? const Color(0xFF2E7D5E)
+                            : const Color(0xFF143427),
+                        size: 22.sp,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        );
+        ),
+      );
       },
     );
   }

@@ -170,8 +170,8 @@ void main() {
       ),
     );
 
-    // 1. زر الرجوع على اليمين مع السهم المتجه لليمين في الـ RTL
-    expect(find.byIcon(Icons.arrow_forward_ios_rounded), findsOneWidget);
+    // 1. زر الرجوع على اليمين مع السهم المتجه لليسار المعتمد في التطبيق
+    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
 
     // 2. التحقق من عدم وجود أي زر حفظ/سيف أو تكبير وتصغير خط
     expect(find.byIcon(Icons.bookmark), findsNothing);

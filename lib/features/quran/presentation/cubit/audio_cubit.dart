@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamic_app/core/services/native_radio_service.dart';
 import '../../data/repositories/audio_repo.dart';
 import '../../data/helpers/reciter_storage_manager.dart';
 import '../../data/models/quran_models.dart';
+import '../../data/services/surah_audio_download_service.dart';
 import '../cubit/audio_state.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -325,14 +327,6 @@ class AudioCubit extends Cubit<AudioState> {
     String? desc,
   }) async {
     try {
-      final hasInternet = await _checkInternetConnection();
-      if (!hasInternet) {
-        if (!isClosed) {
-          emit(AudioError(message: "no_internet".tr(), targetSurahId: surahId));
-        }
-        return;
-      }
-
       // 1. STOP Local Player (In case an Ayah was playing)
       await _localPlayer.stop();
 
@@ -351,11 +345,40 @@ class AudioCubit extends Cubit<AudioState> {
       _activeQueueTitle = null;
       _sectionRangeDescription = null;
 
-      // 3. Get Audio URL
-      final audioUrl = await audioRepository.getAudioUrl(
+      // 3. التحقق إذا كانت السورة محملة مسبقاً للعمل بدون إنترنت
+      final downloadService = SurahAudioDownloadService();
+      final isDownloaded = await downloadService.isSurahDownloaded(
         _currentReciterId!,
         surahId,
       );
+
+      String audioUrl;
+      if (isDownloaded) {
+        audioUrl = await downloadService.getLocalFilePath(
+          _currentReciterId!,
+          surahId,
+        );
+        debugPrint('🎧 تشغيل السورة $surahId بدون إنترنت من الملف المحلي: $audioUrl');
+      } else {
+        final hasInternet = await _checkInternetConnection();
+        if (!hasInternet) {
+          if (!isClosed) {
+            emit(
+              AudioError(
+                message:
+                    'لا يوجد اتصال بالإنترنت. يمكنك تحميل صوت السورة مسبقاً للاستماع بدون نت.',
+                targetSurahId: surahId,
+              ),
+            );
+          }
+          return;
+        }
+
+        audioUrl = await audioRepository.getAudioUrl(
+          _currentReciterId!,
+          surahId,
+        );
+      }
 
       final reciter = await audioRepository.getReciterById(_currentReciterId!);
       final displayTitle = title ?? "سورة $surahId";

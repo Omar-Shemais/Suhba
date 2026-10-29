@@ -15,6 +15,7 @@ import 'package:islamic_app/features/sibha/views/screens/sibha_view.dart';
 import 'package:islamic_app/features/quran/presentation/pages/mushaf_reader_screen.dart';
 import 'package:islamic_app/features/quran/presentation/pages/quran_screen.dart';
 import 'package:islamic_app/features/quran/presentation/pages/radio_screen.dart';
+import 'package:islamic_app/features/quran/presentation/pages/tafsir_screen.dart';
 import 'package:islamic_app/features/quran/presentation/surah_search_screen.dart';
 import 'package:islamic_app/features/nearest_mosque/presentation/pages/nearest_masjed_screen.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
@@ -127,6 +128,35 @@ class AppRouter {
         path: AppRoutes.mushaf,
         name: 'mushaf',
         builder: (context, state) => const MushafReaderScreen(),
+      ),
+      // Tafsir Route
+      GoRoute(
+        path: AppRoutes.tafsir,
+        name: 'tafsir',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final surahId = extra['surahId'] as int? ??
+              int.tryParse(state.uri.queryParameters['surahId'] ?? '1') ??
+              1;
+          final ayahNumber = extra['ayahNumber'] as int? ??
+              int.tryParse(state.uri.queryParameters['ayahNumber'] ?? '1') ??
+              1;
+          final surahName = extra['surahName'] as String? ??
+              state.uri.queryParameters['surahName'] ??
+              'الفاتحة';
+          final initialArabicText = extra['arabicText'] as String? ??
+              state.uri.queryParameters['arabicText'];
+          final totalVerses = extra['totalVerses'] as int? ??
+              int.tryParse(state.uri.queryParameters['totalVerses'] ?? '');
+
+          return TafsirScreen(
+            surahId: surahId,
+            ayahNumber: ayahNumber,
+            surahName: surahName,
+            initialArabicText: initialArabicText,
+            totalVerses: totalVerses,
+          );
+        },
       ),
       //quran Route
       GoRoute(

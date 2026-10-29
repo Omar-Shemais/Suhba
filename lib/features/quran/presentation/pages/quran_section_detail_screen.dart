@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
 import 'package:islamic_app/core/utils/service_locator.dart';
-import '../../data/helpers/quran_reading_mode_helper.dart';
 import '../../data/models/quran_models.dart';
 import '../../data/repositories/audio_repo.dart';
 import '../../data/repositories/quran_repo.dart';
@@ -23,6 +22,9 @@ import '../widgets/mushaf_surah_header.dart';
 import '../widgets/quran_auto_scroll_sidebar.dart';
 import '../widgets/reciter_selector_dialog.dart';
 import '../widgets/surah_loading_shimmer.dart';
+import 'tafsir_screen.dart';
+import '../widgets/surah_download_bottom_sheet.dart';
+import '../../data/services/surah_audio_download_service.dart';
 import '../../data/helpers/last_read_storage.dart';
 import '../../../../../core/widgets/custom_error_widget.dart';
 
@@ -508,104 +510,152 @@ class _QuranSectionViewBodyState extends State<_QuranSectionViewBody> {
               ),
             ),
             const Divider(height: 24, thickness: 0.6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildActionItem(
-                  icon: Icons.play_circle_fill_rounded,
-                  label: 'استماع',
-                  color: AppColors.goldenPrimary,
-                  onTap: () {
-                    Navigator.pop(bottomContext);
-                    audioCubit.playAyah(surahId, verse.id);
-                  },
-                ),
-                _buildActionItem(
-                  icon: Icons.bookmark_add_rounded,
-                  label: 'حفظ علامة',
-                  color: AppColors.goldenPrimary,
-                  onTap: () async {
-                    Navigator.pop(bottomContext);
-                    final formattedSurahName = surahName.startsWith('سورة')
-                        ? surahName
-                        : 'سورة $surahName';
-                    await LastReadManager.saveLastRead(
-                      surahId: surahId,
-                      ayahNumber: verse.id,
-                      surahName: formattedSurahName,
-                      surahNameArabic: formattedSurahName,
-                      totalVerses: totalVerses,
-                    );
-                    if (context.mounted) {
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildActionItem(
+                    icon: Icons.play_circle_fill_rounded,
+                    label: 'استماع',
+                    color: AppColors.goldenPrimary,
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      audioCubit.playAyah(surahId, verse.id);
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.menu_book_rounded,
+                    label: 'تفسير',
+                    color: const Color(0xFF143427),
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TafsirScreen(
+                            surahId: surahId,
+                            ayahNumber: verse.id,
+                            surahName: surahName,
+                            initialArabicText: verse.text,
+                            totalVerses: totalVerses,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  ValueListenableBuilder<int>(
+                    valueListenable: SurahAudioDownloadService().statusNotifier,
+                    builder: (context, _, __) {
+                      final isDownloaded = SurahAudioDownloadService()
+                          .isSurahLocallyDownloaded(surahId);
+                      return _buildActionItem(
+                        icon: isDownloaded
+                            ? Icons.check_circle_rounded
+                            : Icons.download_for_offline_rounded,
+                        label: isDownloaded ? 'السورة محملة' : 'تحميل السورة',
+                        color: isDownloaded
+                            ? const Color(0xFF2E7D5E)
+                            : const Color(0xFF143427),
+                        onTap: () {
+                          Navigator.pop(bottomContext);
+                          SurahDownloadBottomSheet.show(
+                            context,
+                            surahId: surahId,
+                            surahName: surahName,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.bookmark_add_rounded,
+                    label: 'حفظ علامة',
+                    color: AppColors.goldenPrimary,
+                    onTap: () async {
+                      Navigator.pop(bottomContext);
+                      final formattedSurahName = surahName.startsWith('سورة')
+                          ? surahName
+                          : 'سورة $surahName';
+                      await LastReadManager.saveLastRead(
+                        surahId: surahId,
+                        ayahNumber: verse.id,
+                        surahName: formattedSurahName,
+                        surahNameArabic: formattedSurahName,
+                        totalVerses: totalVerses,
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(
+                                  Icons.bookmark_added_rounded,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: Text(
+                                    'تم حفظ $formattedSurahName (الآية ${verse.id}) في متابعة القراءة',
+                                    style: TextStyle(fontSize: 13.5.sp),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: const Color(0xFF143427),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.copy_rounded,
+                    label: 'نسخ',
+                    color: isDark ? Colors.white70 : Colors.black87,
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      Clipboard.setData(
+                        ClipboardData(text: '${verse.text} ﴿${verse.id}﴾'),
+                      );
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Row(
-                            children: [
-                              const Icon(
-                                Icons.bookmark_added_rounded,
-                                color: Colors.white,
-                              ),
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: Text(
-                                  'تم حفظ $formattedSurahName (الآية ${verse.id}) في متابعة القراءة',
-                                  style: TextStyle(fontSize: 13.5.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                          backgroundColor: const Color(0xFF143427),
+                          content: const Text('تم نسخ الآية الكريمة'),
+                          backgroundColor: AppColors.goldenPrimary,
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.r),
                           ),
                         ),
                       );
-                    }
-                  },
-                ),
-                _buildActionItem(
-                  icon: Icons.copy_rounded,
-                  label: 'نسخ',
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  onTap: () {
-                    Navigator.pop(bottomContext);
-                    Clipboard.setData(
-                      ClipboardData(text: '${verse.text} ﴿${verse.id}﴾'),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('تم نسخ الآية الكريمة'),
-                        backgroundColor: AppColors.goldenPrimary,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
+                    },
+                  ),
+                  _buildActionItem(
+                    icon: Icons.share_rounded,
+                    label: 'مشاركة',
+                    color: isDark ? Colors.white70 : Colors.black87,
+                    onTap: () {
+                      Navigator.pop(bottomContext);
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (ctx) => AyahShareBottomSheet(
+                          arabicText: verse.text,
+                          translation: verse.translation,
+                          surahNumber: surahId,
+                          ayahNumber: verse.id,
+                          surahName: surahName,
                         ),
-                      ),
-                    );
-                  },
-                ),
-                _buildActionItem(
-                  icon: Icons.share_rounded,
-                  label: 'مشاركة',
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  onTap: () {
-                    Navigator.pop(bottomContext);
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (ctx) => AyahShareBottomSheet(
-                        arabicText: verse.text,
-                        translation: verse.translation,
-                        surahNumber: surahId,
-                        ayahNumber: verse.id,
-                        surahName: surahName,
-                      ),
-                    );
-                  },
-                ),
-              ],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

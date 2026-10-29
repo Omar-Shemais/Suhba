@@ -6,6 +6,7 @@ class AppRoutes {
   static const String quranSearch = '/quran-search';
   static const String radio = '/radio';
   static const String mushaf = '/mushaf';
+  static const String tafsir = '/tafsir';
 
   static const String hadith = '/hadith';
   static const String hadithSearch = '/hadithSearch';

@@ -39,9 +39,12 @@ class AyahShareManager {
     OverlayEntry? overlay;
 
     try {
-      // Precache logo image
+      // Precache logo images
       try {
-        await precacheImage(const AssetImage(AssetsData.logo), context);
+        await Future.wait([
+          precacheImage(const AssetImage(AssetsData.logo), context),
+          precacheImage(const AssetImage(AssetsData.logoDark), context),
+        ]);
       } catch (_) {}
 
       // إنشاء الـ Widget خارج الشاشة بجودة فائقة بدون عرض أي نافذة تحميل أو تأخير

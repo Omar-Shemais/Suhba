@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:islamic_app/core/utils/service_locator.dart';
 import 'package:islamic_app/features/hadith/data/models/hadith_model.dart';
 import 'package:islamic_app/features/hadith/data/repositories/hadith_repository.dart';
 import 'package:islamic_app/features/hadith/presentation/cubit/hadith_cubit.dart';
-import 'package:islamic_app/features/hadith/presentation/widgets/hadith_card.dart';
 import 'package:islamic_app/features/hadith/presentation/widgets/hadiths_view_body.dart';
 
 class FakeHadithRepository implements HadithRepository {

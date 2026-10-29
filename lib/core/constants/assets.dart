@@ -1,5 +1,6 @@
 class AssetsData {
   static const logo = 'assets/images/logo.png';
+  static const logoDark = 'assets/images/logo_dark.png';
   //quran images
   static const kaaba = 'assets/images/kaaba.png';
   static const mosque = 'assets/images/mosque.png';

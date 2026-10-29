@@ -7,6 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamic_app/core/constants/app_colors.dart';
 import 'package:islamic_app/features/quran/data/helpers/last_read_storage.dart';
 import 'ayah_share_bottom_sheet.dart';
+import '../pages/tafsir_screen.dart';
+import 'surah_download_bottom_sheet.dart';
+import '../../data/services/surah_audio_download_service.dart';
 
 import '../cubit/audio_cubit.dart';
 import '../cubit/audio_state.dart';
@@ -173,7 +176,27 @@ class _AyahActionsState extends State<AyahActions> {
                 }
               },
             ),
-            SizedBox(width: 16.w),
+            SizedBox(width: 14.w),
+            _buildActionButton(
+              context: context,
+              icon: Icons.menu_book_rounded,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TafsirScreen(
+                      surahId: widget.surahId,
+                      ayahNumber: widget.ayahNumber,
+                      surahName: widget.surahNameArabic.isNotEmpty
+                          ? widget.surahNameArabic
+                          : widget.surahName,
+                      initialArabicText: widget.arabicText,
+                    ),
+                  ),
+                );
+              },
+            ),
+            SizedBox(width: 14.w),
             _buildActionButton(
               context: context,
               icon: _isLastRead
@@ -181,6 +204,30 @@ class _AyahActionsState extends State<AyahActions> {
                   : Icons.bookmark_add_outlined,
               isActive: _isLastRead,
               onTap: _setAsLastRead,
+            ),
+            SizedBox(width: 14.w),
+            ValueListenableBuilder<int>(
+              valueListenable: SurahAudioDownloadService().statusNotifier,
+              builder: (context, _, __) {
+                final isDownloaded = SurahAudioDownloadService()
+                    .isSurahLocallyDownloaded(widget.surahId);
+                return _buildActionButton(
+                  context: context,
+                  icon: isDownloaded
+                      ? Icons.check_circle_rounded
+                      : Icons.download_for_offline_outlined,
+                  isActive: isDownloaded,
+                  onTap: () {
+                    SurahDownloadBottomSheet.show(
+                      context,
+                      surahId: widget.surahId,
+                      surahName: widget.surahNameArabic.isNotEmpty
+                          ? widget.surahNameArabic
+                          : widget.surahName,
+                    );
+                  },
+                );
+              },
             ),
             SizedBox(width: 16.w),
             _buildActionButton(

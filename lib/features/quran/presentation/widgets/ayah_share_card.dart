@@ -113,7 +113,7 @@ class AyahShareCard extends StatelessWidget {
                           ),
                         ),
                         child: Image.asset(
-                          AssetsData.logo,
+                          isDark ? AssetsData.logoDark : AssetsData.logo,
                           width: isPreview ? 26 : 38,
                           height: isPreview ? 26 : 38,
                           fit: BoxFit.contain,

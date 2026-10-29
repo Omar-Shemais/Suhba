@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:islamic_app/core/constants/app_colors.dart';
 import 'package:islamic_app/core/constants/assets.dart';
 import 'package:islamic_app/core/utils/service_locator.dart';
 import '../../data/models/audio_model.dart';

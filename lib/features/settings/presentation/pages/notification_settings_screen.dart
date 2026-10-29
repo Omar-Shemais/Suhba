@@ -277,7 +277,21 @@ class _NotificationSettingsScreenState
             value: _masterEnabled,
             isDark: isDark,
             onChanged: (val) async {
-              setState(() => _masterEnabled = val);
+              setState(() {
+                _masterEnabled = val;
+                _prayersMasterEnabled = val;
+                _fajrSpecificEnabled = val;
+                _dhuhrEnabled = val;
+                _asrEnabled = val;
+                _maghribEnabled = val;
+                _ishaEnabled = val;
+                _mondayThursdayEnabled = val;
+                _whiteDaysEnabled = val;
+                _majorFastingEnabled = val;
+                _fridayKahfEnabled = val;
+                _fridayHourResponseEnabled = val;
+                _khatmahReminderEnabled = val;
+              });
               await NotificationSettingsManager.setMasterEnabled(val);
             },
           ),
@@ -401,8 +415,26 @@ class _NotificationSettingsScreenState
                 isDark: isDark,
                 enabled: _masterEnabled,
                 onChanged: (val) async {
-                  setState(() => _prayersMasterEnabled = val);
+                  setState(() {
+                    _prayersMasterEnabled = val;
+                    if (!val) {
+                      // تلقائياً يوقف صلاة الظهر والعصر والمغرب والعشاء بس صلاة الفجر استثناء
+                      _dhuhrEnabled = false;
+                      _asrEnabled = false;
+                      _maghribEnabled = false;
+                      _ishaEnabled = false;
+                    } else {
+                      _dhuhrEnabled = true;
+                      _asrEnabled = true;
+                      _maghribEnabled = true;
+                      _ishaEnabled = true;
+                    }
+                  });
                   await NotificationSettingsManager.setPrayerMasterEnabled(val);
+                  await NotificationSettingsManager.setPrayerIndividualEnabled('dhuhr', val);
+                  await NotificationSettingsManager.setPrayerIndividualEnabled('asr', val);
+                  await NotificationSettingsManager.setPrayerIndividualEnabled('maghrib', val);
+                  await NotificationSettingsManager.setPrayerIndividualEnabled('isha', val);
                 },
               ),
               SizedBox(width: 14.w),

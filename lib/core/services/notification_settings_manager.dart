@@ -96,13 +96,54 @@ class NotificationSettingsManager {
 
   // ================== Setters ==================
   static Future<void> setMasterEnabled(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyMaster, value);
     if (!value) {
-      await cancelAllSunanNotifications();
+      await turnOffAllNotifications();
     } else {
-      await scheduleAllSunanNotifications();
+      await turnOnAllNotifications();
     }
+  }
+
+  /// إيقاف كافة الإشعارات والتنبيهات دفعة واحدة وإلغاء كل الجداول في النظام
+  static Future<void> turnOffAllNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyMaster, false);
+    await prefs.setBool(_keyPrayersMaster, false);
+    await prefs.setBool(_keyFajrSpecific, false);
+    await prefs.setBool(_keyDhuhr, false);
+    await prefs.setBool(_keyAsr, false);
+    await prefs.setBool(_keyMaghrib, false);
+    await prefs.setBool(_keyIsha, false);
+    await prefs.setBool(_keyMondayThursday, false);
+    await prefs.setBool(_keyWhiteDays, false);
+    await prefs.setBool(_keyMajorFasting, false);
+    await prefs.setBool(_keyFridayKahf, false);
+    await prefs.setBool(_keyFridayHourResponse, false);
+    await prefs.setBool(_keyKhatmahReminder, false);
+
+    try {
+      final notif = FlutterLocalNotificationsPlugin();
+      await notif.cancelAll();
+    } catch (_) {}
+  }
+
+  /// تشغيل كافة الإشعارات والتنبيهات دفعة واحدة وإعادة جدولة السنن
+  static Future<void> turnOnAllNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyMaster, true);
+    await prefs.setBool(_keyPrayersMaster, true);
+    await prefs.setBool(_keyFajrSpecific, true);
+    await prefs.setBool(_keyDhuhr, true);
+    await prefs.setBool(_keyAsr, true);
+    await prefs.setBool(_keyMaghrib, true);
+    await prefs.setBool(_keyIsha, true);
+    await prefs.setBool(_keyMondayThursday, true);
+    await prefs.setBool(_keyWhiteDays, true);
+    await prefs.setBool(_keyMajorFasting, true);
+    await prefs.setBool(_keyFridayKahf, true);
+    await prefs.setBool(_keyFridayHourResponse, true);
+    await prefs.setBool(_keyKhatmahReminder, true);
+
+    await scheduleAllSunanNotifications();
   }
 
   static Future<void> setPrayerMasterEnabled(bool value) async {
@@ -199,27 +240,31 @@ class NotificationSettingsManager {
     final master = await isMasterEnabled();
     if (!master) return;
 
-    if (await isMondayThursdayFastingEnabled()) {
-      await _scheduleMondayThursdayNotifications();
-    }
-    if (await isFridayKahfEnabled()) {
-      await _scheduleFridayKahfNotification();
-    }
-    if (await isFridayHourResponseEnabled()) {
-      await _scheduleFridayHourResponseNotification();
-    }
-    if (await isKhatmahReminderEnabled()) {
-      await _scheduleDailyKhatmahNotification();
-    }
+    try {
+      if (await isMondayThursdayFastingEnabled()) {
+        await _scheduleMondayThursdayNotifications();
+      }
+      if (await isFridayKahfEnabled()) {
+        await _scheduleFridayKahfNotification();
+      }
+      if (await isFridayHourResponseEnabled()) {
+        await _scheduleFridayHourResponseNotification();
+      }
+      if (await isKhatmahReminderEnabled()) {
+        await _scheduleDailyKhatmahNotification();
+      }
+    } catch (_) {}
   }
 
   static Future<void> cancelAllSunanNotifications() async {
-    final notif = FlutterLocalNotificationsPlugin();
-    await notif.cancel(idMondayFasting);
-    await notif.cancel(idThursdayFasting);
-    await notif.cancel(idFridayKahfMorning);
-    await notif.cancel(idFridayHourResponse);
-    await notif.cancel(idDailyKhatmah);
+    try {
+      final notif = FlutterLocalNotificationsPlugin();
+      await notif.cancel(idMondayFasting);
+      await notif.cancel(idThursdayFasting);
+      await notif.cancel(idFridayKahfMorning);
+      await notif.cancel(idFridayHourResponse);
+      await notif.cancel(idDailyKhatmah);
+    } catch (_) {}
   }
 
   /// تذكير صيام الإثنين (يوم الأحد الساعة 8:30 مساءً) والخميس (يوم الأربعاء الساعة 8:30 مساءً)

@@ -9,6 +9,7 @@ import '../../bussiness_logic/sibha_cubit/sibha_state.dart';
 import '../widgets/bead_string_painter.dart';
 import '../widgets/bead_widget.dart';
 import '../widgets/counter_selector_bottom_sheet.dart';
+import '../widgets/dhikr_selector_bottom_sheet.dart';
 import '../widgets/rounds_selector_bottom_sheet.dart';
 import '../widgets/sibha_bottom_buttons.dart';
 import '../widgets/sibha_counter_display.dart';
@@ -30,7 +31,9 @@ class _SibhaViewState extends State<SibhaView> with TickerProviderStateMixin {
   int _currentRound = 1;
   int _maxRounds = 3;
   bool _showPlusOne = false;
+  int _currentDhikrIndex = 0;
 
+  late final PageController _pageController;
   late AnimationController _beadAnimationController;
   late Animation<double> _beadAnimation;
   late AnimationController _plusOneAnimationController;
@@ -40,6 +43,7 @@ class _SibhaViewState extends State<SibhaView> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     _sibhaCubit = getIt<SibhaCubit>()..getSibhaData();
 
     _beadAnimationController = AnimationController(
@@ -74,6 +78,7 @@ class _SibhaViewState extends State<SibhaView> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _pageController.dispose();
     _beadAnimationController.dispose();
     _plusOneAnimationController.dispose();
     _sibhaCubit.close();
@@ -383,72 +388,238 @@ class _SibhaViewState extends State<SibhaView> with TickerProviderStateMixin {
               ),
             ),
 
-            // Zikr text container
+            // 1. زر اختيار الذكر والتسبيح
             Positioned(
-              left: 16,
-              right: 16,
-              top: 250,
+              left: 20,
+              right: 20,
+              top: 145,
+              child: Center(
+                child: BlocBuilder<SibhaCubit, SibhaState>(
+                  bloc: _sibhaCubit,
+                  builder: (context, state) {
+                    if (state is! SibhaLoaded) return const SizedBox.shrink();
+
+                    return InkWell(
+                      onTap: () {
+                        DhikrSelectorBottomSheet.show(
+                          context,
+                          items: state.sibhas,
+                          selectedIndex: _currentDhikrIndex,
+                          onSelect: (index) {
+                            setState(() {
+                              _currentDhikrIndex = index;
+                              _currentCount = 1;
+                              _currentRound = 1;
+                            });
+                            _pageController.animateToPage(
+                              index,
+                              duration: const Duration(milliseconds: 350),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF282C32)
+                              : const Color(0xFFFCFAF7),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isDark
+                                ? const Color(0xFF383E46)
+                                : const Color(0xFFEADBCE),
+                            width: 1.2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black
+                                  .withValues(alpha: isDark ? 0.3 : 0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 16,
+                              color: AppColors.goldenPrimary,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'اختيار الذكر والتسبيح',
+                              style: TextStyle(
+                                fontFamily: 'Amiri',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF143427),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 18,
+                              color: isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF8C7A6B),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            // 2. حاوية نص الذكر التفاعلية مع أسهم التنقل
+            Positioned(
+              left: 12,
+              right: 12,
+              top: 200,
               child: SizedBox(
-                height: 180,
+                height: 200,
                 child: BlocBuilder<SibhaCubit, SibhaState>(
                   bloc: _sibhaCubit,
                   builder: (context, state) {
                     if (state is SibhaLoaded) {
-                      return PageView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: state.sibhas.length,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          final item = state.sibhas[index];
+                      return Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            PageView.builder(
+                              controller: _pageController,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: state.sibhas.length,
+                              physics: const BouncingScrollPhysics(),
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _currentDhikrIndex = index;
+                                  _currentCount = 1;
+                                  _currentRound = 1;
+                                });
+                              },
+                              itemBuilder: (context, index) {
+                                final item = state.sibhas[index];
+                                final isLong = item.nameAr.length > 25;
+                                final isMedium = item.nameAr.length > 15;
 
-                          return SizedBox(
-                            height: 180,
-                            width: MediaQuery.of(context).size.width - 32,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    item.nameAr,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? const Color(0xFFFFF7E6)
-                                          : AppColors.brownPrimary,
-                                      fontSize: 48,
-                                      height: 1.15,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'amiri',
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                                  child: SingleChildScrollView(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          item.nameAr,
+                                          textAlign: TextAlign.center,
+                                          textDirection: TextDirection.rtl,
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? const Color(0xFFFFF7E6)
+                                                : AppColors.brownPrimary,
+                                            fontSize: isLong
+                                                ? 26
+                                                : (isMedium ? 32 : 44),
+                                            height: 1.25,
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: 'amiri',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          item.nameEn,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: AppColors.goldenPrimary,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          item.meaningEn,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : AppColors.brownSecondary,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    item.nameEn,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: AppColors.goldenPrimary,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item.meaningEn,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white70
-                                          : AppColors.brownSecondary,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
+                                );
+                              },
+                            ),
+
+                            // سهم التنقل للذكر التالي (اليمين >)
+                            Positioned(
+                              right: 0,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: isDark
+                                      ? Colors.white54
+                                      : const Color(0xFF8C7A6B),
+                                  size: 30,
+                                ),
+                                onPressed: () {
+                                  final next =
+                                      (_currentDhikrIndex + 1) % state.sibhas.length;
+                                  _pageController.animateToPage(
+                                    next,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
                               ),
                             ),
-                          );
-                        },
+
+                            // سهم التنقل للذكر السابق (اليسار <)
+                            Positioned(
+                              left: 0,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.chevron_left_rounded,
+                                  color: isDark
+                                      ? Colors.white54
+                                      : const Color(0xFF8C7A6B),
+                                  size: 30,
+                                ),
+                                onPressed: () {
+                                  final prev = (_currentDhikrIndex -
+                                          1 +
+                                          state.sibhas.length) %
+                                      state.sibhas.length;
+                                  _pageController.animateToPage(
+                                    prev,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     }
 
@@ -458,12 +629,9 @@ class _SibhaViewState extends State<SibhaView> with TickerProviderStateMixin {
 
                     return const Center(
                       child: SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.goldenPrimary,
-                        ),
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                     );
                   },

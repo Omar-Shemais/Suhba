@@ -4,6 +4,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:islamic_app/core/services/notification_settings_manager.dart';
 
 class AzanNotificationService {
@@ -32,10 +33,17 @@ class AzanNotificationService {
     try {
       debugPrint('🔧 بدء تهيئة خدمة الإشعارات...');
 
-      // ✅ تهيئة المناطق الزمنية
+      // ✅ تهيئة المناطق الزمنية تلقائياً بحسب دولة ومنطقة المستخدم
       tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
-      debugPrint('✅ تم تهيئة المناطق الزمنية');
+      try {
+        final tzInfo = await FlutterTimezone.getLocalTimezone();
+        final String currentTimeZone = tzInfo.identifier;
+        tz.setLocalLocation(tz.getLocation(currentTimeZone));
+        debugPrint('✅ تم تهيئة المنطقة الزمنية بنجاح: $currentTimeZone');
+      } catch (e) {
+        tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+        debugPrint('⚠️ تعذر جلب المنطقة الزمنية المحلية، اعتماد الافتراضي: $e');
+      }
 
       // ✅ إعداد قناة Android
       const androidChannel = AndroidNotificationChannel(
@@ -178,8 +186,8 @@ class AzanNotificationService {
         // تحديد ما إذا كان يجب جدولة هذه الصلاة بناءً على رغبة المستخدم
         bool shouldSchedule = false;
         if (prayerKey == 'fajr') {
-          // يمكن تفعيل صلاة الفجر مخصوص حتى لو كانت باقي الصلوات مغلقة
-          shouldSchedule = fajrSpecificEnabled || prayersMasterEnabled;
+          // استثناء صلاة الفجر: تتبع إعدادها الخاص دائماً سواء أراد المستخدم تشغيلها أو إيقافها
+          shouldSchedule = fajrSpecificEnabled;
         } else {
           final individualEnabled =
               await NotificationSettingsManager.isPrayerIndividualEnabled(prayerKey);
