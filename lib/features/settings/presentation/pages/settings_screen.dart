@@ -752,6 +752,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // ==============================================================
   Widget _buildFooterDuaa(bool isDark) {
     return Container(
+      width: double.infinity,
+      alignment: Alignment.center,
       margin: EdgeInsets.only(top: 14.h, bottom: 8.h),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
@@ -762,26 +764,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8.w,
-            children: [
-              Icon(
-                Icons.volunteer_activism_rounded,
-                color: const Color(0xFF143427),
-                size: 20.sp,
-              ),
-              Text(
-                'صدقة جارية لوجه الله تعالى',
-                style: TextStyle(
-                  fontSize: 13.5.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? const Color(0xFFF7ECE1) : const Color(0xFF38291D),
+          Center(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8.w,
+              children: [
+                Icon(
+                  Icons.volunteer_activism_rounded,
+                  color: isDark ? const Color(0xFFB0B3B8) : const Color(0xFF143427),
+                  size: 20.sp,
                 ),
-              ),
-            ],
+                Text(
+                  'صدقة جارية لوجه الله تعالى',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13.5.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? const Color(0xFFF7ECE1) : const Color(0xFF38291D),
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 6.h),
           Text(

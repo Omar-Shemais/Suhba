@@ -7,7 +7,7 @@ import 'theme_state.dart';
 class ThemeCubit extends Cubit<ThemeState> {
   static const String _themeKey = 'app_theme_mode';
 
-  ThemeCubit({ThemeMode initialTheme = ThemeMode.system})
+  ThemeCubit({ThemeMode initialTheme = ThemeMode.light})
       : super(ThemeLoaded(initialTheme)) {
     _loadTheme();
   }
@@ -20,22 +20,20 @@ class ThemeCubit extends Cubit<ThemeState> {
 
       ThemeMode themeMode;
       switch (savedTheme) {
-        case 'light':
-          themeMode = ThemeMode.light;
-          break;
         case 'dark':
           themeMode = ThemeMode.dark;
           break;
+        case 'light':
         case 'system':
         default:
-          themeMode = ThemeMode.system;
+          themeMode = ThemeMode.light;
           break;
       }
 
       emit(ThemeLoaded(themeMode));
     } catch (e) {
-      // If error, default to system theme
-      emit(const ThemeLoaded(ThemeMode.system));
+      // If error, default to light theme
+      emit(const ThemeLoaded(ThemeMode.light));
     }
   }
 

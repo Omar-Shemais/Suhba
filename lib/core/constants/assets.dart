@@ -30,7 +30,7 @@ class AssetsData {
   static const quran3dBook = 'assets/images/quran_3d_book.jpg';
   static const mosqurLocationIcon = 'assets/icons/mosque-location.svg';
   static const quranHeaderBg = 'assets/images/quran_header_bg.jpg';
-  static const nabawiDome = 'assets/images/nabawi_dome.jpg';
+  static const nabawiDome = 'assets/images/nabawi_dome.png';
   static const splashBg = 'assets/images/splash_bg.jpg';
   static const splashBgClean = 'assets/images/splash_bg_clean_hd.jpg';
   static const splashMedallion = 'assets/images/splash_medallion.png';

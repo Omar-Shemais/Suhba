@@ -30,6 +30,30 @@ class SmoothBouncingScrollPhysics extends BouncingScrollPhysics {
   }
 }
 
+/// فيزياء تمرير تمنع التمطيط والسحب من الأعلى تماماً (No Top Overscroll)
+/// مع الحفاظ على مرونة وانسيابية التمرير
+class ClampTopScrollPhysics extends ScrollPhysics {
+  const ClampTopScrollPhysics({super.parent});
+
+  @override
+  ClampTopScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return ClampTopScrollPhysics(parent: buildParent(ancestor));
+  }
+
+  @override
+  double applyBoundaryConditions(ScrollMetrics position, double value) {
+    // 1. منع السحب والتمدد لأسفل عند الوصول لأعلى الشاشة
+    if (value < position.pixels && position.pixels <= position.minScrollExtent) {
+      return value - position.pixels;
+    }
+    // 2. منع تجاوز الحد العلوي عند الاندفاع السريع لأعلى
+    if (value < position.minScrollExtent && position.minScrollExtent < position.pixels) {
+      return value - position.minScrollExtent;
+    }
+    return super.applyBoundaryConditions(position, value);
+  }
+}
+
 /// سلوك تمرير عام للتطبيق يوفر فيزياء ارتدادية فاخرة ويزيل التشوهات الافتراضية
 class AppScrollBehavior extends MaterialScrollBehavior {
   const AppScrollBehavior();

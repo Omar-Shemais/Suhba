@@ -80,6 +80,7 @@ class MushafSurahPage extends StatelessWidget {
   void _showAyahOptions(BuildContext context, VerseModel verse) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final audioCubit = context.read<AudioCubit>();
+    final actionItemColor = isDark ? Colors.white70 : Colors.black87;
 
     showModalBottomSheet(
       context: context,
@@ -150,7 +151,7 @@ class MushafSurahPage extends StatelessWidget {
                   _buildActionItem(
                     icon: Icons.play_circle_fill_rounded,
                     label: 'استماع',
-                    color: AppColors.goldenPrimary,
+                    color: actionItemColor,
                     onTap: () {
                       Navigator.pop(bottomContext);
                       audioCubit.playAyah(
@@ -164,7 +165,7 @@ class MushafSurahPage extends StatelessWidget {
                   _buildActionItem(
                     icon: Icons.menu_book_rounded,
                     label: 'تفسير',
-                    color: const Color(0xFF143427),
+                    color: actionItemColor,
                     onTap: () {
                       Navigator.pop(bottomContext);
                       Navigator.push(
@@ -193,7 +194,7 @@ class MushafSurahPage extends StatelessWidget {
                         label: isDownloaded ? 'السورة محملة' : 'تحميل السورة',
                         color: isDownloaded
                             ? const Color(0xFF2E7D5E)
-                            : const Color(0xFF143427),
+                            : actionItemColor,
                         onTap: () {
                           Navigator.pop(bottomContext);
                           SurahDownloadBottomSheet.show(
@@ -208,7 +209,7 @@ class MushafSurahPage extends StatelessWidget {
                   _buildActionItem(
                     icon: Icons.bookmark_add_rounded,
                     label: 'حفظ علامة',
-                    color: AppColors.goldenPrimary,
+                    color: actionItemColor,
                     onTap: () async {
                       Navigator.pop(bottomContext);
                       await LastReadManager.saveLastRead(

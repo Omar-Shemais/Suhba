@@ -24,6 +24,7 @@ class _HadithSearchViewBodyState extends State<HadithSearchViewBody> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         // Search Bar
@@ -35,7 +36,11 @@ class _HadithSearchViewBodyState extends State<HadithSearchViewBody> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.arrow_back, size: 24.sp),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20.sp,
+                  color: isDark ? Colors.white : const Color(0xFF38291D),
+                ),
               ),
               SizedBox(width: 8.w),
               Expanded(
@@ -210,12 +215,16 @@ class _HadithSearchViewBodyState extends State<HadithSearchViewBody> {
                         horizontal: 16.w,
                         vertical: 8.h,
                       ),
-                      color: Colors.green.shade50,
+                      color: isDark
+                          ? const Color(0xFF282C32)
+                          : Colors.green.shade50,
                       child: Row(
                         children: [
                           Icon(
                             Icons.check_circle,
-                            color: Colors.green.shade700,
+                            color: isDark
+                                ? const Color(0xFF81C784)
+                                : Colors.green.shade700,
                             size: 20,
                           ),
                           SizedBox(width: 8.w),
@@ -224,7 +233,9 @@ class _HadithSearchViewBodyState extends State<HadithSearchViewBody> {
                               args: [state.results.length.toString()],
                             ),
                             style: TextStyle(
-                              color: Colors.green.shade900,
+                              color: isDark
+                                  ? Colors.white
+                                  : Colors.green.shade900,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

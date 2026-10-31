@@ -310,7 +310,7 @@ class HomeQuickActionsGrid extends StatelessWidget {
                           _buildMoreTile(
                             ctx,
                             icon: Icons.checklist_rtl_rounded,
-                            iconColor: const Color(0xFF143427),
+                            iconColor: const Color(0xFF2E8555),
                             title: 'الفروض والسنن',
                             subtitle:
                                 'متابعة الصلوات الخمس، السنن الرواتب، وصيام التطوع',
@@ -322,7 +322,7 @@ class HomeQuickActionsGrid extends StatelessWidget {
                           _buildMoreTile(
                             ctx,
                             icon: Icons.radio_rounded,
-                            iconColor: const Color(0xFF4A7C59),
+                            iconColor: const Color(0xFF2E8555),
                             title: 'إذاعة القرآن الكريم',
                             subtitle: 'استمع للبث المباشر لإذاعات القرآن',
                             onTap: () {
@@ -333,7 +333,7 @@ class HomeQuickActionsGrid extends StatelessWidget {
                           _buildMoreTile(
                             ctx,
                             icon: Icons.calendar_month_rounded,
-                            iconColor: const Color(0xFF2C8C7E),
+                            iconColor: const Color(0xFF2E8555),
                             title: 'التقويم الهجري والميلادي',
                             subtitle: 'عرض التاريخ الهجري ومناسبات الشهر',
                             onTap: () {
@@ -344,7 +344,7 @@ class HomeQuickActionsGrid extends StatelessWidget {
                           _buildMoreTile(
                             ctx,
                             icon: Icons.notifications_active_rounded,
-                            iconColor: const Color(0xFF38291D),
+                            iconColor: const Color(0xFF2E8555),
                             title: 'إعدادات الإشعارات والأذان',
                             subtitle: 'التحكم بإشعارات الصلاة والفجر والسنن والختمة',
                             onTap: () {
@@ -355,7 +355,7 @@ class HomeQuickActionsGrid extends StatelessWidget {
                           _buildMoreTile(
                             ctx,
                             icon: Icons.help_outline_rounded,
-                            iconColor: const Color(0xFF7E57C2),
+                            iconColor: const Color(0xFF2E8555),
                             title: 'المساعدة والدعم',
                             subtitle: 'تواصل معنا أو أرسل اقتراحك',
                             onTap: () {

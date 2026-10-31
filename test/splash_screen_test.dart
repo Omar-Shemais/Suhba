@@ -73,7 +73,7 @@ void main() {
     );
   });
 
-  testWidgets('SplashScreen renders properly in dark mode with deep night theme',
+  testWidgets('SplashScreen consistently renders authentic ivory theme across brightness modes',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       ScreenUtilInit(
@@ -92,7 +92,7 @@ void main() {
     final scaffoldFinder = find.byType(Scaffold);
     expect(scaffoldFinder, findsOneWidget);
     final scaffold = tester.widget<Scaffold>(scaffoldFinder);
-    expect(scaffold.backgroundColor, const Color(0xFF1E2125));
+    expect(scaffold.backgroundColor, const Color(0xFFFAF5ED));
 
     final heroFinder = find.byWidgetPredicate(
       (widget) => widget is Hero && widget.tag == 'app_logo',

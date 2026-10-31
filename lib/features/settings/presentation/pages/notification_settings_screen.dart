@@ -326,12 +326,12 @@ class _NotificationSettingsScreenState
             width: 40.w,
             height: 40.w,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white10 : const Color(0xFFE8F1EC),
+              color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               Icons.notifications_rounded,
-              color: const Color(0xFF143427),
+              color: isDark ? const Color(0xFFB0B3B8) : const Color(0xFF6B7280),
               size: 22.sp,
             ),
           ),

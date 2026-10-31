@@ -460,7 +460,7 @@ class AboutScreen extends StatelessWidget {
             ),
             child: Icon(
               Icons.volunteer_activism_rounded,
-              color: const Color(0xFF143427),
+              color: isDark ? const Color(0xFFB0B3B8) : const Color(0xFF143427),
               size: 28.sp,
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:islamic_app/features/prayer_times/data/models/prayer_times_model.dart';
 import 'package:islamic_app/features/prayer_times/presentation/widgets/home_prayer_card.dart';
 import 'package:islamic_app/features/prayer_times/presentation/widgets/home_quick_actions_grid.dart';
+import 'package:islamic_app/core/theme/app_scroll_behavior.dart';
 import 'package:islamic_app/features/prayer_times/presentation/widgets/home_quick_dhikr_card.dart';
 
 void main() {
@@ -162,5 +163,38 @@ void main() {
 
     // Verify sheet is dismissed
     expect(find.text('المزيد من المميزات'), findsNothing);
+  });
+
+  testWidgets('ClampTopScrollPhysics strictly prevents overscrolling / pulling from the top',
+      (WidgetTester tester) async {
+    const physics = ClampTopScrollPhysics(
+      parent: SmoothBouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListView(
+            physics: physics,
+            children: List.generate(
+              30,
+              (index) => ListTile(title: Text('Item $index')),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final scrollableState = tester.state<ScrollableState>(find.byType(Scrollable));
+    expect(scrollableState.position.pixels, equals(0.0));
+
+    // Try to pull down from the top
+    await tester.drag(find.text('Item 0'), const Offset(0, 300));
+    await tester.pump();
+
+    // Must strictly remain 0.0 (no overscroll stretching downwards at the top)
+    expect(scrollableState.position.pixels, equals(0.0));
   });
 }

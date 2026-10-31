@@ -103,7 +103,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
             borderRadius: BorderRadius.circular(24.r),
             side: BorderSide(
               color: isDark
-                  ? AppColors.goldenPrimary.withValues(alpha: 0.4)
+                  ? const Color(0xFF2E7D5E).withValues(alpha: 0.5)
                   : const Color(0xFF143427).withValues(alpha: 0.3),
               width: 1.5,
             ),
@@ -118,14 +118,15 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                   height: 70.w,
                   decoration: BoxDecoration(
                     color: isDark
-                        ? AppColors.goldenPrimary
+                        ? const Color(0xFF2E7D5E)
                         : const Color(0xFF143427),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: isDark
-                            ? AppColors.goldenPrimary.withValues(alpha: 0.4)
-                            : const Color(0xFF143427).withValues(alpha: 0.3),
+                        color: (isDark
+                                ? const Color(0xFF2E7D5E)
+                                : const Color(0xFF143427))
+                            .withValues(alpha: 0.3),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -201,7 +202,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isDark
-                              ? AppColors.goldenPrimary
+                              ? const Color(0xFF2E7D5E)
                               : const Color(0xFF143427),
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                           shape: RoundedRectangleBorder(
@@ -241,7 +242,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
             Text('تم نسخ الذكر إلى الحافظة ✨'),
           ],
         ),
-        backgroundColor: AppColors.goldenPrimary,
+        backgroundColor: const Color(0xFF143427),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
@@ -476,7 +477,9 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                               icon: const Icon(Icons.refresh_rounded, color: Colors.white),
                               label: const Text('إعادة المحاولة', style: TextStyle(color: Colors.white)),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.goldenPrimary,
+                                backgroundColor: isDark
+                                    ? const Color(0xFF2E7D5E)
+                                    : const Color(0xFF143427),
                               ),
                             ),
                           ],
@@ -556,7 +559,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                   Icon(
                     Icons.check_circle_outline_rounded,
                     color: isDark
-                        ? AppColors.goldenPrimary
+                        ? const Color(0xFF2E7D5E)
                         : const Color(0xFF143427),
                     size: 18,
                   ),
@@ -575,7 +578,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppColors.goldenPrimary.withValues(alpha: 0.15)
+                      ? const Color(0xFF2E7D5E).withValues(alpha: 0.18)
                       : const Color(0xFF143427).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
@@ -585,7 +588,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark
-                        ? AppColors.goldenPrimary
+                        ? const Color(0xFF81C784)
                         : const Color(0xFF143427),
                   ),
                 ),
@@ -605,7 +608,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                 completed == total
                     ? const Color(0xFF2E7D32)
                     : (isDark
-                        ? AppColors.goldenPrimary
+                        ? const Color(0xFF2E7D5E)
                         : const Color(0xFF143427)),
               ),
             ),
@@ -649,9 +652,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
           BoxShadow(
             color: isCompleted
                 ? const Color(0xFF2E7D32).withValues(alpha: 0.08)
-                : (isDark
-                    ? AppColors.goldenPrimary.withValues(alpha: 0.06)
-                    : Colors.black.withValues(alpha: 0.04)),
+                : Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -671,7 +672,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? AppColors.goldenPrimary.withValues(alpha: 0.12)
+                        ? const Color(0xFF2E7D5E).withValues(alpha: 0.18)
                         : const Color(0xFF143427).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
@@ -681,7 +682,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark
-                          ? AppColors.goldenPrimary
+                          ? const Color(0xFF81C784)
                           : const Color(0xFF143427),
                     ),
                   ),
@@ -757,7 +758,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: isDark
-                        ? AppColors.goldenPrimary.withValues(alpha: 0.2)
+                        ? const Color(0xFF2E7D5E).withValues(alpha: 0.25)
                         : const Color(0xFF143427).withValues(alpha: 0.2),
                     width: 0.8,
                   ),
@@ -768,7 +769,7 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                     Icon(
                       Icons.auto_awesome_rounded,
                       color: isDark
-                          ? AppColors.goldenPrimary
+                          ? const Color(0xFF81C784)
                           : const Color(0xFF143427),
                       size: 16,
                     ),
@@ -803,7 +804,9 @@ class _AzkarReaderViewState extends State<AzkarReaderView> {
                         colors: [Color(0xFF2E7D32), Color(0xFF388E3C)],
                       )
                     : (isDark
-                        ? AppColors.goldenGradient
+                        ? const LinearGradient(
+                            colors: [Color(0xFF2E7D5E), Color(0xFF1E523E)],
+                          )
                         : const LinearGradient(
                             colors: [Color(0xFF143427), Color(0xFF1F4838)],
                           )),

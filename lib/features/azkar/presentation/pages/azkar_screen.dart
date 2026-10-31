@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../widgets/azkar_reminder_card.dart';
 import 'after_prayer_azkar_screen.dart';
@@ -65,7 +64,7 @@ class AzkarScreen extends StatelessWidget {
                   height: 18.h,
                   decoration: BoxDecoration(
                     color: isDark
-                        ? AppColors.goldenPrimary
+                        ? const Color(0xFF2E7D5E)
                         : const Color(0xFF143427),
                     borderRadius: BorderRadius.circular(4.r),
                   ),
@@ -85,7 +84,7 @@ class AzkarScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: isDark
-                        ? AppColors.goldenPrimary
+                        ? const Color(0xFF81C784)
                         : const Color(0xFF143427),
                     fontWeight: FontWeight.w600,
                   ),
@@ -259,7 +258,7 @@ class AzkarScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.sp,
               color: isDark
-                  ? AppColors.goldenPrimary
+                  ? const Color(0xFF81C784)
                   : const Color(0xFF143427),
               fontWeight: FontWeight.w600,
             ),
@@ -371,8 +370,8 @@ class AzkarScreen extends StatelessWidget {
             ),
             SizedBox(width: 6.w),
             Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 16,
+              Icons.chevron_left_rounded,
+              size: 20,
               color: isDark
                   ? Colors.white38
                   : const Color(0xFF38291D).withValues(alpha: 0.4),

@@ -222,21 +222,18 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    // Strict Islamic Palette Tokens
+    // Strict Islamic Palette Tokens - Splash screen consistently uses the light ivory aesthetic
     const ivoryBg = Color(0xFFFAF5ED);
-    final bgColor = isDark ? const Color(0xFF1E2125) : ivoryBg;
+    const bgColor = ivoryBg;
 
     // System bars styling: transparent with contrast enforcement disabled for true edge-to-edge
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness: Brightness.dark,
         systemStatusBarContrastEnforced: false,
         systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.dark,
         systemNavigationBarDividerColor: Colors.transparent,
         systemNavigationBarContrastEnforced: false,
       ),
@@ -275,13 +272,6 @@ class _SplashScreenState extends State<SplashScreen>
                           },
                         ),
 
-                        // 2. طبقة ناعمة للوضع الليلي لراحة العين مع الحفاظ على جمالية المشهد
-                        if (isDark)
-                          Positioned.fill(
-                            child: Container(
-                              color: const Color(0xFF1E2125).withValues(alpha: 0.35),
-                            ),
-                          ),
 
                         // 3. ذرات النور والبركة الذهبية العائمة برفق في الأجواء
                         Positioned.fill(

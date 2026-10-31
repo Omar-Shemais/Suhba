@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:islamic_app/core/widgets/custom_app_bar.dart';
 import '../../data/repositories/nearest_msajed_repo.dart';
@@ -23,7 +24,8 @@ class NearestMasjedScreen extends StatelessWidget {
         Marker(
           markerId: MarkerId(m.id),
           position: LatLng(m.lat, m.lng),
-          infoWindow: InfoWindow(title: m.name),
+          infoWindow: InfoWindow(title: m.name, snippet: m.vicinity),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         ),
       );
     }
@@ -32,8 +34,8 @@ class NearestMasjedScreen extends StatelessWidget {
       Marker(
         markerId: const MarkerId('my_location'),
         position: LatLng(latitude, longitude),
-        infoWindow: const InfoWindow(title: 'My Location'),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        infoWindow: const InfoWindow(title: 'موقعي الحالي'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       ),
     );
 
@@ -42,7 +44,10 @@ class NearestMasjedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF1E2125) : const Color(0xFFFAF5ED),
       appBar: CustomAppBar(title: 'nearby_masjed'.tr(), showReciterIcon: false),
       body: BlocProvider(
         create: (context) {
@@ -51,16 +56,38 @@ class NearestMasjedScreen extends StatelessWidget {
         child: BlocBuilder<NearestMasjedCubit, NearestMasjedState>(
           builder: (context, state) {
             if (state is NearestMasjedErrorState) {
-              //  log(state.message);
-              return Center(child: Text(state.message));
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.all(24.r),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_off_rounded,
+                        size: 54.sp,
+                        color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        state.message,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: isDark ? Colors.white70 : const Color(0xFF736152),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             } else if (state is NearestMasjedLoadingState) {
               log(state.toString());
-
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                child: CircularProgressIndicator(
+                  color: isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427),
+                ),
+              );
             } else if (state is NearestMasjedSuccessState) {
-              //log(state.position.latitude.toString());
-              // log(state.position.toString());
-              // markers للمساجد
               final position = state.position;
               final markers = _buildMarkers(
                 state.masjeds,
@@ -70,7 +97,7 @@ class NearestMasjedScreen extends StatelessWidget {
               return Column(
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.4,
+                    height: MediaQuery.of(context).size.height * 0.38,
                     width: double.infinity,
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
@@ -82,19 +109,102 @@ class NearestMasjedScreen extends StatelessWidget {
                       myLocationButtonEnabled: true,
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 6.h),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 4.w,
+                          height: 16.h,
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'المساجد القريبة (${state.masjeds.length})',
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : const Color(0xFF143427),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Expanded(
                     child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
                       itemCount: state.masjeds.length,
                       itemBuilder: (context, index) {
                         final masjed = state.masjeds[index];
-                        log(state.masjeds.first.toString());
-                        return Card(
-                          margin: const EdgeInsets.all(8),
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 10.h),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF282C32) : Colors.white,
+                            borderRadius: BorderRadius.circular(16.r),
+                            border: Border.all(
+                              color: isDark
+                                  ? const Color(0xFF383E46)
+                                  : const Color(0xFFEADBCE),
+                              width: 1.0,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           child: ListTile(
-                            title: Text(masjed.name),
-                            subtitle: Text(masjed.vicinity),
-                            trailing: const Icon(Icons.location_on),
-                            onTap: () {},
+                            contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+                            leading: Container(
+                              padding: EdgeInsets.all(10.r),
+                              decoration: BoxDecoration(
+                                color: (isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427))
+                                    .withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Icon(
+                                Icons.mosque_rounded,
+                                color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
+                                size: 22.sp,
+                              ),
+                            ),
+                            title: Text(
+                              masjed.name,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : const Color(0xFF143427),
+                              ),
+                            ),
+                            subtitle: Padding(
+                              padding: EdgeInsets.only(top: 4.h),
+                              child: Text(
+                                masjed.vicinity,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: isDark ? Colors.white70 : const Color(0xFF736152),
+                                ),
+                              ),
+                            ),
+                            trailing: Container(
+                              padding: EdgeInsets.all(8.r),
+                              decoration: BoxDecoration(
+                                color: (isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427))
+                                    .withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.location_on_rounded,
+                                color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
+                                size: 18.sp,
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -102,15 +212,6 @@ class NearestMasjedScreen extends StatelessWidget {
                   ),
                 ],
               );
-              /*Column(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 2,
-                    color: Colors.amber,
-                  ),
-                ],
-              );*/
             } else {
               return const SizedBox();
             }

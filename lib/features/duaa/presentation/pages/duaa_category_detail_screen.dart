@@ -30,7 +30,9 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
             Text('تم نسخ الدعاء إلى الحافظة ✨'),
           ],
         ),
-        backgroundColor: AppColors.goldenPrimary,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF2E7D5E)
+            : const Color(0xFF143427),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
@@ -62,8 +64,8 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: isDark ? Colors.white : AppColors.brownPrimary,
-            size: 20,
+            color: isDark ? Colors.white : const Color(0xFF38291D),
+            size: 20.sp,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -77,7 +79,7 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : AppColors.brownPrimary,
+                color: isDark ? Colors.white : const Color(0xFF143427),
               ),
             ),
           ],
@@ -108,7 +110,9 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
               color: isDark ? AppColors.containerDarkColor : Colors.white,
               border: Border(
                 bottom: BorderSide(
-                  color: AppColors.goldenPrimary.withValues(alpha: 0.2),
+                  color: isDark
+                      ? const Color(0xFF383E46)
+                      : const Color(0xFFEADBCE),
                   width: 1,
                 ),
               ),
@@ -123,7 +127,7 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
                       widget.category.descriptionAr,
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: isDark ? Colors.white70 : AppColors.brownPrimary.withValues(alpha: 0.7),
+                        color: isDark ? Colors.white70 : const Color(0xFF736152),
                       ),
                     ),
                     Container(
@@ -196,7 +200,9 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: AppColors.goldenPrimary.withValues(alpha: 0.12),
+                    color: isDark
+                        ? const Color(0xFF2E7D5E).withValues(alpha: 0.15)
+                        : const Color(0xFF143427).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Text(
@@ -204,7 +210,7 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.goldenPrimary,
+                      color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
                     ),
                   ),
                 ),
@@ -214,7 +220,7 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
                     IconButton(
                       icon: const Icon(Icons.copy_rounded, size: 18),
                       tooltip: 'نسخ الدعاء',
-                      color: isDark ? Colors.white60 : Colors.brown.shade400,
+                      color: isDark ? Colors.white70 : const Color(0xFF143427),
                       onPressed: () => _copyDuaa(item),
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.all(6.r),
@@ -223,7 +229,7 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
                     IconButton(
                       icon: const Icon(Icons.share_rounded, size: 18),
                       tooltip: 'مشاركة الدعاء',
-                      color: isDark ? Colors.white60 : Colors.brown.shade400,
+                      color: isDark ? Colors.white70 : const Color(0xFF143427),
                       onPressed: () => _shareDuaa(item),
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.all(6.r),
@@ -244,7 +250,7 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
                 fontSize: _fontSize.sp,
                 height: 1.85,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : const Color(0xFF2C1810),
+                color: isDark ? Colors.white : const Color(0xFF143427),
               ),
               textAlign: TextAlign.center,
             ),
@@ -276,7 +282,7 @@ class _DuaaCategoryDetailScreenState extends State<DuaaCategoryDetailScreen> {
                     fontStyle: FontStyle.italic,
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.75)
-                        : AppColors.brownPrimary.withValues(alpha: 0.8),
+                        : const Color(0xFF736152),
                   ),
                   textAlign: TextAlign.left,
                 ),

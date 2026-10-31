@@ -191,7 +191,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
-                color: isDark ? const Color(0xFF2E8555) : const Color(0xFF38291D),
+                color: isDark ? Colors.white : const Color(0xFF38291D),
               ),
             ),
           ),

@@ -93,7 +93,9 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
               ),
             ],
           ),
-          backgroundColor: AppColors.goldenPrimary,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF2E7D5E)
+              : const Color(0xFF143427),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
           duration: const Duration(seconds: 2),
@@ -176,7 +178,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
         context: context,
         builder: (context) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          final primaryColor = isDark ? const Color(0xFFC7A87A) : const Color(0xFF143427);
+          final primaryColor = isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427);
           return AlertDialog(
             backgroundColor:
                 isDark ? AppColors.containerDarkColor : const Color(0xFFFAF5ED),
@@ -340,7 +342,9 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
               ),
             ],
           ),
-          backgroundColor: AppColors.brownPrimary,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF2E7D5E)
+              : const Color(0xFF143427),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
           duration: const Duration(seconds: 2),
@@ -359,7 +363,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
         height: 140.h,
         alignment: Alignment.center,
         child: CircularProgressIndicator(
-          color: isDark ? const Color(0xFFC7A87A) : const Color(0xFF143427),
+          color: isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427),
           backgroundColor: isDark ? const Color(0xFF383E46) : const Color(0xFFEADBCE),
         ),
       );
@@ -371,14 +375,14 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isDark
-              ? AppColors.goldenPrimary.withValues(alpha: 0.25)
+              ? const Color(0xFF383E46)
               : const Color(0xFFEADBCE),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? AppColors.goldenPrimary.withValues(alpha: 0.08)
+                ? Colors.black.withValues(alpha: 0.25)
                 : Colors.black.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 6),
@@ -396,7 +400,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                 padding: EdgeInsets.all(8.r),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppColors.goldenPrimary
+                      ? const Color(0xFF2E7D5E)
                       : const Color(0xFF143427),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
@@ -483,7 +487,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
             decoration: BoxDecoration(
               color: _isAutoMode
                   ? (isDark
-                      ? AppColors.goldenPrimary.withValues(alpha: 0.12)
+                      ? const Color(0xFF2E7D5E).withValues(alpha: 0.15)
                       : const Color(0xFF143427).withValues(alpha: 0.08))
                   : (isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -492,7 +496,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
               border: Border.all(
                 color: _isAutoMode
                     ? (isDark
-                        ? AppColors.goldenPrimary.withValues(alpha: 0.4)
+                        ? const Color(0xFF2E7D5E).withValues(alpha: 0.4)
                         : const Color(0xFF143427).withValues(alpha: 0.3))
                     : Colors.grey.withValues(alpha: 0.2),
                 width: 1,
@@ -506,7 +510,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                       : Icons.alarm_rounded,
                   color: _isAutoMode
                       ? (isDark
-                          ? AppColors.goldenPrimary
+                          ? const Color(0xFF81C784)
                           : const Color(0xFF143427))
                       : Colors.grey,
                   size: 22,
@@ -538,7 +542,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                             decoration: BoxDecoration(
                               color: _isAutoMode
                                   ? (isDark
-                                      ? AppColors.goldenPrimary
+                                      ? const Color(0xFF2E7D5E)
                                       : const Color(0xFF143427))
                                   : Colors.grey,
                               borderRadius: BorderRadius.circular(6.r),
@@ -573,10 +577,10 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                   value: _isAutoMode,
                   onChanged: _toggleAutoMode,
                   activeThumbColor: isDark
-                      ? AppColors.goldenPrimary
+                      ? const Color(0xFF2E7D5E)
                       : const Color(0xFF143427),
                   activeTrackColor: isDark
-                      ? AppColors.goldenSecondary.withValues(alpha: 0.4)
+                      ? const Color(0xFF2E7D5E).withValues(alpha: 0.4)
                       : const Color(0xFF143427).withValues(alpha: 0.3),
                 ),
               ],
@@ -684,7 +688,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
         border: Border.all(
           color: enabled
               ? (isDark
-                  ? AppColors.goldenPrimary.withValues(alpha: 0.3)
+                  ? const Color(0xFF2E7D5E).withValues(alpha: 0.35)
                   : const Color(0xFF143427).withValues(alpha: 0.25))
               : (isDark ? Colors.grey.withValues(alpha: 0.2) : const Color(0xFFEADBCE)),
           width: 0.8,
@@ -725,7 +729,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                         padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
                         decoration: BoxDecoration(
                           color: (isDark
-                                  ? AppColors.goldenPrimary
+                                  ? const Color(0xFF2E7D5E)
                                   : const Color(0xFF143427))
                               .withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(5.r),
@@ -737,7 +741,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                               Icons.lock_rounded,
                               size: 10.sp,
                               color: isDark
-                                  ? AppColors.goldenPrimary
+                                  ? const Color(0xFF81C784)
                                   : const Color(0xFF143427),
                             ),
                             SizedBox(width: 2.w),
@@ -747,7 +751,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                                 fontSize: 9.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isDark
-                                    ? AppColors.goldenPrimary
+                                    ? const Color(0xFF81C784)
                                     : const Color(0xFF143427),
                               ),
                             ),
@@ -781,18 +785,18 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
               decoration: BoxDecoration(
                 color: enabled
                     ? (isDark
-                        ? AppColors.goldenPrimary.withValues(alpha: 0.15)
+                        ? const Color(0xFF2E7D5E).withValues(alpha: 0.2)
                         : const Color(0xFF143427).withValues(alpha: 0.1))
                     : Colors.grey.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10.r),
                 border: Border.all(
                   color: isLockedByAuto
                       ? (isDark
-                          ? AppColors.goldenPrimary.withValues(alpha: 0.35)
+                          ? const Color(0xFF2E7D5E).withValues(alpha: 0.35)
                           : const Color(0xFF143427).withValues(alpha: 0.25))
                       : (enabled
                           ? (isDark
-                              ? AppColors.goldenPrimary.withValues(alpha: 0.5)
+                              ? const Color(0xFF2E7D5E).withValues(alpha: 0.5)
                               : const Color(0xFF143427).withValues(alpha: 0.35))
                           : Colors.grey.withValues(alpha: 0.3)),
                   width: 0.8,
@@ -806,7 +810,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                     size: 13.sp,
                     color: enabled
                         ? (isDark
-                            ? AppColors.goldenPrimary
+                            ? const Color(0xFF81C784)
                             : const Color(0xFF143427))
                         : Colors.grey,
                   ),
@@ -818,7 +822,7 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
                       fontWeight: FontWeight.bold,
                       color: enabled
                           ? (isDark
-                              ? AppColors.goldenPrimary
+                              ? const Color(0xFF81C784)
                               : const Color(0xFF143427))
                           : Colors.grey,
                     ),
@@ -864,10 +868,10 @@ class _AzkarReminderCardState extends State<AzkarReminderCard> {
               value: isLockedByAuto ? true : enabled,
               onChanged: isLockedByAuto ? null : onToggle,
               activeThumbColor: isDark
-                  ? AppColors.goldenPrimary
+                  ? const Color(0xFF2E7D5E)
                   : const Color(0xFF143427),
               activeTrackColor: isDark
-                  ? AppColors.goldenSecondary.withValues(alpha: 0.4)
+                  ? const Color(0xFF2E7D5E).withValues(alpha: 0.4)
                   : const Color(0xFF143427).withValues(alpha: 0.3),
             ),
           ),
@@ -981,7 +985,7 @@ class _IslamicTimePickerDialogState extends State<_IslamicTimePickerDialog> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? const Color(0xFFC7A87A) : const Color(0xFF143427);
+    final primaryColor = isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427);
     final defaultStr = _formatTime(widget.defaultHour, widget.defaultMinute);
 
     final List<Map<String, dynamic>> presets = widget.isMorning
@@ -1001,11 +1005,11 @@ class _IslamicTimePickerDialogState extends State<_IslamicTimePickerDialog> {
           ];
 
     return Dialog(
-      backgroundColor: isDark ? const Color(0xFF1F1C18) : const Color(0xFFFAF5ED),
+      backgroundColor: isDark ? const Color(0xFF282C32) : const Color(0xFFFAF5ED),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22.r),
         side: BorderSide(
-          color: isDark ? primaryColor.withValues(alpha: 0.3) : const Color(0xFFEADBCE),
+          color: isDark ? const Color(0xFF383E46) : const Color(0xFFEADBCE),
           width: 1.2,
         ),
       ),

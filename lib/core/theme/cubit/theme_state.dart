@@ -13,7 +13,7 @@ abstract class ThemeState extends Equatable {
 
 /// Initial Theme State
 class ThemeInitial extends ThemeState {
-  const ThemeInitial() : super(ThemeMode.system);
+  const ThemeInitial() : super(ThemeMode.light);
 }
 
 /// Theme Loaded State

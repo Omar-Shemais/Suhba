@@ -12,7 +12,7 @@ class SettingsModel extends Equatable {
   final String languageCode;
 
   const SettingsModel({
-    this.themeMode = ThemeMode.system,
+    this.themeMode = ThemeMode.light,
     this.notificationsEnabled = true,
     this.languageCode = 'ar',
   });
@@ -41,7 +41,7 @@ class SettingsModel extends Equatable {
     return SettingsModel(
       themeMode: ThemeMode.values.firstWhere(
         (e) => e.name == json['themeMode'],
-        orElse: () => ThemeMode.system,
+        orElse: () => ThemeMode.light,
       ),
       notificationsEnabled: json['notificationsEnabled'] ?? true,
       languageCode: json['languageCode'] ?? 'ar',

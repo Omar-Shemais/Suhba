@@ -92,7 +92,7 @@ class _HadithCardState extends State<HadithCard> {
                           'رقم ${hadith.hadithNumber}',
                           style: TextStyle(
                             color: isDark
-                                ? AppColors.primaryLightColor
+                                ? Colors.white
                                 : AppColors.secondaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 13.sp,
@@ -117,7 +117,7 @@ class _HadithCardState extends State<HadithCard> {
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: isDark
-                                ? AppColors.primaryLightColor
+                                ? Colors.white
                                 : AppColors.secondaryColor,
                             fontWeight: FontWeight.w600,
                           ),
@@ -135,11 +135,13 @@ class _HadithCardState extends State<HadithCard> {
                       padding: EdgeInsets.all(12.r),
                       decoration: BoxDecoration(
                         color: isDark
-                            ? Colors.amber.withOpacity(0.15)
-                            : Colors.amber.shade50,
+                            ? const Color(0xFF2E7D5E).withValues(alpha: 0.15)
+                            : const Color(0xFF143427).withValues(alpha: 0.06),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: Colors.amber.withOpacity(0.3),
+                          color: isDark
+                              ? const Color(0xFF2E7D5E).withValues(alpha: 0.3)
+                              : const Color(0xFF143427).withValues(alpha: 0.15),
                           width: 1.w,
                         ),
                       ),
@@ -149,8 +151,8 @@ class _HadithCardState extends State<HadithCard> {
                           fontSize: 14.sp,
                           fontStyle: FontStyle.italic,
                           color: isDark
-                              ? Colors.amber.shade200
-                              : Colors.brown.shade700,
+                              ? Colors.white70
+                              : const Color(0xFF38291D),
                           height: 1.6.h,
                         ),
                         textAlign: TextAlign.right,
@@ -176,6 +178,7 @@ class _HadithCardState extends State<HadithCard> {
                         fontSize: 18.sp,
                         height: 2.0.h,
                         fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : AppColors.secondaryColor,
                       ),
                       textAlign: TextAlign.right,
                       textDirection: TextDirection.rtl,
@@ -216,7 +219,7 @@ class _HadithCardState extends State<HadithCard> {
                                 Icons.translate_rounded,
                                 size: 15.sp,
                                 color: isDark
-                                    ? AppColors.primaryLightColor
+                                    ? Colors.white
                                     : const Color(0xFF143427),
                               ),
                               SizedBox(width: 6.w),
@@ -229,7 +232,7 @@ class _HadithCardState extends State<HadithCard> {
                                     fontSize: 11.5.sp,
                                     fontWeight: FontWeight.w600,
                                     color: isDark
-                                        ? AppColors.primaryLightColor
+                                        ? Colors.white
                                         : const Color(0xFF143427),
                                   ),
                                 ),
@@ -241,7 +244,7 @@ class _HadithCardState extends State<HadithCard> {
                                     : Icons.keyboard_arrow_down_rounded,
                                 size: 17.sp,
                                 color: isDark
-                                    ? AppColors.primaryLightColor
+                                    ? Colors.white
                                     : const Color(0xFF143427),
                               ),
                             ],

@@ -1014,13 +1014,17 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
             width: 32.w,
             height: 32.w,
             decoration: BoxDecoration(
-              color: const Color(0xFF143427).withValues(alpha: isDark ? 0.25 : 0.1),
+              color: isChecked
+                  ? (isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427))
+                  : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
               icon,
               size: 16.sp,
-              color: const Color(0xFF143427),
+              color: isChecked
+                  ? Colors.white
+                  : (isDark ? const Color(0xFFB0B3B8) : const Color(0xFF6B7280)),
             ),
           ),
           SizedBox(width: 10.w),
@@ -1049,9 +1053,9 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                         decoration: BoxDecoration(
-                          color: badge.contains('مؤكدة')
-                              ? const Color(0xFF143427).withValues(alpha: isDark ? 0.3 : 0.12)
-                              : Colors.orange.withValues(alpha: isDark ? 0.3 : 0.12),
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : Colors.black.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(6.r),
                         ),
                         child: Text(
@@ -1061,9 +1065,9 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                           style: TextStyle(
                             fontSize: 9.sp,
                             fontWeight: FontWeight.w600,
-                            color: badge.contains('مؤكدة')
-                                ? const Color(0xFF143427)
-                                : Colors.orange.shade800,
+                            color: isDark
+                                ? const Color(0xFFB0B3B8)
+                                : const Color(0xFF6B7280),
                           ),
                         ),
                       ),
@@ -1076,7 +1080,7 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                   style: TextStyle(
                     fontSize: 11.5.sp,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? const Color(0xFFC7A87A) : const Color(0xFF143427),
+                    color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -1086,7 +1090,7 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 10.sp,
-                    color: isDark ? Colors.white60 : const Color(0xFF736152),
+                    color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
                   ),
                 ),
               ],
@@ -1570,14 +1574,16 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
             height: 34.w,
             decoration: BoxDecoration(
               color: isChecked
-                  ? const Color(0xFF143427)
-                  : const Color(0xFF143427).withValues(alpha: isDark ? 0.25 : 0.1),
+                  ? (isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427))
+                  : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: Icon(
               icon,
               size: 18.sp,
-              color: isChecked ? Colors.white : const Color(0xFF143427),
+              color: isChecked
+                  ? Colors.white
+                  : (isDark ? const Color(0xFFB0B3B8) : const Color(0xFF6B7280)),
             ),
           ),
           SizedBox(width: 10.w),
@@ -1603,7 +1609,9 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF143427).withValues(alpha: isDark ? 0.3 : 0.12),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : Colors.black.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Text(
@@ -1611,7 +1619,9 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                         style: TextStyle(
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF143427),
+                          color: isDark
+                              ? const Color(0xFFB0B3B8)
+                              : const Color(0xFF6B7280),
                         ),
                       ),
                     ),
@@ -1623,7 +1633,7 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                   style: TextStyle(
                     fontSize: 11.5.sp,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? const Color(0xFFC7A87A) : const Color(0xFF143427),
+                    color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -1633,7 +1643,7 @@ class _FastingSunanScreenState extends State<FastingSunanScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 10.sp,
-                    color: isDark ? Colors.white60 : const Color(0xFF736152),
+                    color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
                   ),
                 ),
               ],

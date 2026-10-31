@@ -84,8 +84,10 @@ class MainHomeViewBody extends StatelessWidget {
               .getTimeRemaining(nextPrayer.time);
 
           return SingleChildScrollView(
-            physics: const SmoothBouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
+            physics: const ClampTopScrollPhysics(
+              parent: SmoothBouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

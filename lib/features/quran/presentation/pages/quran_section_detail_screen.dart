@@ -460,6 +460,7 @@ class _QuranSectionViewBodyState extends State<_QuranSectionViewBody> {
   ]) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final audioCubit = context.read<AudioCubit>();
+    final actionItemColor = isDark ? Colors.white70 : Colors.black87;
 
     showModalBottomSheet(
       context: context,
@@ -519,7 +520,7 @@ class _QuranSectionViewBodyState extends State<_QuranSectionViewBody> {
                   _buildActionItem(
                     icon: Icons.play_circle_fill_rounded,
                     label: 'استماع',
-                    color: AppColors.goldenPrimary,
+                    color: actionItemColor,
                     onTap: () {
                       Navigator.pop(bottomContext);
                       audioCubit.playAyah(surahId, verse.id);
@@ -528,7 +529,7 @@ class _QuranSectionViewBodyState extends State<_QuranSectionViewBody> {
                   _buildActionItem(
                     icon: Icons.menu_book_rounded,
                     label: 'تفسير',
-                    color: const Color(0xFF143427),
+                    color: actionItemColor,
                     onTap: () {
                       Navigator.pop(bottomContext);
                       Navigator.push(
@@ -557,7 +558,7 @@ class _QuranSectionViewBodyState extends State<_QuranSectionViewBody> {
                         label: isDownloaded ? 'السورة محملة' : 'تحميل السورة',
                         color: isDownloaded
                             ? const Color(0xFF2E7D5E)
-                            : const Color(0xFF143427),
+                            : actionItemColor,
                         onTap: () {
                           Navigator.pop(bottomContext);
                           SurahDownloadBottomSheet.show(
@@ -572,7 +573,7 @@ class _QuranSectionViewBodyState extends State<_QuranSectionViewBody> {
                   _buildActionItem(
                     icon: Icons.bookmark_add_rounded,
                     label: 'حفظ علامة',
-                    color: AppColors.goldenPrimary,
+                    color: actionItemColor,
                     onTap: () async {
                       Navigator.pop(bottomContext);
                       final formattedSurahName = surahName.startsWith('سورة')
@@ -736,11 +737,13 @@ class _QuranSectionViewBodyState extends State<_QuranSectionViewBody> {
                   ),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? const Color(0xFF201913)
+                        ? const Color(0xFF282C32)
                         : const Color(0xFFFCFAF4),
                     borderRadius: BorderRadius.circular(18.r),
                     border: Border.all(
-                      color: const Color(0xFFC79E53).withValues(alpha: 0.35),
+                      color: isDark
+                          ? const Color(0xFF383E46)
+                          : const Color(0xFFC79E53).withValues(alpha: 0.35),
                       width: 1.2,
                     ),
                     boxShadow: [

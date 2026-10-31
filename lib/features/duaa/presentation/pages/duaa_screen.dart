@@ -24,31 +24,6 @@ class _DuaaScreenState extends State<DuaaScreen> {
     _categories = DuaaRepository.getCategories();
   }
 
-  void _copyDuaa(DuaaItem item) {
-    HapticFeedback.lightImpact();
-    Clipboard.setData(ClipboardData(text: '${item.arabic}\n\n${item.translation}'));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.copy_rounded, color: Colors.white, size: 18),
-            SizedBox(width: 8),
-            Text('تم نسخ الدعاء إلى الحافظة ✨'),
-          ],
-        ),
-        backgroundColor: AppColors.goldenPrimary,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 1),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-      ),
-    );
-  }
-
-  void _shareDuaa(DuaaItem item) {
-    HapticFeedback.selectionClick();
-    final text = '${item.arabic}\n\n${item.translation}\n\n— من تطبيق صُحبة';
-    Share.share(text);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +40,8 @@ class _DuaaScreenState extends State<DuaaScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: isDark ? Colors.white : AppColors.brownPrimary,
-            size: 20,
+            color: isDark ? Colors.white : const Color(0xFF38291D),
+            size: 20.sp,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -75,7 +50,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
           style: TextStyle(
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : AppColors.brownPrimary,
+            color: isDark ? Colors.white : const Color(0xFF143427),
           ),
         ),
       ),
@@ -101,7 +76,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                   width: 4.w,
                   height: 18.h,
                   decoration: BoxDecoration(
-                    color: AppColors.goldenPrimary,
+                    color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                 ),
@@ -111,7 +86,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                   style: TextStyle(
                     fontSize: 17.sp,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : AppColors.brownPrimary,
+                    color: isDark ? Colors.white : const Color(0xFF143427),
                   ),
                 ),
                 const Spacer(),
@@ -119,7 +94,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                   '${_categories.length} أقسام',
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: AppColors.goldenPrimary,
+                    color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -171,7 +146,9 @@ class _DuaaScreenState extends State<DuaaScreen> {
         ),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
-          color: AppColors.goldenPrimary.withValues(alpha: 0.3),
+          color: isDark
+              ? const Color(0xFF2E7D5E).withValues(alpha: 0.3)
+              : const Color(0xFF143427).withValues(alpha: 0.15),
           width: 1.2,
         ),
       ),
@@ -179,7 +156,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
         children: [
           Icon(
             Icons.format_quote_rounded,
-            color: AppColors.goldenPrimary,
+            color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
             size: 26,
           ),
           SizedBox(height: 4.h),
@@ -190,7 +167,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
               fontSize: 16.sp,
               height: 1.7,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppColors.brownPrimary,
+              color: isDark ? Colors.white : const Color(0xFF143427),
             ),
             textAlign: TextAlign.center,
           ),
@@ -199,7 +176,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
             'سورة البقرة : ١٨٦',
             style: TextStyle(
               fontSize: 11.sp,
-              color: AppColors.goldenPrimary,
+              color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -248,7 +225,11 @@ class _DuaaScreenState extends State<DuaaScreen> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  gradient: AppColors.goldenGradient,
+                  gradient: LinearGradient(
+                    colors: isDark
+                        ? const [Color(0xFF2E7D5E), Color(0xFF1E523E)]
+                        : const [Color(0xFF143427), Color(0xFF1F4838)],
+                  ),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: const Row(
@@ -271,7 +252,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
               IconButton(
                 icon: const Icon(Icons.copy_rounded, size: 18),
                 tooltip: 'نسخ',
-                color: AppColors.goldenPrimary,
+                color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
                 onPressed: () {
                   HapticFeedback.lightImpact();
                   Clipboard.setData(const ClipboardData(
@@ -280,7 +261,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text('تم نسخ الدعاء إلى الحافظة ✨'),
-                      backgroundColor: AppColors.goldenPrimary,
+                      backgroundColor: isDark ? const Color(0xFF2E7D5E) : const Color(0xFF143427),
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.r),
@@ -295,7 +276,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
               IconButton(
                 icon: const Icon(Icons.share_rounded, size: 18),
                 tooltip: 'مشاركة',
-                color: AppColors.goldenPrimary,
+                color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   Share.share('$featuredArabic\n\n$featuredTranslation\n\n— من تطبيق صُحبة');
@@ -313,7 +294,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
               fontSize: 17.sp,
               height: 1.8,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppColors.brownPrimary,
+              color: isDark ? Colors.white : const Color(0xFF143427),
             ),
             textAlign: TextAlign.center,
           ),
@@ -323,7 +304,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
             style: TextStyle(
               fontSize: 11.sp,
               fontStyle: FontStyle.italic,
-              color: isDark ? Colors.white70 : AppColors.brownPrimary.withValues(alpha: 0.75),
+              color: isDark ? Colors.white70 : const Color(0xFF736152),
             ),
             textAlign: TextAlign.center,
           ),
@@ -385,7 +366,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : AppColors.brownPrimary,
+                          color: isDark ? Colors.white : const Color(0xFF143427),
                         ),
                       ),
                       const Spacer(),
@@ -411,7 +392,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                     category.descriptionAr,
                     style: TextStyle(
                       fontSize: 11.sp,
-                      color: isDark ? Colors.white60 : Colors.brown.shade400,
+                      color: isDark ? Colors.white60 : const Color(0xFF736152),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -423,7 +404,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
             Icon(
               Icons.chevron_left_rounded,
               size: 20,
-              color: isDark ? Colors.white38 : AppColors.brownPrimary.withValues(alpha: 0.4),
+              color: isDark ? Colors.white38 : const Color(0xFF143427).withValues(alpha: 0.4),
             ),
           ],
         ),
@@ -449,7 +430,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
         children: [
           Icon(
             Icons.menu_book_rounded,
-            color: AppColors.goldenPrimary,
+            color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
             size: 20,
           ),
           SizedBox(width: 10.w),
@@ -462,7 +443,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.goldenPrimary,
+                    color: isDark ? const Color(0xFF81C784) : const Color(0xFF143427),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -472,7 +453,7 @@ class _DuaaScreenState extends State<DuaaScreen> {
                     fontFamily: 'Amiri',
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : AppColors.brownPrimary,
+                    color: isDark ? Colors.white : const Color(0xFF143427),
                   ),
                 ),
                 Text(

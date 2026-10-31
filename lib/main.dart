@@ -22,13 +22,14 @@ void main() async {
   ]);
 
   // Load saved theme mode before runApp so splash renders in exact theme on frame 0
+  // Default is strictly Light Mode, even if the user's mobile is in dark mode
   final prefs = await SharedPreferences.getInstance();
   final savedTheme = prefs.getString('app_theme_mode');
-  ThemeMode initialThemeMode = ThemeMode.system;
-  if (savedTheme == 'light') {
-    initialThemeMode = ThemeMode.light;
-  } else if (savedTheme == 'dark') {
+  ThemeMode initialThemeMode = ThemeMode.light;
+  if (savedTheme == 'dark') {
     initialThemeMode = ThemeMode.dark;
+  } else if (savedTheme == 'light') {
+    initialThemeMode = ThemeMode.light;
   }
 
   // Initialize core services so app launches cleanly into the single SplashScreen

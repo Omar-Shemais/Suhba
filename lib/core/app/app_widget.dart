@@ -24,7 +24,7 @@ class MyApp extends StatefulWidget {
 
   const MyApp({
     super.key,
-    this.initialThemeMode = ThemeMode.system,
+    this.initialThemeMode = ThemeMode.light,
   });
 
   @override
